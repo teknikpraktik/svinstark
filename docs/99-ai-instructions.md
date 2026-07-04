@@ -30,6 +30,7 @@ Läs dem i följande ordning:
 6. `05-designprinciper.md`
 7. `06-roadmap.md`
 8. `07-generator-specifikation.md`
+9. `loggbok.md` (för att se vad som redan är gjort)
 
 Ingen implementation får påbörjas innan dokumentationen förståtts.
 
@@ -189,7 +190,23 @@ Vid tveksamhet ska enkelhet alltid prioriteras.
 
 ---
 
-# 13. Slutregel
+# 13. Loggbok
+
+Projektet har en loggbok: `docs/loggbok.md`.
+
+Efter varje fas som slutförs ska AI:
+
+- uppdatera statusöversikten i loggboken för den fasen,
+- lägga till en ny post i sessionsloggen enligt mallen i loggboken (byggt, filer skapade/ändrade, testat, begränsningar, nästa steg),
+- göra detta som en del av leverabelredovisningen i punkt 19 i `04-utvecklingsplan.md`, inte som ett separat, väntande steg.
+
+Loggboken är ett undantag från regeln i punkt 2 om att AI inte får ändra dokumentationen på eget initiativ — den ska hållas uppdaterad löpande utan att invänta godkännande, eftersom den bara redovisar redan utfört och godkänt arbete.
+
+Övriga dokument i `docs/` omfattas fortfarande av punkt 2.
+
+---
+
+# 14. Slutregel
 
 Om dokumentationen och användarens instruktioner skulle skilja sig åt gäller den **senaste uttryckliga instruktionen från användaren**.
 
