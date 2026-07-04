@@ -1,0 +1,24 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.content {
+  width: 100%;
+  max-width: 360px;
+  padding: 2rem 1.5rem;
+  border-radius: 16px;
+  background: var(--background);
+  color: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
