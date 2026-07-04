@@ -13,7 +13,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | --- | --------------------------- | ----------- |
 | 0   | Projektinitiering           | ✅ Klar      |
 | 1   | Grundläggande UI            | ✅ Klar      |
-| 2   | Grundläggande komponenter   | ⬜ Ej påbörjad |
+| 2   | Grundläggande komponenter   | ✅ Klar      |
 | 3   | TypeScript-modeller         | ⬜ Ej påbörjad |
 | 4   | Exercise Library            | ⬜ Ej påbörjad |
 | 5   | Workout Generator           | ⬜ Ej påbörjad |
@@ -79,6 +79,50 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 - Layout/komponenter är inte uppdelade i återanvändbara komponenter ännu — det sker i Fas 2
 
 **Nästa steg:** Fas 2 – Grundläggande komponenter.
+
+---
+
+### 2026-07-04 — Fas 2: Grundläggande komponenter
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- Sju återanvändbara komponenter, helt frikopplade från träningslogik (endast props in, händelser ut):
+  - `PrimaryButton` — stor primärknapp
+  - `IconButton` — ikonknapp (44×44 px, kräver `ariaLabel`)
+  - `OptionSelector` — generisk gruppvals-komponent (används av Träningstid/Intensitet)
+  - `TimerDisplay` — stor tidsvisning (mm:ss)
+  - `ExerciseCard` — övningsnamn + instruktion
+  - `PhaseBadge` — diskret fasindikator (Uppvärmning/Träning/Nedvarvning)
+  - `Modal` — generisk dialogruta (grund för PauseDialog/Inställningar senare)
+- `src/utils/formatTime.ts` — liten hjälpfunktion för mm:ss-formatering
+- Startsidan (`src/app/page.tsx`) refaktorerad till att använda `IconButton`, `OptionSelector` och `PrimaryButton` istället för inline-markup, utan att ändra utseende eller beteende
+
+**Filer skapade:**
+- `src/components/PrimaryButton.tsx` + `.module.css`
+- `src/components/IconButton.tsx` + `.module.css`
+- `src/components/OptionSelector.tsx` + `.module.css`
+- `src/components/TimerDisplay.tsx` + `.module.css`
+- `src/components/ExerciseCard.tsx` + `.module.css`
+- `src/components/PhaseBadge.tsx` + `.module.css`
+- `src/components/Modal.tsx` + `.module.css`
+- `src/utils/formatTime.ts`
+
+**Filer ändrade:**
+- `src/app/page.tsx` — använder nu de nya komponenterna
+- `src/app/page.module.css` — rensad till endast sidlayout (komponentstyling flyttad till respektive komponents CSS-modul)
+
+**Testat:**
+- `npm run build` och `npm run lint` — felfria
+- Manuellt i headless Chrome (390×844): startsidan fungerar oförändrat efter refaktorering
+- `TimerDisplay`, `ExerciseCard`, `PhaseBadge` och `Modal` verifierades visuellt via en tillfällig testsida (skapad, screenshottad, sedan borttagen — ingår inte i appens routing)
+- Inga konsolfel i något av fallen
+
+**Begränsningar:**
+- `TimerDisplay`, `ExerciseCard`, `PhaseBadge` och `Modal` används ännu inte i någon riktig skärm — det sker i Fas 8 (Workout Screen) och senare faser
+- Inga TypeScript-domäntyper importeras än (t.ex. `WorkoutPhase`); komponenternas lokala props-typer (`"warmup" | "exercise" | "cooldown"` etc.) är redan skrivna för att matcha `02-teknisk-specifikation.md` exakt, så de kan kopplas mot de riktiga typerna utan ändring i Fas 3
+
+**Nästa steg:** Fas 3 – TypeScript-modeller.
 
 ---
 
