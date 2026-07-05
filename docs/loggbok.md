@@ -606,6 +606,31 @@ Första förbättringsfasen efter MVP (version 1.0), enligt `06-roadmap.md` §4 
 
 ---
 
+### 2026-07-05 — v1.1 uppföljning: Passvyn (övningsräknare + layout)
+
+**Status:** ✅ Klar
+
+Två snabba användarstyrda iterationer på passvyn efter feedback:
+
+1. **Övningsräknare istället för tid kvar:** bytte ut "MM:SS kvar" mot "Övning X av Y" för ett renare uttryck. Ny funktion `getExerciseProgress()` i `src/lib/timer.ts` (ersätter `getTotalRemainingSeconds`), placerad direkt under övningsbeskrivningen och synlig endast under träningsfasen (inte uppvärmning/nedvarvning)
+2. **Tydligare layout:** ny rad högst upp i passvyn som visar total längd och intensitet utskrivet (t.ex. "9 min · Tufft"), fasbadgen gjord större (dubblad padding, större typsnitt), och övningsnamn/instruktion flyttade upp direkt under timern istället för att centreras mitt på skärmen
+
+**Filer skapade:**
+- `src/data/workoutLabels.ts` — delade tränings-/intensitetsetiketter, används nu av både `StartScreen` och `WorkoutScreen` (tog bort dubblerad data)
+
+**Filer ändrade:**
+- `src/lib/timer.ts`, `src/components/WorkoutProgress.tsx`, `src/components/WorkoutScreen.tsx`/`.module.css`, `src/components/PhaseBadge.module.css`, `src/components/StartScreen.tsx`, `src/app/page.tsx`
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Logiktester för `getExerciseProgress` (gränsfall vid uppvärmning/första/sista övningen/nedvarvning)
+- Verifierat i headless Chrome genom en verklig 60-sekunders uppvärmning: räknaren döljs korrekt under uppvärmning, visar "Övning 1 av 7" så fort träningsfasen börjar
+- Regressionstest av paus/återuppta/avsluta. Inga konsolfel
+
+**Begränsningar:** Inga.
+
+---
+
 ## Mall för nästa post
 
 ```
