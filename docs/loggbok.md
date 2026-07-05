@@ -19,7 +19,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 5   | Workout Generator           | ✅ Klar      |
 | 6   | Timer Engine                | ✅ Klar      |
 | 7   | React Hooks                 | ✅ Klar      |
-| 8   | Workout Screen              | ⬜ Ej påbörjad |
+| 8   | Workout Screen              | ✅ Klar      |
 | 9   | Signaturuppvärmning         | ⬜ Ej påbörjad |
 | 10  | Signaturavslut              | ⬜ Ej påbörjad |
 | 11  | Ljud                        | ⬜ Ej påbörjad |
@@ -300,6 +300,42 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 - `useSettings` har ingen `useAudio()`-motsvarighet ännu (ljud kommer i Fas 11); `soundEnabled` lagras redan men används inte
 
 **Nästa steg:** Fas 8 – Workout Screen.
+
+---
+
+### 2026-07-05 — Fas 8: Workout Screen
+
+**Status:** ✅ Klar
+
+**Byggt:**
+Fas 8 hette formellt bara "Workout Screen", men för att passet faktiskt ska gå att spela igenom och testa manuellt (paus måste leda någonstans, passet måste kunna avslutas) byggdes hela skärmflödet från komponentträdet i C.4:
+- `StartScreen` — startsidans innehåll flyttat ut ur `page.tsx`, nu styrd av `useSettings` istället för lokal state, plus ett enkelt felmeddelande om passgenerering misslyckas
+- `WorkoutScreen` — visar endast fas (PhaseBadge), stor timer (TimerDisplay), övning/segment (återanvänder ExerciseCard för båda, eftersom komponenten redan är helt frikopplad från domänmodellen) samt Paus/Avsluta. Ingen nästa övning, passlista eller statistik
+- `PauseDialog` — "Paus" med Fortsätt/Avsluta, byggd på Modal-komponenten från Fas 2
+- `FinishedScreen` — "Klart!" och "Till start", helt utan statistik/summering/konfetti
+- `src/app/page.tsx` växlar nu mellan skärmarna baserat på `screen` från `useWorkout`
+
+**Filer skapade:**
+- `src/components/StartScreen.tsx` + `.module.css`
+- `src/components/WorkoutScreen.tsx` + `.module.css`
+- `src/components/PauseDialog.tsx` + `.module.css`
+- `src/components/FinishedScreen.tsx` + `.module.css`
+
+**Filer ändrade:**
+- `src/app/page.tsx` (nu bara skärmväxling)
+- `src/app/page.module.css` borttagen (innehållet flyttat till `StartScreen.module.css`)
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Fullständig manuell genomspelning i headless Chrome (390×844): valde Kortare/Normalt, STARTA PASS → uppvärmning visas med korrekt första segment (Djup knäböj med armlyft) → väntade in ett verkligt segmentbyte vid rätt tidpunkt (till Utfall bakåt med rotation) → Paus öppnar dialogen och fryser tiden, bakgrunden dimmas → Fortsätt återupptar exakt → Avsluta återgår direkt till startskärmen med bevarade val
+  - FinishedScreen verifierades separat via en tillfällig testsida (borttagen igen) eftersom ett fullt pass tar minst 9 minuter i realtid att spela igenom naturligt — det underliggande avslutsbeteendet (`onFinish`) är redan grundligt testat i Fas 6/7
+  - Inga konsolfel i något steg
+
+**Begränsningar:**
+- Inget ljud än (Fas 11) och ingen inställningsdialog bakom kugghjulsikonen än (Fas 12) — ikonen är samma icke-funktionella platshållare som i Fas 1
+- Signaturuppvärmningens/-avslutets innehåll visas redan korrekt (implementerat i Fas 5), så Fas 9/10 blir främst en verifiering av att exakt detta innehåll och denna timing är avsiktlig snarare än ny implementation
+
+**Nästa steg:** Fas 9 – Signaturuppvärmning.
 
 ---
 
