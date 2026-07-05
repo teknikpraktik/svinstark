@@ -1,3 +1,4 @@
+import { memo } from "react";
 import styles from "./ExerciseCard.module.css";
 
 interface ExerciseCardProps {
@@ -5,7 +6,9 @@ interface ExerciseCardProps {
   instruction: string;
 }
 
-export default function ExerciseCard({ name, instruction }: ExerciseCardProps) {
+// Memoiserad eftersom WorkoutScreen (föräldern) renderas om varje sekund via
+// timern, medan namn/instruktion bara ändras vid block-/segmentbyten (A.10).
+function ExerciseCard({ name, instruction }: ExerciseCardProps) {
   return (
     <div className={styles.card}>
       <h2 className={styles.name}>{name}</h2>
@@ -13,3 +16,5 @@ export default function ExerciseCard({ name, instruction }: ExerciseCardProps) {
     </div>
   );
 }
+
+export default memo(ExerciseCard);

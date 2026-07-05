@@ -117,12 +117,14 @@ export class WorkoutTimer {
       remainingMs = this.blockDeadline - Date.now();
     }
 
-    // Signalera "sista tre sekunderna" exakt en gång per sekund (C.19), inte en
-    // gång per tick (TICK_INTERVAL_MS är tätare än en sekund).
+    // TICK_INTERVAL_MS är tätare än en hel sekund (för precision kring
+    // block-/nedräkningsgränser), men det visade värdet är avrundat till hela
+    // sekunder. Uppdatera state (och trigga en rendering) bara när det visade
+    // värdet faktiskt ändras, för att undvika onödiga renderingar (A.10/C.29).
     const remainingSeconds = Math.ceil(remainingMs / 1000);
-    const isNewCountdownSecond =
-      remainingSeconds !== this.state.remainingSeconds && remainingSeconds >= 1 && remainingSeconds <= 3;
+    if (remainingSeconds === this.state.remainingSeconds) return;
 
+    const isNewCountdownSecond = remainingSeconds >= 1 && remainingSeconds <= 3;
     this.state = { ...this.state, remainingSeconds };
     if (isNewCountdownSecond) {
       this.callbacks.onCountdown?.(remainingSeconds);
