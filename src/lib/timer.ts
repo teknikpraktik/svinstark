@@ -13,18 +13,26 @@ export function getCurrentSegment(block: WorkoutBlock, remainingSeconds: number)
   );
 }
 
-// Total återstående tid för hela passet (inte bara aktuellt block): resten av
-// nuvarande block plus samtliga kommande blocks fulla längd. Minskar med en
-// sekund i taget utan hopp, även när blocket byts.
-export function getTotalRemainingSeconds(
+export interface ExerciseProgress {
+  current: number;
+  total: number;
+}
+
+// Vilken övning (inte uppvärmning/nedvarvning) det aktuella blocket är, av
+// det totala antalet övningar i passet. Returnerar null utanför träningsfasen
+// - uppvärmning och nedvarvning har inget "övning X av Y" att visa.
+export function getExerciseProgress(
   blocks: WorkoutBlock[],
-  currentBlockIndex: number,
-  currentBlockRemainingSeconds: number
-): number {
-  const futureBlocksSeconds = blocks
-    .slice(currentBlockIndex + 1)
-    .reduce((sum, block) => sum + block.duration, 0);
-  return currentBlockRemainingSeconds + futureBlocksSeconds;
+  currentBlockIndex: number
+): ExerciseProgress | null {
+  if (blocks[currentBlockIndex]?.phase !== "exercise") return null;
+
+  const total = blocks.filter((block) => block.phase === "exercise").length;
+  const current = blocks
+    .slice(0, currentBlockIndex + 1)
+    .filter((block) => block.phase === "exercise").length;
+
+  return { current, total };
 }
 
 export interface WorkoutTimerCallbacks {

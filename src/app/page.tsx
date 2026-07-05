@@ -36,6 +36,7 @@ export default function Home() {
       <WorkoutScreen
         blocks={workout.blocks}
         block={currentBlock}
+        settings={workout.settings}
         timerState={timerState}
         onPause={pause}
         onStop={stop}

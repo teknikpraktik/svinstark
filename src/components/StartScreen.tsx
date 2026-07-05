@@ -5,20 +5,26 @@ import IconButton from "@/components/IconButton";
 import OptionSelector from "@/components/OptionSelector";
 import PrimaryButton from "@/components/PrimaryButton";
 import SettingsDialog from "@/components/SettingsDialog";
+import {
+  durationLabels,
+  durationMinutes,
+  durationOrder,
+  intensityLabels,
+  intensityOrder,
+} from "@/data/workoutLabels";
 import type { WorkoutDuration, WorkoutIntensity, WorkoutSettings } from "@/types/workout";
 import styles from "./StartScreen.module.css";
 
-const trainingTimes: { value: WorkoutDuration; label: string; sublabel: string }[] = [
-  { value: "short", label: "Kortare", sublabel: "9 min" },
-  { value: "standard", label: "Standard", sublabel: "16 min" },
-  { value: "long", label: "Längre", sublabel: "23 min" },
-];
+const trainingTimes = durationOrder.map((value) => ({
+  value,
+  label: durationLabels[value],
+  sublabel: `${durationMinutes[value]} min`,
+}));
 
-const intensities: { value: WorkoutIntensity; label: string }[] = [
-  { value: "calm", label: "Lugnt" },
-  { value: "normal", label: "Normalt" },
-  { value: "hard", label: "Tufft" },
-];
+const intensities = intensityOrder.map((value) => ({
+  value,
+  label: intensityLabels[value],
+}));
 
 const valueProps = ["Helkropp", "Tidseffektivt", "Regelstyrt"];
 

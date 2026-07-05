@@ -2,41 +2,51 @@ import ExerciseCard from "@/components/ExerciseCard";
 import PhaseBadge from "@/components/PhaseBadge";
 import TimerDisplay from "@/components/TimerDisplay";
 import WorkoutProgress from "@/components/WorkoutProgress";
-import { getCurrentSegment, getTotalRemainingSeconds } from "@/lib/timer";
-import type { TimerState, WorkoutBlock } from "@/types/workout";
+import { durationMinutes, intensityLabels } from "@/data/workoutLabels";
+import { getCurrentSegment, getExerciseProgress } from "@/lib/timer";
+import type { TimerState, WorkoutBlock, WorkoutSettings } from "@/types/workout";
 import styles from "./WorkoutScreen.module.css";
 
 interface WorkoutScreenProps {
   blocks: WorkoutBlock[];
   block: WorkoutBlock;
+  settings: WorkoutSettings;
   timerState: TimerState;
   onPause: () => void;
   onStop: () => void;
 }
 
-export default function WorkoutScreen({ blocks, block, timerState, onPause, onStop }: WorkoutScreenProps) {
+export default function WorkoutScreen({
+  blocks,
+  block,
+  settings,
+  timerState,
+  onPause,
+  onStop,
+}: WorkoutScreenProps) {
   const displayed =
     block.phase === "exercise" && block.exercise
       ? { name: block.exercise.name, instruction: block.exercise.instruction }
       : toDisplayedSegment(getCurrentSegment(block, timerState.remainingSeconds));
 
-  const totalRemainingSeconds = getTotalRemainingSeconds(
-    blocks,
-    timerState.currentBlock,
-    timerState.remainingSeconds
-  );
+  const exerciseProgress = getExerciseProgress(blocks, timerState.currentBlock);
 
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
+        <p className={styles.summary}>
+          {durationMinutes[settings.duration]} min · {intensityLabels[settings.intensity]}
+        </p>
         <PhaseBadge phase={block.phase} />
-        <WorkoutProgress remainingSeconds={totalRemainingSeconds} />
       </div>
 
       <TimerDisplay seconds={timerState.remainingSeconds} />
 
       <div className={styles.content}>
         {displayed && <ExerciseCard name={displayed.name} instruction={displayed.instruction} />}
+        {exerciseProgress && (
+          <WorkoutProgress current={exerciseProgress.current} total={exerciseProgress.total} />
+        )}
       </div>
 
       <div className={styles.actions}>

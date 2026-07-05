@@ -1,14 +1,17 @@
-import { formatTime } from "@/utils/formatTime";
 import styles from "./WorkoutProgress.module.css";
 
 interface WorkoutProgressProps {
-  remainingSeconds: number;
+  current: number;
+  total: number;
 }
 
-// Diskret indikator för hur mycket tid som återstår av HELA passet.
-// Ska aldrig konkurrera visuellt med den stora TimerDisplay-komponenten.
-// Ingen memo här (till skillnad från ExerciseCard/PhaseBadge) eftersom
-// remainingSeconds ändras varje sekund - memoisering skulle inte göra nytta.
-export default function WorkoutProgress({ remainingSeconds }: WorkoutProgressProps) {
-  return <p className={styles.progress}>{formatTime(remainingSeconds)} kvar</p>;
+// Diskret indikator för vilken övning i passet användaren är på. Visas endast
+// under träningsfasen (inte uppvärmning/nedvarvning). Ska aldrig konkurrera
+// visuellt med den stora TimerDisplay-komponenten eller ExerciseCard.
+export default function WorkoutProgress({ current, total }: WorkoutProgressProps) {
+  return (
+    <p className={styles.progress}>
+      Övning {current} av {total}
+    </p>
+  );
 }
