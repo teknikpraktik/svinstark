@@ -22,7 +22,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 8   | Workout Screen              | ✅ Klar      |
 | 9   | Signaturuppvärmning         | ✅ Klar      |
 | 10  | Signaturavslut              | ✅ Klar      |
-| 11  | Ljud                        | ⬜ Ej påbörjad |
+| 11  | Ljud                        | ✅ Klar      |
 | 12  | Inställningar               | ⬜ Ej påbörjad |
 | 13  | PWA                         | ⬜ Ej påbörjad |
 | 14  | Optimering                  | ⬜ Ej påbörjad |
@@ -373,6 +373,41 @@ Fas 8 hette formellt bara "Workout Screen", men för att passet faktiskt ska gå
 **Begränsningar:** Inga.
 
 **Nästa steg:** Fas 11 – Ljud.
+
+---
+
+### 2026-07-05 — Fas 11: Ljud
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- `src/lib/audio.ts` — korta, diskreta toner genererade med Web Audio API (`OscillatorNode`/`GainNode`, mjuk attack/release för att undvika klickljud), istället för externa ljudfiler. Tre signaler enligt C.19:
+  - `playNewBlockSound()` — nytt block (spelas vid övergång mellan block, inte vid det allra första blockets start eftersom knapptryckningen på STARTA PASS redan ger egen feedback)
+  - `playCountdownBeep()` — sista tre sekunderna
+  - `playFinishSound()` — pass klart (kort stigande tretonssekvens, inget fanfar/konfetti)
+- `src/hooks/useAudio.ts` — spelar bara ljud om inställningen är på
+- `src/lib/timer.ts` utökad med `onCountdown`-callback: känner av när sekundvärdet faktiskt växlar till 3/2/1 (inte bara `<= 3`), så ljudet inte spelas flera gånger per sekund trots att intervallet tickar var 250:e ms
+- `useWorkout` kopplar ihop `useAudio` (styrd av `workout.settings.soundEnabled`) med timerns `onBlockChange`/`onCountdown`/`onFinish`
+
+**Filer skapade:**
+- `src/lib/audio.ts`
+- `src/hooks/useAudio.ts`
+
+**Filer ändrade:**
+- `src/lib/timer.ts` (ny `onCountdown`-callback med korrekt en-gång-per-sekund-detektering)
+- `src/hooks/useTimer.ts` (tar nu emot ett callbacks-objekt: `onFinish`/`onBlockChange`/`onCountdown`)
+- `src/hooks/useWorkout.ts` (kopplar ljud till timerhändelserna)
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Fristående test (`npx tsx`): verifierade att `onCountdown` triggas exakt en gång per sekund vid 3/2/1 över två på varandra följande fejkade block (resultat: `[3,2,1,3,2,1]`, inga dubbletter eller uteblivna anrop)
+- Riktigt webbläsartest i headless Chrome: startade ett kortare pass med en verklig knapptryckning (user gesture, krävs av webbläsarens autoplay-policy för Web Audio API), väntade in ett verkligt blockbyte (uppvärmning → första övningen, ~62 sekunder realtid) och bekräftade att fasmärket bytte korrekt till "Träning" med rätt övning visad — utan några konsolfel. Detta innebär att både "nytt block"-ljudet och de tre nedräkningsljuden i slutet av uppvärmningen faktiskt kördes via Web Audio API i en riktig webbläsare utan att krascha
+
+**Begränsningar:**
+- Inget UI för att stänga av ljud finns ännu synligt (kugghjulsikonen är fortfarande en icke-funktionell platshållare) — själva på/av-styrningen finns redan (`soundEnabled` i `WorkoutSettings`), men dialogen för att ändra den kommer i Fas 12
+- Ingen sound-toggle testad manuellt än eftersom UI för det saknas; själva av/på-grenen i `useAudio` (`if (enabled) ...`) är dock trivial och verifierad genom kodgranskning
+
+**Nästa steg:** Fas 12 – Inställningar.
 
 ---
 
