@@ -682,6 +682,30 @@ Ytterligare en snabb iteration efter användarfeedback:
 
 ---
 
+### 2026-07-06 — Bugfix: inget ljud på mobil
+
+**Status:** ✅ Klar
+
+**Problem:** Användaren hörde inget ljud alls på mobilen, trots att Fas 11:s tester inte visade några fel.
+
+**Grundorsak:** `AudioContext` skapades första gången inifrån en `setInterval`-callback (den första nedräkningssignalen, ~57 sekunder efter knapptryckningen på STARTA PASS), inte synkront i själva klicket. Mobila webbläsare (särskilt iOS Safari) håller då ljudet permanent pausat (`state: "suspended"`) utan att kasta något fel — därför missade Fas 11:s tester det, som dessutom av misstag kördes med en flagga (`--autoplay-policy=no-user-gesture-required`) som kringgick just den policy som orsakade problemet.
+
+**Byggt:**
+- `unlockAudioContext()` i `src/lib/audio.ts` — spelar en tyst, momentan ton för att låsa upp ljudet
+- Anropas synkront i `start()` i `src/hooks/useWorkout.ts`, dvs. i själva knapptryckningen på STARTA PASS (inte senare från en timer-callback)
+
+**Filer ändrade:**
+- `src/lib/audio.ts`, `src/hooks/useWorkout.ts`
+
+**Testat:**
+- Körde om verifieringen *utan* policy-bypass-flaggan (den strikta, verkliga policyn): `AudioContext` startar nu i `running`-läge direkt vid klicket, inte `suspended`
+- Instrumenterade `OscillatorNode.start()` genom ett helt live-flöde: bekräftade att en tyst upplåsningston (440 Hz) spelas direkt vid klicket, följt av tre riktiga nedräkningstoner (880 Hz) och ett blockbytesljud (660 Hz) vid rätt tidpunkter under uppvärmningen — helt utan bypass-flagga
+- Full regressionstest av paus/återuppta/avsluta. Inga konsolfel
+
+**Begränsningar:** Kan inte fysiskt bekräfta hörbart ljud på en riktig telefon (endast webbläsarmotorn kan testas programmatiskt) — användaren behöver bekräfta på sin enhet.
+
+---
+
 ## Mall för nästa post
 
 ```
