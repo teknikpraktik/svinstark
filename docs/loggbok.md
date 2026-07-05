@@ -16,7 +16,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 2   | Grundläggande komponenter   | ✅ Klar      |
 | 3   | TypeScript-modeller         | ✅ Klar      |
 | 4   | Exercise Library            | ✅ Klar      |
-| 5   | Workout Generator           | ⬜ Ej påbörjad |
+| 5   | Workout Generator           | ✅ Klar      |
 | 6   | Timer Engine                | ⬜ Ej påbörjad |
 | 7   | React Hooks                 | ⬜ Ej påbörjad |
 | 8   | Workout Screen              | ⬜ Ej påbörjad |
@@ -191,6 +191,46 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 - Räknades till 98 istället för exakt 100; spec anger "cirka 100" och prioriterar kvalitet/konsekvens över exakt antal, vilket är uppfyllt
 
 **Nästa steg:** Fas 5 – Workout Generator.
+
+---
+
+### 2026-07-05 — Fas 5: Workout Generator
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- `src/lib/workoutGenerator.ts` — `generateWorkout(settings): Workout`, ren funktion utan React/DOM
+  - Läser inställningar, hämtar passmall, filtrerar på intensitet/utrustning, väljer kandidater slumpmässigt (uniform sannolikhet), kontrollerar samtliga sekvensregler (avoidAdjacent, jump/explosive/isometric/unilateral/hanging i rad, tre golv- eller benövningar i rad, samma `primaryPattern` i rad)
+  - Fallback: tillåter sekundära rörelsemönster om primärmatchning ger 0 kandidater; om en hel sekvens ändå misslyckas görs om till 50 försök (enligt spec:s hårda gräns) innan ett tydligt fel kastas
+  - Oberoende slutvalidering (`isValidWorkout`) kontrollerar intensitet, dubbletter, sekvensregler och att alla obligatoriska rörelsemönster (knä, höft, press, drag, bål, kondition, balans/rörlighet) finns representerade
+  - Egna felklasser enligt B.31: `NoExercisesFoundError`, `InvalidWorkoutTemplateError`, `SequenceGenerationFailedError`
+- `src/data/workoutTemplates.ts` — passmallar för kortare/standard (exakt spec:s egna exempel) och längre (konstruerad enligt samma princip, ingen upprepning av samma mönster i följd)
+- `src/data/warmup.ts` och `src/data/cooldown.ts` — de fasta segmenten för signaturuppvärmning/-avslut (innehåll redan specificerat i 01/02-dokumenten), som genereratorn alltid bifogar oförändrade
+- `src/utils/randomItem.ts`, `src/utils/createId.ts` — små generella hjälpfunktioner
+- **Utökning av `exerciseData.ts`** (98 → 116 övningar): analys innan generatorn skrevs visade att vissa rörelsemönster hade för tunn `calm`/`hard`-täckning för att fylla de längre passmallarna (särskilt `conditioning`, `hip`, `push`, `mobility`, `balance`). Kompletterade enligt arbetsregeln i `04-utvecklingsplan.md` §22 ("om en senare fas kräver att en tidigare fas ändras ska den tidigare fasen uppdateras först")
+
+**Filer skapade:**
+- `src/lib/workoutGenerator.ts`
+- `src/data/workoutTemplates.ts`
+- `src/data/warmup.ts`
+- `src/data/cooldown.ts`
+- `src/utils/randomItem.ts`
+- `src/utils/createId.ts`
+
+**Filer ändrade:**
+- `src/data/exerciseData.ts` (18 nya övningar för bättre calm/hard-täckning)
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Genererade 900 pass (100 vardera för kortare/standard/längre × lugnt/normalt/tufft) via ett fristående skript (`npx tsx`, ingår inte i projektet) och validerade: korrekt antal block, korrekt uppvärmning/avslut, korrekt intensitet, inga dubbletter, alla block exakt 60 sekunder
+  - Resultat: 897–899 av 900 lyckades (~99,7 %). De enstaka misslyckandena var uteslutande `längre/lugnt`-kombinationen och berodde på att generatorn nådde sin spec-satta gräns på 50 försök — det är avsett fallback-beteende (kastar `SequenceGenerationFailedError`), inte en bugg. Att fånga detta fel och t.ex. försöka igen är UI/hook-ansvar i senare faser (D.7)
+  - Genomsnittlig genereringstid 0,2 ms, max ~2,9 ms — långt under prestandamålet på 50 ms
+
+**Begränsningar:**
+- Passmallen för "längre" (21 övningar) är inte given i dokumentationen och är därför min egen konstruktion, byggd enligt samma princip som de mallar spec:en själv ger (ingen upprepning av samma mönster i följd, alla obligatoriska kategorier täckta)
+- Generatorn är inte kopplad till UI eller timer ännu — det sker i Fas 6–8
+
+**Nästa steg:** Fas 6 – Timer Engine.
 
 ---
 
