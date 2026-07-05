@@ -14,7 +14,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 0   | Projektinitiering           | ✅ Klar      |
 | 1   | Grundläggande UI            | ✅ Klar      |
 | 2   | Grundläggande komponenter   | ✅ Klar      |
-| 3   | TypeScript-modeller         | ⬜ Ej påbörjad |
+| 3   | TypeScript-modeller         | ✅ Klar      |
 | 4   | Exercise Library            | ⬜ Ej påbörjad |
 | 5   | Workout Generator           | ⬜ Ej påbörjad |
 | 6   | Timer Engine                | ⬜ Ej påbörjad |
@@ -123,6 +123,40 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 - Inga TypeScript-domäntyper importeras än (t.ex. `WorkoutPhase`); komponenternas lokala props-typer (`"warmup" | "exercise" | "cooldown"` etc.) är redan skrivna för att matcha `02-teknisk-specifikation.md` exakt, så de kan kopplas mot de riktiga typerna utan ändring i Fas 3
 
 **Nästa steg:** Fas 3 – TypeScript-modeller.
+
+---
+
+### 2026-07-05 — Fas 3: TypeScript-modeller
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- Samtliga domäntyper implementerade i `src/types/workout.ts`, enligt `02-teknisk-specifikation.md` Del B och `03-exercise-library-specification.md` (som §20 i det dokumentet pekar ut som rätt fil):
+  - Övningsklassificering: `Equipment`, `ExercisePattern`, `ExerciseIntensity`, `DemandLevel`, `BodyPosition`, `MovementType`, `Impact`, `MovementPlane`, `MuscleGroup`, `Exercise`
+  - Pass och användarval: `WorkoutDuration`, `WorkoutIntensity`, `WorkoutSettings`, `WorkoutPhase`, `WorkoutSegment`, `WorkoutBlock`, `Workout`
+  - Passgenerator: `PatternKey`, `WorkoutTemplate`
+  - Timer och appstate: `TimerState`, `Screen`, `AppState`
+- Rensat bort duplicerade lokala unioner som nu ersatts av de delade typerna:
+  - `PhaseBadge` använder `WorkoutPhase` istället för en egen lokal `Phase`-typ
+  - `src/app/page.tsx` använder `WorkoutDuration`/`WorkoutIntensity` istället för egna `TrainingTime`/`Intensity`-typer
+
+**Filer skapade:**
+- `src/types/workout.ts`
+
+**Filer ändrade:**
+- `src/components/PhaseBadge.tsx`
+- `src/app/page.tsx`
+
+**Testat:**
+- `npm run build` — TypeScript kompilerar utan fel (projektets test-krav för denna fas)
+- `npm run lint` — inga varningar
+- Ingen ny renderad UI i denna fas (typer har ingen körtidseffekt), så ingen ny visuell test behövdes
+
+**Begränsningar:**
+- Inga körtidsfel-klasser (`NoExercisesFound` m.fl. från B.31) är definierade ännu — de hör ihop med generatorimplementationen i Fas 5, inte med datamodellerna
+- `exerciseData.ts` (Fas 4) och generatorn (Fas 5) är inte kopplade till typerna ännu
+
+**Nästa steg:** Fas 4 – Exercise Library.
 
 ---
 
