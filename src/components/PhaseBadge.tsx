@@ -1,12 +1,11 @@
+import type { WorkoutPhase } from "@/types/workout";
 import styles from "./PhaseBadge.module.css";
 
-type Phase = "warmup" | "exercise" | "cooldown";
-
 interface PhaseBadgeProps {
-  phase: Phase;
+  phase: WorkoutPhase;
 }
 
-const phaseLabels: Record<Phase, string> = {
+const phaseLabels: Record<WorkoutPhase, string> = {
   warmup: "Uppvärmning",
   exercise: "Träning",
   cooldown: "Nedvarvning",

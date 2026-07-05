@@ -4,18 +4,16 @@ import { useState } from "react";
 import IconButton from "@/components/IconButton";
 import OptionSelector from "@/components/OptionSelector";
 import PrimaryButton from "@/components/PrimaryButton";
+import type { WorkoutDuration, WorkoutIntensity } from "@/types/workout";
 import styles from "./page.module.css";
 
-type TrainingTime = "short" | "standard" | "long";
-type Intensity = "calm" | "normal" | "hard";
-
-const trainingTimes: { value: TrainingTime; label: string }[] = [
+const trainingTimes: { value: WorkoutDuration; label: string }[] = [
   { value: "short", label: "Kortare" },
   { value: "standard", label: "Standard" },
   { value: "long", label: "Längre" },
 ];
 
-const intensities: { value: Intensity; label: string }[] = [
+const intensities: { value: WorkoutIntensity; label: string }[] = [
   { value: "calm", label: "Lugnt" },
   { value: "normal", label: "Normalt" },
   { value: "hard", label: "Tufft" },
@@ -31,8 +29,8 @@ function SettingsIcon() {
 }
 
 export default function Home() {
-  const [trainingTime, setTrainingTime] = useState<TrainingTime>("standard");
-  const [intensity, setIntensity] = useState<Intensity>("normal");
+  const [trainingTime, setTrainingTime] = useState<WorkoutDuration>("standard");
+  const [intensity, setIntensity] = useState<WorkoutIntensity>("normal");
 
   return (
     <div className={styles.page}>
