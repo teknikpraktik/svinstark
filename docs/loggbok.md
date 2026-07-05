@@ -24,7 +24,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 10  | Signaturavslut              | ✅ Klar      |
 | 11  | Ljud                        | ✅ Klar      |
 | 12  | Inställningar               | ✅ Klar      |
-| 13  | PWA                         | ⬜ Ej påbörjad |
+| 13  | PWA                         | ✅ Klar      |
 | 14  | Optimering                  | ⬜ Ej påbörjad |
 | 15  | Sluttest                    | ⬜ Ej påbörjad |
 
@@ -439,6 +439,48 @@ Fas 8 hette formellt bara "Workout Screen", men för att passet faktiskt ska gå
 **Begränsningar:** Inga.
 
 **Nästa steg:** Fas 13 – PWA.
+
+---
+
+### 2026-07-05 — Fas 13: PWA
+
+**Status:** ✅ Klar
+
+**Arkitekturfynd och beslut (stämt av med användaren):**
+Under testningen upptäcktes att `@ducanh2912/next-pwa` (valt i Fas 0) bara kroksig in i Next.js via Webpacks `webpack()`-konfigurationsfunktion. Projektet använder Turbopack som standardbuntlare (bekräftat av byggloggens `▲ Next.js 16.2.10 (Turbopack)`, utan någon flagga), vilket gjorde att PWA-pluginet tyst gjorde ingenting alls — ingen service worker, inget fel, ingen varning. Detta hade varit trasigt sedan Fas 0 utan att synas förrän nu.
+
+Tre alternativ togs fram (bygg med `--webpack`, byt till Serwist/`@serwist/turbopack`, eller en handskriven service worker) och lades fram för användaren. Valt alternativ: **bygg med `--webpack`**. Minimal ändring, `next-pwa` fungerar oförändrat, `next dev` kör fortfarande Turbopack som vanligt (endast produktionsbygget påverkas).
+
+**Byggt:**
+- `public/icons/icon-192x192.png` och `icon-512x512.png` — genererade (mörk rundad kvadrat, vit "S", matchar appens typografiska identitet), inga externa bildtillgångar behövdes
+- `src/app/layout.tsx` kompletterad med `manifest`, `icons`, `appleWebApp` i `metadata` samt `themeColor` i en ny `viewport`-export — manifestet och ikonerna var tidigare inte kopplade till appen alls
+- `package.json`: `"build": "next build --webpack"` (dev oförändrad, kör Turbopack)
+- `.gitignore` och `eslint.config.mjs` uppdaterade för att inte spåra/linta de genererade PWA-filerna (`public/sw.js`, `public/workbox-*.js` m.fl.) — de skapas på nytt vid varje build, även på Vercel
+
+**Filer skapade:**
+- `public/icons/icon-192x192.png`
+- `public/icons/icon-512x512.png`
+
+**Filer ändrade:**
+- `src/app/layout.tsx`
+- `package.json`
+- `.gitignore`
+- `eslint.config.mjs`
+
+**Testat:**
+- `npm run build` (nu med `--webpack`) genererar korrekt `public/sw.js` + workbox-chunk; vanlig Turbopack-build gör det inte (verifierat båda vägarna)
+- `npm run dev` verifierad oförändrad (kör fortfarande Turbopack)
+- Riktigt test mot produktionsbygget (`next start`) i headless Chrome:
+  - Service worker registrerar sig och blir `activated`
+  - Manifestet svarar 200 och innehåller rätt ikonsökvägar
+  - Efter en första sidladdning + att gå offline (`context.setOffline(true)`) och ladda om: sidan renderas fortfarande fullständigt, inklusive att **generera och starta ett helt pass offline** (uppvärmning visades korrekt)
+  - Enda avvikelsen: `favicon.ico` (webbläsarflikens ikon, inte hemskärmsikonen) är inte precachad och ger ett harmlöst nätverksfel offline — påverkar inte appens funktion eller installationsikonen (som styrs av manifestets ikoner, redan verifierade)
+
+**Begränsningar:**
+- Faktisk "Lägg till på hemskärmen"-installation har inte testats på en riktig telefon (iPhone/Android), bara verifierat att förutsättningarna (manifest, ikoner, service worker, standalone-läge via `display: "standalone"`) är korrekt på plats
+- `favicon.ico` cachas inte offline (kosmetiskt, se ovan)
+
+**Nästa steg:** Fas 14 – Optimering.
 
 ---
 
