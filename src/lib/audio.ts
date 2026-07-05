@@ -38,6 +38,25 @@ function playTone(context: AudioContext, frequency: number, durationSeconds: num
   oscillator.stop(endTime);
 }
 
+// Måste anropas synkront inifrån en riktig användarinteraktion (t.ex. en
+// click-handler), inte senare från en timer-callback. Mobila webbläsare
+// (särskilt iOS Safari) håller annars AudioContext pausad permanent -
+// context.resume() räcker inte där, ett ljud måste faktiskt starta inom
+// själva knapptryckningen. Spelar en tyst, momentan ton för att "låsa upp"
+// ljudet för resten av passet.
+export function unlockAudioContext(): void {
+  const context = getAudioContext();
+  if (!context) return;
+
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  gain.gain.value = 0;
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  oscillator.start();
+  oscillator.stop(context.currentTime + 0.001);
+}
+
 export function playNewBlockSound(): void {
   const context = getAudioContext();
   if (!context) return;

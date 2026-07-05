@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { unlockAudioContext } from "@/lib/audio";
 import { generateWorkout } from "@/lib/workoutGenerator";
 import { useAudio } from "@/hooks/useAudio";
 import { useTimer } from "@/hooks/useTimer";
@@ -38,6 +39,12 @@ export function useWorkout() {
   useWakeLock(workout !== null);
 
   function start(settings: WorkoutSettings) {
+    // Måste ske synkront här, i själva knapptryckningen, annars förblir
+    // ljudet permanent avstängt på mobila webbläsare (se lib/audio.ts).
+    if (settings.soundEnabled) {
+      unlockAudioContext();
+    }
+
     setError(null);
     try {
       setWorkout(generateWorkout(settings));
