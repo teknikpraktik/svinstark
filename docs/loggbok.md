@@ -20,7 +20,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 6   | Timer Engine                | ✅ Klar      |
 | 7   | React Hooks                 | ✅ Klar      |
 | 8   | Workout Screen              | ✅ Klar      |
-| 9   | Signaturuppvärmning         | ⬜ Ej påbörjad |
+| 9   | Signaturuppvärmning         | ✅ Klar      |
 | 10  | Signaturavslut              | ⬜ Ej påbörjad |
 | 11  | Ljud                        | ⬜ Ej påbörjad |
 | 12  | Inställningar               | ⬜ Ej påbörjad |
@@ -336,6 +336,23 @@ Fas 8 hette formellt bara "Workout Screen", men för att passet faktiskt ska gå
 - Signaturuppvärmningens/-avslutets innehåll visas redan korrekt (implementerat i Fas 5), så Fas 9/10 blir främst en verifiering av att exakt detta innehåll och denna timing är avsiktlig snarare än ny implementation
 
 **Nästa steg:** Fas 9 – Signaturuppvärmning.
+
+---
+
+### 2026-07-05 — Fas 9: Signaturuppvärmning
+
+**Status:** ✅ Klar (ingen kodändring — verifiering av redan implementerat innehåll)
+
+**Byggt:**
+- Inget nytt. Innehållet i `src/data/warmup.ts` implementerades redan under Fas 5 eftersom passgeneratorn behövde det fasta uppvärmningsblocket för att kunna returnera ett komplett `Workout`. Bekräftat att det matchar `01-produktspecifikation.md` §12 och `02-teknisk-specifikation.md` D.12 exakt: 60 sekunder, 4 segment (0–15 Djup knäböj med armlyft, 15–30 Utfall bakåt med rotation, 30–45 Inchworm, 45–60 Höga knän)
+
+**Testat:**
+- Uttömmande test (`npx tsx`, ingår inte i projektet): kontrollerade `getCurrentSegment()` för **varje enskild sekund** 0–59, plus extra kontroll av brytpunkterna vid 14/15, 29/30 och 44/45 — alla bytte exakt vid rätt sekund, inget avvikande
+- Redan visuellt verifierat i Fas 8:s genomspelning (skärmdump vid 0 s och vid 16 s visade rätt segment)
+
+**Begränsningar:** Inga.
+
+**Nästa steg:** Fas 10 – Signaturavslut.
 
 ---
 
