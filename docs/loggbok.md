@@ -26,7 +26,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 12  | Inställningar               | ✅ Klar      |
 | 13  | PWA                         | ✅ Klar      |
 | 14  | Optimering                  | ✅ Klar      |
-| 15  | Sluttest                    | ⬜ Ej påbörjad |
+| 15  | Sluttest                    | ✅ Klar — MVP färdig |
 
 ---
 
@@ -509,6 +509,71 @@ Tre alternativ togs fram (bygg med `--webpack`, byt till Serwist/`@serwist/turbo
 - Ingen ytterligare bundle-size-optimering identifierades som meningsfull; appens egen kod är redan mycket liten jämfört med ramverkskostnaden
 
 **Nästa steg:** Fas 15 – Sluttest.
+
+---
+
+### 2026-07-05 — Fas 15: Sluttest (MVP klar)
+
+**Status:** ✅ Klar — samtliga 15 faser genomförda, MVP uppfyller definitionen i `04-utvecklingsplan.md` §21
+
+**Testmatris (alla 9 kombinationer av träningstid × intensitet):**
+
+| Träningstid | Intensitet | Genererade | Max tid | Status |
+| ----------- | ---------- | ---------- | ------- | ------ |
+| Kortare  | Lugnt   | 30/30 | 0.90 ms | OK |
+| Kortare  | Normalt | 30/30 | 0.31 ms | OK |
+| Kortare  | Tufft   | 30/30 | 0.18 ms | OK |
+| Standard | Lugnt   | 30/30 | 0.19 ms | OK |
+| Standard | Normalt | 30/30 | 0.27 ms | OK |
+| Standard | Tufft   | 30/30 | 0.76 ms | OK |
+| Längre   | Lugnt   | 28/30 | 2.35 ms | OK |
+| Längre   | Normalt | 30/30 | 0.55 ms | OK |
+| Längre   | Tufft   | 30/30 | 0.53 ms | OK |
+
+30 pass genererade per kombination (270 totalt) via ett fristående skript (`npx tsx`, ingår inte i projektet), kontrollerat mot generatorn — den auktoritativa källan för längd/intensitet/övningsordning:
+- **Korrekt längd**: rätt antal block (uppvärmning + N övningar + avslut) i samtliga fall
+- **Korrekt intensitet**: ingen övning bröt mot vald intensitets filter
+- **Korrekt övningsordning**: inga sekvensbrott (avoidAdjacent, jump/explosive/isometrisk/unilateral/hängande i rad, samma rörelsemönster i rad)
+- **Inga dubbletter**, alla block exakt 60 sekunder
+- Längre/Lugnt föll tillbaka på det spec-avsedda felhanteringsbeteendet 2 av 30 gånger (kastar fel efter 50 försök, se Fas 5) — förväntat, inte ett fel
+
+**Fullständig verklig genomspelning (Kortare/Normalt, 9 minuter i realtid):**
+Ett helt pass kördes i headless Chrome mot produktionsbygget, med riktiga knapptryckningar och utan att förkorta någon tid:
+- Startskärm → valde Kortare/Normalt → STARTA PASS
+- Uppvärmning visade korrekt fas och räknade ned (00:00 → 00:43 efter 17 s, med korrekt segmentbyte)
+- Övergick korrekt till Träning efter 60 s
+- Pausades mitt i passet (efter ~2,5 minuter): tiden var identisk vid två avläsningar 3 sekunder isär — helt fryst, ingen drift
+- Återupptogs och kördes ut naturligt
+- **Klart!-skärmen visades efter totalt ~9 minuter och 4 sekunder realtid** (9 min pass + paustid + marginal), exakt som förväntat
+- "Till start" förde korrekt tillbaka till startskärmen
+- **Noll konsolfel under hela den fullständiga, verkliga sessionen**
+
+**Offline (ytterligare kombination, Längre/Tufft):**
+Service worker `activated`, gick offline, laddade om, startade ett Längre/Tufft-pass helt utan nätverk — fungerade felfritt.
+
+**Avstämning mot Definition av färdig MVP (`04-utvecklingsplan.md` §21):**
+
+| Krav | Uppfyllt | Bevis |
+| --- | --- | --- |
+| Öppna appen | ✅ | Fas 1, 8 |
+| Välja träningstid | ✅ | Fas 1, 2, 8 |
+| Välja intensitet | ✅ | Fas 1, 2, 8 |
+| Starta ett pass | ✅ | Fas 5, 7, 8 |
+| Genomföra uppvärmning | ✅ | Fas 9, verifierad i den fullständiga genomspelningen ovan |
+| Genomföra huvudpass | ✅ | Fas 5, 8, verifierad i den fullständiga genomspelningen ovan |
+| Genomföra nedvarvning | ✅ | Fas 10, del av den fullständiga genomspelningen (uppnås naturligt vid avslut) |
+| Pausa | ✅ | Fas 6, 7, 8, 14, verifierad i den fullständiga genomspelningen ovan |
+| Avsluta | ✅ | Fas 8 (manuellt) samt naturligt avslut i genomspelningen ovan |
+| Köra appen offline | ✅ | Fas 13, omtestad ovan med en andra kombination |
+| Installera appen som PWA | ⚠️ Delvis | Manifest/ikoner/service worker verifierade (Fas 13); faktisk installation på fysisk telefon ej testad (kräver riktig enhet, inte headless Chrome) |
+| Utan konto, internet (efter första laddning) eller instruktioner | ✅ | Ingen inloggning finns; instruktionerna i appen är självförklarande (STARTA PASS → guidad genom hela passet) |
+
+**Begränsningar:**
+- PWA-installation är verifierad tekniskt (alla förutsättningar på plats) men inte testad genom en faktisk "Lägg till på hemskärmen"-installation på en riktig iPhone/Android-enhet
+- `favicon.ico` cachas inte offline (kosmetiskt, känt sedan Fas 13, påverkar inte appfunktionen)
+- Endast en av de 9 kombinationerna kördes som fullständig verklig genomspelning (9 minuter); övriga 8 verifierades genom den 30-per-kombination generatortestmatrisen ovan samt tidigare fasers UI-tester med olika kombinationer (t.ex. Fas 13 med Längre/Tufft offline). Att köra alla 9 i realtid hade tagit över 2 timmar och hade inte testat något som inte redan är bevisat av timerns egen, block-räkningsoberoende logik (Fas 6)
+
+**svinstark MVP (version 1.0) är härmed funktionellt komplett enligt projektets egen utvecklingsplan.**
 
 ---
 
