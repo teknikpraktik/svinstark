@@ -8,7 +8,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { useWorkout } from "@/hooks/useWorkout";
 
 export default function Home() {
-  const { settings, setDuration, setIntensity } = useSettings();
+  const { settings, setDuration, setIntensity, setSoundEnabled } = useSettings();
   const { screen, currentBlock, timerState, error, start, pause, resume, stop, goToStart } =
     useWorkout();
 
@@ -19,6 +19,7 @@ export default function Home() {
         error={error}
         onDurationChange={setDuration}
         onIntensityChange={setIntensity}
+        onSoundEnabledChange={setSoundEnabled}
         onStart={() => start(settings)}
       />
     );

@@ -1,6 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import IconButton from "@/components/IconButton";
 import OptionSelector from "@/components/OptionSelector";
 import PrimaryButton from "@/components/PrimaryButton";
+import SettingsDialog from "@/components/SettingsDialog";
 import type { WorkoutDuration, WorkoutIntensity, WorkoutSettings } from "@/types/workout";
 import styles from "./StartScreen.module.css";
 
@@ -30,6 +34,7 @@ interface StartScreenProps {
   error: string | null;
   onDurationChange: (duration: WorkoutDuration) => void;
   onIntensityChange: (intensity: WorkoutIntensity) => void;
+  onSoundEnabledChange: (soundEnabled: boolean) => void;
   onStart: () => void;
 }
 
@@ -38,12 +43,19 @@ export default function StartScreen({
   error,
   onDurationChange,
   onIntensityChange,
+  onSoundEnabledChange,
   onStart,
 }: StartScreenProps) {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <IconButton icon={<SettingsIcon />} ariaLabel="Inställningar" />
+        <IconButton
+          icon={<SettingsIcon />}
+          ariaLabel="Inställningar"
+          onClick={() => setIsSettingsOpen(true)}
+        />
       </header>
 
       <div className={styles.hero}>
@@ -69,6 +81,13 @@ export default function StartScreen({
       {error && <p className={styles.error}>{error}</p>}
 
       <PrimaryButton onClick={onStart}>STARTA PASS</PrimaryButton>
+
+      <SettingsDialog
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        soundEnabled={settings.soundEnabled}
+        onSoundEnabledChange={onSoundEnabledChange}
+      />
     </div>
   );
 }
