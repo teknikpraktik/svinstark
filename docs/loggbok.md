@@ -15,7 +15,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 1   | Grundläggande UI            | ✅ Klar      |
 | 2   | Grundläggande komponenter   | ✅ Klar      |
 | 3   | TypeScript-modeller         | ✅ Klar      |
-| 4   | Exercise Library            | ⬜ Ej påbörjad |
+| 4   | Exercise Library            | ✅ Klar      |
 | 5   | Workout Generator           | ⬜ Ej påbörjad |
 | 6   | Timer Engine                | ⬜ Ej påbörjad |
 | 7   | React Hooks                 | ⬜ Ej påbörjad |
@@ -157,6 +157,40 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 - `exerciseData.ts` (Fas 4) och generatorn (Fas 5) är inte kopplade till typerna ännu
 
 **Nästa steg:** Fas 4 – Exercise Library.
+
+---
+
+### 2026-07-05 — Fas 4: Exercise Library
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- `src/data/exerciseData.ts` med 98 övningar (mål ca 100), fördelat på:
+  - Knädominanta: 15, Höftdominanta: 13, Horisontell press: 10, Vertikal press: 3,
+    Horisontellt drag: 4, Vertikalt drag: 7, Bål: 15, Kondition: 11, Balans: 9, Rörlighet: 11
+- Endast tillåten utrustning används (`bodyweight`, `floor`, `chair`, `pullup_bar`) — inga hantlar, kettlebells eller skivstänger
+- Varje övning har komplett metadata enligt `Exercise`-modellen i `src/types/workout.ts`
+- Medvetet säkerställt att varje rörelsemönster-hink (knee, hip, push, pull, core, conditioning, balance, mobility) har minst en `calm`- och en `hard`-övning, så att både Lugnt- och Tufft-pass kan fyllas i samtliga mallplatser i Fas 5 utan att biblioteket behöver kompletteras
+
+**Filer skapade:**
+- `src/data/exerciseData.ts`
+
+**Testat:**
+- `npm run build` — TypeScript kompilerar utan fel (samtliga 98 objekt matchar `Exercise`-modellen exakt)
+- `npm run lint` — inga varningar
+- Fristående valideringsskript (körd via `npx tsx`, inte del av projektet) som kontrollerade:
+  - inga dubbla `id`
+  - inga tomma `name`/`instruction`
+  - inga otillåtna utrustningsvärden
+  - alla `avoidAdjacent`-referenser pekar på existerande id:n
+  - `calm`- och `hard`-täckning i varje rörelsemönster-hink
+  - Resultat: 98 övningar, 0 fel
+
+**Begränsningar:**
+- Biblioteket är inte kopplat till någon generator eller något UI ännu — det sker i Fas 5
+- Räknades till 98 istället för exakt 100; spec anger "cirka 100" och prioriterar kvalitet/konsekvens över exakt antal, vilket är uppfyllt
+
+**Nästa steg:** Fas 5 – Workout Generator.
 
 ---
 
