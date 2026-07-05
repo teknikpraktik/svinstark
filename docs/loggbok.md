@@ -25,7 +25,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 11  | Ljud                        | ✅ Klar      |
 | 12  | Inställningar               | ✅ Klar      |
 | 13  | PWA                         | ✅ Klar      |
-| 14  | Optimering                  | ⬜ Ej påbörjad |
+| 14  | Optimering                  | ✅ Klar      |
 | 15  | Sluttest                    | ⬜ Ej påbörjad |
 
 ---
@@ -481,6 +481,34 @@ Tre alternativ togs fram (bygg med `--webpack`, byt till Serwist/`@serwist/turbo
 - `favicon.ico` cachas inte offline (kosmetiskt, se ovan)
 
 **Nästa steg:** Fas 14 – Optimering.
+
+---
+
+### 2026-07-05 — Fas 14: Optimering
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- **Renderingar:** hittade att `WorkoutTimer.tick()` (var 250:e ms, för precision kring block-/nedräkningsgränser) triggade en React-rendering vid *varje* tick även när det visade, avrundade sekundvärdet inte hade ändrats — cirka 4 renderingar per sekund istället för 1. Fixat genom att bara anropa `emit()` när `remainingSeconds` faktiskt ändrats. Uppmätt effekt: 6 renderingar över en 5-sekunders nedräkning istället för 20 (~70 % färre), utan förlorad precision
+- **Memoisering:** `ExerciseCard` och `PhaseBadge` omslutna med `React.memo`, eftersom `WorkoutScreen` (förälder) nu ändå renderas om en gång per sekund via timern, medan dessa komponenters props bara ändras vid block-/segmentbyten
+- **Bundle size:** granskad via produktionsbygget. Appens egen kod (samtliga komponenter, hooks, generator, timer, 116 övningar med full metadata) väger **~13 KB gzip**. Resterande del av bunten (~158 KB gzip) är oundviklig React 19/Next.js-ramverkskostnad. Ingen meningsfull besparing kvar att hämta utan att överge React, vilket arkitekturen (02-teknisk-specifikation.md) kräver
+- **Laddningstid:** ingen ändring behövdes — redan mycket snabb
+
+**Filer ändrade:**
+- `src/lib/timer.ts` (undviker onödiga state-uppdateringar i `tick()`)
+- `src/components/ExerciseCard.tsx`, `src/components/PhaseBadge.tsx` (omslutna med `React.memo`)
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Passgenerering omätt igen (449 genereringar över alla längder/intensiteter): snitt 0,208 ms, max 2,5 ms — långt under 50 ms-målet
+- First Contentful Paint uppmätt mot produktionsbygget (5 körningar): snitt **~37 ms** — långt under 1 sekund-målet. Fullständig `load`-händelse klar på ~80–90 ms
+- Regressionstest i headless Chrome efter ändringarna: timern räknar fortfarande ned korrekt (01:00 → 00:58 efter 2,2 s), paus/återuppta/avsluta fungerar, inga konsolfel
+
+**Begränsningar:**
+- Mätningarna är gjorda lokalt (`localhost`), inte mot verklig nätverkslatens på Vercel — men eftersom appen är statisk och nästan helt klientrenderad bör skillnaden vara liten
+- Ingen ytterligare bundle-size-optimering identifierades som meningsfull; appens egen kod är redan mycket liten jämfört med ramverkskostnaden
+
+**Nästa steg:** Fas 15 – Sluttest.
 
 ---
 
