@@ -1,4 +1,6 @@
 .progress {
+  /* Motsvarar ungefär två rader under övningsbeskrivningen. */
+  margin-top: 2.5rem;
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--muted);

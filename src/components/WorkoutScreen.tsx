@@ -34,9 +34,8 @@ export default function WorkoutScreen({
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
-        <p className={styles.summary}>
-          {durationMinutes[settings.duration]} min · {intensityLabels[settings.intensity]}
-        </p>
+        <p className={styles.summary}>Total längd: {durationMinutes[settings.duration]} min</p>
+        <p className={styles.summary}>Intensitet: {intensityLabels[settings.intensity]}</p>
         <PhaseBadge phase={block.phase} />
       </div>
 
@@ -44,11 +43,10 @@ export default function WorkoutScreen({
 
       <div className={styles.content}>
         {displayed && <ExerciseCard name={displayed.name} instruction={displayed.instruction} />}
+        {exerciseProgress && (
+          <WorkoutProgress current={exerciseProgress.current} total={exerciseProgress.total} />
+        )}
       </div>
-
-      {exerciseProgress && (
-        <WorkoutProgress current={exerciseProgress.current} total={exerciseProgress.total} />
-      )}
 
       <div className={styles.actions}>
         <button className={styles.actionButton} onClick={onPause}>
