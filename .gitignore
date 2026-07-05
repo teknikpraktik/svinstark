@@ -17,6 +17,12 @@
 /.next/
 /out/
 
+# pwa (genereras av @ducanh2912/next-pwa vid build, se docs/loggbok.md Fas 13)
+/public/sw.js
+/public/workbox-*.js
+/public/worker-*.js
+/public/fallback-*.js
+
 # production
 /build
 
