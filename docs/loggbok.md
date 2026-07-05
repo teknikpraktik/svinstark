@@ -21,7 +21,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 7   | React Hooks                 | ✅ Klar      |
 | 8   | Workout Screen              | ✅ Klar      |
 | 9   | Signaturuppvärmning         | ✅ Klar      |
-| 10  | Signaturavslut              | ⬜ Ej påbörjad |
+| 10  | Signaturavslut              | ✅ Klar      |
 | 11  | Ljud                        | ⬜ Ej påbörjad |
 | 12  | Inställningar               | ⬜ Ej påbörjad |
 | 13  | PWA                         | ⬜ Ej påbörjad |
@@ -353,6 +353,26 @@ Fas 8 hette formellt bara "Workout Screen", men för att passet faktiskt ska gå
 **Begränsningar:** Inga.
 
 **Nästa steg:** Fas 10 – Signaturavslut.
+
+---
+
+### 2026-07-05 — Fas 10: Signaturavslut
+
+**Status:** ✅ Klar (ingen kodändring — verifiering av redan implementerat innehåll)
+
+**Byggt:**
+- Inget nytt. Innehållet i `src/data/cooldown.ts` implementerades redan under Fas 5. Bekräftat att timing matchar exakt: 60 sekunder, 3 segment (0–20, 20–40, 40–60)
+
+**Oklarhet som upptäcktes och hur den löstes:**
+- `01-produktspecifikation.md` §13 kallar segmenten "Djup knäböj **med lugn andning**", "**Långsam** framfällning" och "Andning med armlyft", medan `02-teknisk-specifikation.md` D.13 (testspecen med de exakta tidsintervallen) kallar dem "Djup knäböj", "Framåtfällning" och "Andning med armlyft" — samma rörelser, något olika ordval.
+- Jag valde D.13:s kortare titlar som `title`-fältet (eftersom den är den exakta test-/timing-källan detta ska verifieras mot), och vävde in produktspecens nyanser ("lugn andning", "långsamt") i `instruction`-texten istället. Ingen skillnad i faktiskt beteende eller timing, bara vilket dokument som fick styra den exakta rubriktexten. Nämner det här för synlighetens skull i linje med `99-ai-instructions.md` punkt 2, även om det inte bedömdes behöva blockera arbetet.
+
+**Testat:**
+- Uttömmande test (`npx tsx`, ingår inte i projektet): `getCurrentSegment()` kontrollerad för varje sekund 0–59, plus brytpunkterna vid 19/20 och 39/40 — allt byter exakt rätt
+
+**Begränsningar:** Inga.
+
+**Nästa steg:** Fas 11 – Ljud.
 
 ---
 
