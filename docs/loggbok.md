@@ -659,6 +659,29 @@ Ytterligare en snabb iteration efter användarfeedback:
 
 ---
 
+### 2026-07-06 — v1.1 uppföljning: Wake Lock + passvyns layout
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- **Skärmen hålls vaken under pass:** `src/lib/wakeLock.ts` (inkapslar `navigator.wakeLock`, misslyckas tyst utan stöd) och `src/hooks/useWakeLock.ts` (begär låset på nytt vid `visibilitychange`). Kopplad i `useWorkout` — aktiv så länge ett workout finns, dvs. hela passet inklusive paus, släpps vid avslut
+- **Passvyn:** "Övning X av Y" flyttad tillbaka upp med tydligt mellanrum (~2 rader) under övningsbeskrivningen. Passinformationen högst upp skriven som två rader: "Total längd: X min" / "Intensitet: Y" istället för en hopslagen rad
+
+**Filer skapade:**
+- `src/lib/wakeLock.ts`, `src/hooks/useWakeLock.ts`
+
+**Filer ändrade:**
+- `src/hooks/useWorkout.ts`, `src/components/WorkoutScreen.tsx`, `src/components/WorkoutProgress.module.css`
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Wake Lock: avlyssnat riktiga anrop genom hela flödet (inget anrop före start, begärs vid start, hålls kvar under paus, släpps exakt en gång vid avsluta) samt bekräftat att API:t faktiskt stöds och kan begäras i webbläsarmiljön
+- Layout: visuell granskning av uppvärmning och träningsfas, regressionstest av paus/återuppta/avsluta. Inga konsolfel
+
+**Begränsningar:** Wake Lock stöds inte i äldre webbläsare (t.ex. Safari innan iOS 16.4) — misslyckas då tyst utan att påverka appens övriga funktion.
+
+---
+
 ## Mall för nästa post
 
 ```
