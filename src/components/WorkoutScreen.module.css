@@ -1,0 +1,40 @@
+.screen {
+  min-height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  gap: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.actionButton {
+  flex: 1;
+  min-height: 56px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
