@@ -33,14 +33,6 @@ export default function SettingsDialog({
         onChange={(value) => onSoundEnabledChange(value === "on")}
       />
 
-      <div className={styles.about}>
-        <p className={styles.aboutTitle}>Om svinstark</p>
-        <p className={styles.aboutText}>
-          Den minsta effektiva dosen. svinstark genererar automatiskt balanserade
-          helkroppspass så att du slipper planera träningen själv.
-        </p>
-      </div>
-
       <p className={styles.version}>Version {packageJson.version}</p>
 
       <PrimaryButton onClick={onClose}>Stäng</PrimaryButton>

@@ -3,21 +3,6 @@
   font-weight: 700;
 }
 
-.about {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.aboutTitle {
-  font-weight: 600;
-}
-
-.aboutText {
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
 .version {
   font-size: 0.85rem;
   color: var(--muted);

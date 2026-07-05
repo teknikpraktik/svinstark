@@ -44,10 +44,11 @@ export default function WorkoutScreen({
 
       <div className={styles.content}>
         {displayed && <ExerciseCard name={displayed.name} instruction={displayed.instruction} />}
-        {exerciseProgress && (
-          <WorkoutProgress current={exerciseProgress.current} total={exerciseProgress.total} />
-        )}
       </div>
+
+      {exerciseProgress && (
+        <WorkoutProgress current={exerciseProgress.current} total={exerciseProgress.total} />
+      )}
 
       <div className={styles.actions}>
         <button className={styles.actionButton} onClick={onPause}>

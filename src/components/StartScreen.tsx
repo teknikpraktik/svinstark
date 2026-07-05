@@ -73,7 +73,6 @@ export default function StartScreen({
         <p className={styles.wordmark}>svinstark</p>
 
         <h1 className={styles.headline}>Kroppen svarar på signaler, inte på träningstid.</h1>
-        <p className={styles.slogan}>Den minsta effektiva dosen</p>
 
         <p className={styles.explanation}>
           Styrka och funktion utvecklas när muskler, senor, skelett och nervsystem regelbundet får
