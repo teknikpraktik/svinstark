@@ -11,11 +11,17 @@ const INITIAL_STATE: TimerState = {
   isPaused: false,
 };
 
+export interface UseTimerCallbacks {
+  onFinish?: () => void;
+  onBlockChange?: (blockIndex: number) => void;
+  onCountdown?: (remainingSeconds: number) => void;
+}
+
 // Kopplar WorkoutTimer (ingen React-logik) till React-state. Timern startar
 // automatiskt så fort ett workout ges, och stoppas/städas bort när det
 // tas bort eller byts ut. All state uppdateras uteslutande via timerns
 // egna callbacks (onTick), aldrig direkt i effektens kropp.
-export function useTimer(workout: Workout | null, onFinish?: () => void) {
+export function useTimer(workout: Workout | null, callbacks: UseTimerCallbacks = {}) {
   const [timerState, setTimerState] = useState<TimerState>(INITIAL_STATE);
   const timerRef = useRef<WorkoutTimer | null>(null);
 
@@ -24,7 +30,9 @@ export function useTimer(workout: Workout | null, onFinish?: () => void) {
 
     const timer = new WorkoutTimer(workout, {
       onTick: setTimerState,
-      onFinish: () => onFinish?.(),
+      onBlockChange: callbacks.onBlockChange,
+      onCountdown: callbacks.onCountdown,
+      onFinish: callbacks.onFinish,
     });
     timerRef.current = timer;
     timer.start();
@@ -33,7 +41,7 @@ export function useTimer(workout: Workout | null, onFinish?: () => void) {
       timer.stop();
       timerRef.current = null;
     };
-  }, [workout, onFinish]);
+  }, [workout, callbacks]);
 
   return {
     timerState,

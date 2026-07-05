@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { generateWorkout } from "@/lib/workoutGenerator";
+import { useAudio } from "@/hooks/useAudio";
 import { useTimer } from "@/hooks/useTimer";
 import type { Screen, Workout, WorkoutSettings } from "@/types/workout";
 
@@ -12,10 +13,24 @@ export function useWorkout() {
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFinish = useCallback(() => setScreen("finished"), []);
+  // Ljud på/av avgörs av inställningen som gällde när passet skapades
+  // (workout.settings), eftersom det inte finns någon inställningsdialog
+  // synlig under själva passet.
+  const { playNewBlock, playCountdown, playFinish } = useAudio(workout?.settings.soundEnabled ?? true);
+
+  const handleFinish = useCallback(() => {
+    playFinish();
+    setScreen("finished");
+  }, [playFinish]);
+
+  const timerCallbacks = useMemo(
+    () => ({ onFinish: handleFinish, onBlockChange: playNewBlock, onCountdown: playCountdown }),
+    [handleFinish, playNewBlock, playCountdown]
+  );
+
   const { timerState, pause: pauseTimer, resume: resumeTimer, stop: stopTimer } = useTimer(
     workout,
-    handleFinish
+    timerCallbacks
   );
 
   function start(settings: WorkoutSettings) {
