@@ -631,6 +631,34 @@ Två snabba användarstyrda iterationer på passvyn efter feedback:
 
 ---
 
+### 2026-07-05 — v1.1 uppföljning: Varumärke och städning
+
+**Status:** ✅ Klar
+
+Ytterligare en snabb iteration efter användarfeedback:
+
+- Monogram och app-ikoner (`public/icons/monogram.png`, `icon-192x192.png`, `icon-512x512.png`) ändrade från "S" till "SS"
+- Tagit bort underrubriken "Den minsta effektiva dosen" från startsidans hero (finns kvar i sidans `<meta name="description">`, vilket inte är synligt UI-innehåll)
+- Flyttat "Övning X av Y" till en egen rad ovanför Paus/Avsluta-knapparna och gjort texten större (0.85rem → 1.2rem)
+- Tagit bort "Om svinstark"-texten ur `SettingsDialog` — den beskrivningen finns nu bara på startsidan
+- Rättat `package.json`-versionen från felaktig `0.1.0` till `1.1.0`
+
+**Filer ändrade:**
+- `public/icons/monogram.png`, `icon-192x192.png`, `icon-512x512.png`
+- `src/components/StartScreen.tsx`/`.module.css`
+- `src/components/SettingsDialog.tsx`/`.module.css`
+- `src/components/WorkoutScreen.tsx`, `src/components/WorkoutProgress.module.css`
+- `package.json`
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Visuell granskning i headless Chrome (startsida, inställningsdialog, träningsfas) samt en fullständig genomspelning av uppvärmningen för att bekräfta övningsräknarens nya placering
+- Regressionstest av paus/återuppta/avsluta. Inga konsolfel
+
+**Begränsningar:** Inga.
+
+---
+
 ## Mall för nästa post
 
 ```
