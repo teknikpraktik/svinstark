@@ -3,6 +3,7 @@ import styles from "./OptionSelector.module.css";
 interface OptionSelectorOption<T extends string> {
   value: T;
   label: string;
+  sublabel?: string;
 }
 
 interface OptionSelectorProps<T extends string> {
@@ -32,6 +33,7 @@ export default function OptionSelector<T extends string>({
             onClick={() => onChange(option.value)}
           >
             {option.label}
+            {option.sublabel && <span className={styles.sublabel}>{option.sublabel}</span>}
           </button>
         ))}
       </div>

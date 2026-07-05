@@ -9,7 +9,7 @@ import { useWorkout } from "@/hooks/useWorkout";
 
 export default function Home() {
   const { settings, setDuration, setIntensity, setSoundEnabled } = useSettings();
-  const { screen, currentBlock, timerState, error, start, pause, resume, stop, goToStart } =
+  const { screen, workout, currentBlock, timerState, error, start, pause, resume, stop, goToStart } =
     useWorkout();
 
   if (screen === "start") {
@@ -29,11 +29,17 @@ export default function Home() {
     return <FinishedScreen onGoToStart={goToStart} />;
   }
 
-  if (!currentBlock) return null;
+  if (!currentBlock || !workout) return null;
 
   return (
     <>
-      <WorkoutScreen block={currentBlock} timerState={timerState} onPause={pause} onStop={stop} />
+      <WorkoutScreen
+        blocks={workout.blocks}
+        block={currentBlock}
+        timerState={timerState}
+        onPause={pause}
+        onStop={stop}
+      />
       <PauseDialog isOpen={screen === "paused"} onResume={resume} onStop={stop} />
     </>
   );

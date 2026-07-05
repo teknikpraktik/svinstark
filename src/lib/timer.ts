@@ -13,6 +13,20 @@ export function getCurrentSegment(block: WorkoutBlock, remainingSeconds: number)
   );
 }
 
+// Total återstående tid för hela passet (inte bara aktuellt block): resten av
+// nuvarande block plus samtliga kommande blocks fulla längd. Minskar med en
+// sekund i taget utan hopp, även när blocket byts.
+export function getTotalRemainingSeconds(
+  blocks: WorkoutBlock[],
+  currentBlockIndex: number,
+  currentBlockRemainingSeconds: number
+): number {
+  const futureBlocksSeconds = blocks
+    .slice(currentBlockIndex + 1)
+    .reduce((sum, block) => sum + block.duration, 0);
+  return currentBlockRemainingSeconds + futureBlocksSeconds;
+}
+
 export interface WorkoutTimerCallbacks {
   onTick?: (state: TimerState) => void;
   onBlockChange?: (blockIndex: number) => void;

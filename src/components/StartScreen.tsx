@@ -8,10 +8,10 @@ import SettingsDialog from "@/components/SettingsDialog";
 import type { WorkoutDuration, WorkoutIntensity, WorkoutSettings } from "@/types/workout";
 import styles from "./StartScreen.module.css";
 
-const trainingTimes: { value: WorkoutDuration; label: string }[] = [
-  { value: "short", label: "Kortare" },
-  { value: "standard", label: "Standard" },
-  { value: "long", label: "Längre" },
+const trainingTimes: { value: WorkoutDuration; label: string; sublabel: string }[] = [
+  { value: "short", label: "Kortare", sublabel: "9 min" },
+  { value: "standard", label: "Standard", sublabel: "16 min" },
+  { value: "long", label: "Längre", sublabel: "23 min" },
 ];
 
 const intensities: { value: WorkoutIntensity; label: string }[] = [
@@ -19,6 +19,8 @@ const intensities: { value: WorkoutIntensity; label: string }[] = [
   { value: "normal", label: "Normalt" },
   { value: "hard", label: "Tufft" },
 ];
+
+const valueProps = ["Helkropp", "Tidseffektivt", "Regelstyrt"];
 
 function SettingsIcon() {
   return (
@@ -59,8 +61,25 @@ export default function StartScreen({
       </header>
 
       <div className={styles.hero}>
-        <h1 className={styles.title}>svinstark</h1>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/icons/monogram.png" alt="" width={56} height={56} className={styles.monogram} />
+
+        <p className={styles.wordmark}>svinstark</p>
+
+        <h1 className={styles.headline}>Kroppen svarar på signaler, inte på träningstid.</h1>
         <p className={styles.slogan}>Den minsta effektiva dosen</p>
+
+        <p className={styles.explanation}>
+          Styrka och funktion utvecklas när muskler, senor, skelett och nervsystem regelbundet får
+          en tydlig träningsstimulans. Svinstark levererar den minsta effektiva dosen genom korta,
+          balanserade helkroppspass.
+        </p>
+
+        <ul className={styles.valueProps}>
+          {valueProps.map((value) => (
+            <li key={value}>{value}</li>
+          ))}
+        </ul>
       </div>
 
       <div className={styles.choices}>
