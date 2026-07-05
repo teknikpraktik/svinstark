@@ -27,6 +27,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 13  | PWA                         | ✅ Klar      |
 | 14  | Optimering                  | ✅ Klar      |
 | 15  | Sluttest                    | ✅ Klar — MVP färdig |
+| v1.1| Experience Update           | ✅ Klar      |
 
 ---
 
@@ -574,6 +575,34 @@ Service worker `activated`, gick offline, laddade om, startade ett Längre/Tufft
 - Endast en av de 9 kombinationerna kördes som fullständig verklig genomspelning (9 minuter); övriga 8 verifierades genom den 30-per-kombination generatortestmatrisen ovan samt tidigare fasers UI-tester med olika kombinationer (t.ex. Fas 13 med Längre/Tufft offline). Att köra alla 9 i realtid hade tagit över 2 timmar och hade inte testat något som inte redan är bevisat av timerns egen, block-räkningsoberoende logik (Fas 6)
 
 **svinstark MVP (version 1.0) är härmed funktionellt komplett enligt projektets egen utvecklingsplan.**
+
+---
+
+### 2026-07-05 — v1.1: Experience Update
+
+**Status:** ✅ Klar
+
+Första förbättringsfasen efter MVP (version 1.0), enligt `06-roadmap.md` §4 ("Version 1.1 – Små förbättringar"). Fokus på förstaintryck, varumärke och tydlighet, ingen ny kärnfunktionalitet. Beställd direkt av användaren, inte en fas i `04-utvecklingsplan.md`.
+
+**Byggt:**
+- **Startsidan:** ny hero-sektion med monogram (nygenererad transparent variant, `public/icons/monogram.png`, separat från de opaka app-ikonerna för att undvika en vit fyrkant i mörkt läge), wordmark, huvudbudskapet "Kroppen svarar på signaler, inte på träningstid.", befintlig slogan, en kort förklarande text och tre värdeargument (Helkropp · Tidseffektivt · Regelstyrt). Träningstid-knapparna visar nu minuter under varje alternativ (9/16/23 min) via en ny valfri `sublabel`-prop på `OptionSelector` (bakåtkompatibel)
+- **Passvyn:** ny diskret indikator "MM:SS kvar" under fasbadgen som visar total återstående tid för hela passet, inte bara aktuellt block. Ny ren funktion `getTotalRemainingSeconds()` i `src/lib/timer.ts` (ingen ny state, ingen affärslogik i komponenter). Konkurrerar inte visuellt med den stora timern
+- **Bugfix:** det laddade Geist-typsnittet (`next/font/google`) användes aldrig faktiskt — `globals.css` pekade på Arial. Kopplat korrekt, vilket förbättrar typografin utan nya beroenden
+
+**Filer skapade:**
+- `public/icons/monogram.png`
+- `src/components/WorkoutProgress.tsx` + `.module.css`
+
+**Filer ändrade:**
+- `src/app/page.tsx`, `src/components/OptionSelector.tsx`/`.module.css`, `src/components/StartScreen.tsx`/`.module.css`, `src/components/WorkoutScreen.tsx`/`.module.css`, `src/lib/timer.ts`, `src/styles/globals.css`
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Visuell granskning i både ljust och mörkt läge (headless Chrome) — monogrammets transparens bekräftad, inget vitt hörn-artefakt i mörkt läge
+- Offline-kontroll: monogrammet cachas och laddas korrekt av service workern
+- Full regressionstest: start → progressindikatorn räknar ner korrekt (09:00 → 08:58 efter 2,2 s) → paus fryser exakt (identisk vid två avläsningar) → återuppta → avsluta → tillbaka till start. Inga konsolfel
+
+**Begränsningar:** Inga nya. Ingen ny kärnfunktionalitet tillagd, i linje med uppdragets syfte.
 
 ---
 
