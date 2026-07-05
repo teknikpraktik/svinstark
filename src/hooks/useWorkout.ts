@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { generateWorkout } from "@/lib/workoutGenerator";
 import { useAudio } from "@/hooks/useAudio";
 import { useTimer } from "@/hooks/useTimer";
+import { useWakeLock } from "@/hooks/useWakeLock";
 import type { Screen, Workout, WorkoutSettings } from "@/types/workout";
 
 // Orkestrerar skärmflödet Start -> Workout -> Paused -> Finished -> Start
@@ -32,6 +33,9 @@ export function useWorkout() {
     workout,
     timerCallbacks
   );
+
+  // Skärmen ska inte dimmas/släckas så länge ett pass pågår, även vid paus.
+  useWakeLock(workout !== null);
 
   function start(settings: WorkoutSettings) {
     setError(null);
