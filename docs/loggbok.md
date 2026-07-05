@@ -17,7 +17,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 3   | TypeScript-modeller         | ✅ Klar      |
 | 4   | Exercise Library            | ✅ Klar      |
 | 5   | Workout Generator           | ✅ Klar      |
-| 6   | Timer Engine                | ⬜ Ej påbörjad |
+| 6   | Timer Engine                | ✅ Klar      |
 | 7   | React Hooks                 | ⬜ Ej påbörjad |
 | 8   | Workout Screen              | ⬜ Ej påbörjad |
 | 9   | Signaturuppvärmning         | ⬜ Ej påbörjad |
@@ -231,6 +231,37 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 - Generatorn är inte kopplad till UI eller timer ännu — det sker i Fas 6–8
 
 **Nästa steg:** Fas 6 – Timer Engine.
+
+---
+
+### 2026-07-05 — Fas 6: Timer Engine
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- `src/lib/timer.ts` — `WorkoutTimer`-klass, ingen React-logik, arbetar endast med ett `Workout` (B.25)
+  - `start()`, `pause()`, `resume()`, `stop()` samt automatiskt blockbyte och `onFinish` när sista blocket är klart
+  - Räknar mot en absolut deadline (`Date.now()`-baserad) istället för att bara räkna ned steg för steg — garanterar korrekt återstående tid även om intervallet fördröjs, t.ex. när appen är i bakgrunden (D.11)
+  - Om flera block hinner ta slut under en fördröjning kaskaderar den korrekt genom dem istället för att tappa tid
+  - Callbacks (`onTick`, `onBlockChange`, `onFinish`) istället för en publish/subscribe-modell med flera lyssnare — enklast möjliga lösning för hur den kommer användas i Fas 7
+
+**Filer skapade:**
+- `src/lib/timer.ts`
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Fristående testskript (`npx tsx`, ingår inte i projektet) med ett fejkat 4-blocks pass (1 sekund per block för snabb testning), som verifierade:
+  - start/pause/resume/stop fungerar och sätter rätt state
+  - tiden fryser helt under paus (ingen drift)
+  - automatiskt blockbyte och `onFinish` triggas korrekt
+  - kritiskt test: event loop blockerades medvetet i 3 sekunder (simulerar en bakgrundad flik) — timern kapade korrekt igenom de återstående blockbytena och landade i avslutat läge, istället för att tappa tid eller hänga sig
+  - Alla kontroller godkända
+
+**Begränsningar:**
+- Timern är inte kopplad till React eller UI ännu — det sker i Fas 7 (`useTimer`) och Fas 8 (WorkoutScreen)
+- Ingen manuell "hoppa till nästa övning"-funktion finns, i linje med att UI-specen inte har någon sådan knapp
+
+**Nästa steg:** Fas 7 – React Hooks.
 
 ---
 
