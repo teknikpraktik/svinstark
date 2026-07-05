@@ -23,7 +23,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 9   | Signaturuppvärmning         | ✅ Klar      |
 | 10  | Signaturavslut              | ✅ Klar      |
 | 11  | Ljud                        | ✅ Klar      |
-| 12  | Inställningar               | ⬜ Ej påbörjad |
+| 12  | Inställningar               | ✅ Klar      |
 | 13  | PWA                         | ⬜ Ej påbörjad |
 | 14  | Optimering                  | ⬜ Ej påbörjad |
 | 15  | Sluttest                    | ⬜ Ej påbörjad |
@@ -408,6 +408,37 @@ Fas 8 hette formellt bara "Workout Screen", men för att passet faktiskt ska gå
 - Ingen sound-toggle testad manuellt än eftersom UI för det saknas; själva av/på-grenen i `useAudio` (`if (enabled) ...`) är dock trivial och verifierad genom kodgranskning
 
 **Nästa steg:** Fas 12 – Inställningar.
+
+---
+
+### 2026-07-05 — Fas 12: Inställningar
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- `src/components/SettingsDialog.tsx` — enkel dialog (byggd på Modal-komponenten) med:
+  - Ljud på/av, återanvänder `OptionSelector` för visuell konsekvens med Träningstid/Intensitet
+  - "Om svinstark" — kort beskrivningstext
+  - Versionsnummer, läst direkt från `package.json` (0.1.0)
+  - Stäng-knapp
+- Kugghjulsikonen på `StartScreen` (icke-funktionell platshållare sedan Fas 1) öppnar nu dialogen. Dialogens öppna/stängda-state hålls lokalt i `StartScreen` eftersom det är en ren UI-detalj, inte en del av skärmflödets tillståndsmaskin (start/workout/paused/finished)
+- `page.tsx` skickar nu även `setSoundEnabled` från `useSettings` ner till `StartScreen`
+
+**Filer skapade:**
+- `src/components/SettingsDialog.tsx` + `.module.css`
+
+**Filer ändrade:**
+- `src/components/StartScreen.tsx` (öppnar dialogen, skickar vidare ljudinställningen)
+- `src/app/page.tsx` (kopplar `setSoundEnabled`)
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Manuellt i headless Chrome: öppnade dialogen, växlade ljud På→Av (visuell markering flyttas korrekt), stängde dialogen, laddade om sidan och öppnade dialogen igen — "Av" var fortfarande markerat, vilket bekräftar att `localStorage`-persistensen från Fas 7 även omfattar denna inställning utan ny kod
+- Inga konsolfel
+
+**Begränsningar:** Inga.
+
+**Nästa steg:** Fas 13 – PWA.
 
 ---
 
