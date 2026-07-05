@@ -1,6 +1,17 @@
-import type { TimerState, Workout } from "@/types/workout";
+import type { TimerState, Workout, WorkoutBlock, WorkoutSegment } from "@/types/workout";
 
 const TICK_INTERVAL_MS = 250;
+
+// Härleder vilket segment (t.ex. under uppvärmning/nedvarvning) som är
+// aktuellt just nu, utifrån hur mycket av blocket som redan förflutit.
+export function getCurrentSegment(block: WorkoutBlock, remainingSeconds: number): WorkoutSegment | undefined {
+  if (!block.segments) return undefined;
+
+  const elapsedSeconds = block.duration - remainingSeconds;
+  return block.segments.find(
+    (segment) => elapsedSeconds >= segment.startSecond && elapsedSeconds < segment.endSecond
+  );
+}
 
 export interface WorkoutTimerCallbacks {
   onTick?: (state: TimerState) => void;
