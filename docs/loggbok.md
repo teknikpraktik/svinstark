@@ -18,7 +18,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 4   | Exercise Library            | ✅ Klar      |
 | 5   | Workout Generator           | ✅ Klar      |
 | 6   | Timer Engine                | ✅ Klar      |
-| 7   | React Hooks                 | ⬜ Ej påbörjad |
+| 7   | React Hooks                 | ✅ Klar      |
 | 8   | Workout Screen              | ⬜ Ej påbörjad |
 | 9   | Signaturuppvärmning         | ⬜ Ej påbörjad |
 | 10  | Signaturavslut              | ⬜ Ej påbörjad |
@@ -262,6 +262,44 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 - Ingen manuell "hoppa till nästa övning"-funktion finns, i linje med att UI-specen inte har någon sådan knapp
 
 **Nästa steg:** Fas 7 – React Hooks.
+
+---
+
+### 2026-07-05 — Fas 7: React Hooks
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- `src/hooks/useSettings.ts` — persisterade inställningar (träningstid, intensitet, ljud på/av) via `localStorage`, byggd med `useSyncExternalStore` för att undvika hydreringskrock mellan server- och klientrendering
+- `src/hooks/useTimer.ts` — kopplar `WorkoutTimer` (Fas 6) till React-state; startar automatiskt när ett workout ges, städar upp vid unmount/byte
+- `src/hooks/useWorkout.ts` — orkestrerar skärmflödet start → workout → paused → finished → start (B.27/B.28): genererar pass via `generateWorkout`, håller reda på aktuellt block, och skyddar övergångarna (t.ex. paus kan bara ske från "workout", återuppta bara från "paused") istället för att lita på att UI:t bara anropar rätt metod vid rätt tillfälle
+  - Vid genereringsfel görs ett andra försök innan ett enkelt felmeddelande exponeras (`error`), enligt D.7
+- `src/lib/timer.ts` utökad med `getCurrentSegment()`, en liten ren hjälpfunktion som räknar ut vilket uppvärmnings-/nedvarvningssegment som är aktuellt utifrån återstående tid i blocket
+
+**Filer skapade:**
+- `src/hooks/useSettings.ts`
+- `src/hooks/useTimer.ts`
+- `src/hooks/useWorkout.ts`
+
+**Filer ändrade:**
+- `src/lib/timer.ts` (ny exporterad hjälpfunktion `getCurrentSegment`)
+
+**Testat:**
+- `npm run build`/`lint` — felfria (efter att ha justerat två hooks för de striktare `eslint-plugin-react-hooks`-reglerna i Next 16/React 19: `useSettings` byggdes om med `useSyncExternalStore` istället för en effekt som satte state direkt, och `useTimer` uppdaterar state uteslutande via timerns egen callback)
+- Manuellt i headless Chrome via en tillfällig testsida (skapad, verifierad, sedan borttagen — ingår inte i appens routing):
+  - Inställningar sparas och läses tillbaka korrekt efter omladdning av sidan
+  - `start()` genererar ett pass och sätter igång timern automatiskt (uppvärmning, 60 s, running)
+  - `pause()` fryser tiden exakt (identisk avläsning 1,2 s isär)
+  - `resume()` fortsätter korrekt
+  - `stop()` återgår till startskärmen och rensar passet
+  - `goToStart()` är en no-op när skärmen redan är "start" (verifierar tillståndsskyddet)
+  - Inga konsolfel eller hydreringsvarningar
+
+**Begränsningar:**
+- Hookarna är inte kopplade till någon synlig skärm ännu — det sker i Fas 8 (WorkoutScreen)
+- `useSettings` har ingen `useAudio()`-motsvarighet ännu (ljud kommer i Fas 11); `soundEnabled` lagras redan men används inte
+
+**Nästa steg:** Fas 8 – Workout Screen.
 
 ---
 
