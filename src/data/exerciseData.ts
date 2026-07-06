@@ -57,7 +57,7 @@ const kneeExercises: Exercise[] = [
   {
     id: "split_squat",
     name: "Split squat",
-    instruction: "Stå i utfallsposition. Sänk bakre knäet mot golvet. Pressa upp.",
+    instruction: "Stå i utfallsposition med bakre foten på tå. Sänk bakre knäet mot golvet. Pressa upp. Byt ben efter halva tiden.",
     primaryPattern: "knee",
     secondaryPatterns: ["hip"],
     intensity: "normal",
@@ -83,7 +83,7 @@ const kneeExercises: Exercise[] = [
   {
     id: "reverse_lunge",
     name: "Utfall bakåt",
-    instruction: "Kliv bakåt. Sänk bakre knäet mot golvet. Pressa tillbaka till start.",
+    instruction: "Kliv bakåt med ett ben. Sänk bakre knäet mot golvet. Pressa tillbaka till start. Byt ben varje gång.",
     primaryPattern: "knee",
     secondaryPatterns: ["hip"],
     intensity: "normal",
@@ -109,7 +109,7 @@ const kneeExercises: Exercise[] = [
   {
     id: "forward_lunge",
     name: "Utfall framåt",
-    instruction: "Kliv framåt. Sänk bakre knäet mot golvet. Pressa tillbaka till start.",
+    instruction: "Kliv framåt med ett ben. Sänk bakre knäet mot golvet. Pressa tillbaka till start. Byt ben varje gång.",
     primaryPattern: "knee",
     secondaryPatterns: ["hip"],
     intensity: "normal",
@@ -135,7 +135,7 @@ const kneeExercises: Exercise[] = [
   {
     id: "lateral_lunge",
     name: "Sidoutfall",
-    instruction: "Kliv brett åt sidan. Sänk höften mot det böjda benet. Pressa tillbaka till start.",
+    instruction: "Kliv brett åt sidan med ett ben. Sänk höften mot det böjda benet, andra benet rakt. Pressa tillbaka till start. Byt sida varje gång.",
     primaryPattern: "knee",
     secondaryPatterns: ["hip"],
     intensity: "normal",
@@ -161,7 +161,7 @@ const kneeExercises: Exercise[] = [
   {
     id: "curtsy_lunge",
     name: "Curtsy lunge",
-    instruction: "Kliv bakåt diagonalt bakom det stödjande benet. Sänk kontrollerat. Pressa tillbaka till start.",
+    instruction: "Kliv bakåt diagonalt bakom det stödjande benet. Sänk kontrollerat. Pressa tillbaka till start. Byt sida varje gång.",
     primaryPattern: "knee",
     secondaryPatterns: ["hip"],
     intensity: "normal",
@@ -425,7 +425,7 @@ const hipExercises: Exercise[] = [
   {
     id: "single_leg_glute_bridge",
     name: "Enbenshöftlyft",
-    instruction: "Ligg på rygg med ett ben rakt. Pressa höfterna upp med det böjda benet. Sänk kontrollerat.",
+    instruction: "Ligg på rygg med ett ben rakt i luften. Pressa höfterna upp med det böjda benet. Sänk kontrollerat. Byt ben efter halva tiden.",
     primaryPattern: "hip",
     secondaryPatterns: ["balance"],
     intensity: "normal",
@@ -503,7 +503,7 @@ const hipExercises: Exercise[] = [
   {
     id: "single_leg_deadlift",
     name: "Enbens marklyft",
-    instruction: "Stå på ett ben. Fäll överkroppen framåt och sträck det fria benet bakåt. Res dig upp igen.",
+    instruction: "Stå på ett ben. Fäll överkroppen framåt och sträck det fria benet rakt bakåt. Res dig upp igen. Byt ben efter halva tiden.",
     primaryPattern: "hip",
     secondaryPatterns: ["balance"],
     intensity: "hard",
@@ -529,7 +529,7 @@ const hipExercises: Exercise[] = [
   {
     id: "single_leg_hip_thrust",
     name: "Enbenshöftlyft mot stol",
-    instruction: "Luta axlarna mot en stol. Håll ena benet lyft och pressa höften upp med det andra.",
+    instruction: "Luta axlarna mot en stol. Håll ena benet lyft och pressa höften upp med det andra. Byt ben efter halva tiden.",
     primaryPattern: "hip",
     secondaryPatterns: ["balance"],
     intensity: "hard",
@@ -555,7 +555,7 @@ const hipExercises: Exercise[] = [
   {
     id: "donkey_kick",
     name: "Åsnespark",
-    instruction: "Stå på alla fyra. Spänn bålen och spark ett böjt ben rakt bakåt och upp.",
+    instruction: "Stå på alla fyra. Spänn bålen och spark ett böjt ben rakt bakåt och upp. Byt ben efter halva tiden.",
     primaryPattern: "hip",
     secondaryPatterns: ["core"],
     intensity: "normal",
@@ -581,7 +581,7 @@ const hipExercises: Exercise[] = [
   {
     id: "fire_hydrant",
     name: "Fire hydrant",
-    instruction: "Stå på alla fyra. Lyft ett böjt knä rakt ut åt sidan. Sänk kontrollerat.",
+    instruction: "Stå på alla fyra. Lyft ett böjt knä rakt ut åt sidan. Sänk kontrollerat. Byt ben efter halva tiden.",
     primaryPattern: "hip",
     secondaryPatterns: ["core"],
     intensity: "calm",
@@ -659,7 +659,7 @@ const hipExercises: Exercise[] = [
   {
     id: "bird_dog",
     name: "Bird dog",
-    instruction: "Stå på alla fyra. Sträck ut motsatt arm och ben samtidigt. Håll bålen still.",
+    instruction: "Stå på alla fyra. Sträck ut motsatt arm och ben samtidigt. Håll bålen still. Byt sida varje repetition.",
     primaryPattern: "hip",
     secondaryPatterns: ["core", "balance"],
     intensity: "calm",
@@ -711,7 +711,7 @@ const hipExercises: Exercise[] = [
   {
     id: "standing_kickback",
     name: "Höftsträckning stående",
-    instruction: "Stå och håll i en stol för balans. Sträck ett ben rakt bakåt utan att luta bålen.",
+    instruction: "Stå och håll i en stol för balans. Sträck ett ben rakt bakåt utan att luta bålen. Byt ben efter halva tiden.",
     primaryPattern: "hip",
     secondaryPatterns: [],
     intensity: "normal",
@@ -871,7 +871,7 @@ const horizontalPushExercises: Exercise[] = [
   {
     id: "archer_push_up",
     name: "Archer push-up",
-    instruction: "Gå brett med händerna. Sänk mot ena sidan med andra armen rak. Pressa upp.",
+    instruction: "Gå brett med händerna. Sänk mot ena sidan med andra armen rak. Pressa upp. Byt sida varje repetition.",
     primaryPattern: "horizontal_push",
     secondaryPatterns: ["core"],
     intensity: "hard",
@@ -923,7 +923,7 @@ const horizontalPushExercises: Exercise[] = [
   {
     id: "spiderman_push_up",
     name: "Spiderman push-up",
-    instruction: "Sänk dig i en armhävning. För samtidigt ett knä mot armbågen på samma sida.",
+    instruction: "Sänk dig i en armhävning. För samtidigt ett knä mot armbågen på samma sida. Byt sida varje repetition.",
     primaryPattern: "horizontal_push",
     secondaryPatterns: ["core"],
     intensity: "normal",
@@ -1407,7 +1407,7 @@ const coreExercises: Exercise[] = [
   {
     id: "side_plank",
     name: "Sidoplanka",
-    instruction: "Stöd på en underarm med kroppen i sidled. Håll höften lyft och positionen still.",
+    instruction: "Stöd på en underarm med kroppen i sidled. Håll höften lyft och positionen still. Byt sida efter halva tiden.",
     primaryPattern: "core",
     secondaryPatterns: [],
     intensity: "normal",
@@ -1667,7 +1667,7 @@ const coreExercises: Exercise[] = [
   {
     id: "side_plank_dip",
     name: "Sidoplanka med höftsänkning",
-    instruction: "Stöd i sidoplanka. Sänk höften mot golvet och lyft tillbaka upp igen.",
+    instruction: "Stöd i sidoplanka. Sänk höften mot golvet och lyft tillbaka upp igen. Byt sida efter halva tiden.",
     primaryPattern: "core",
     secondaryPatterns: [],
     intensity: "normal",
@@ -1719,7 +1719,7 @@ const coreExercises: Exercise[] = [
   {
     id: "star_plank",
     name: "Stjärnplanka",
-    instruction: "Stöd i sidoplanka. Lyft det översta benet och den översta armen ut i en stjärnform.",
+    instruction: "Stöd i sidoplanka. Lyft det översta benet och den översta armen ut i en stjärnform. Byt sida efter halva tiden.",
     primaryPattern: "core",
     secondaryPatterns: ["balance"],
     intensity: "normal",
@@ -2065,7 +2065,7 @@ const balanceExercises: Exercise[] = [
   {
     id: "single_leg_stand",
     name: "Enbensstående",
-    instruction: "Stå på ett ben. Håll blicken stilla framåt och positionen still.",
+    instruction: "Stå på ett ben. Håll blicken stilla framåt och positionen still. Byt ben efter halva tiden.",
     primaryPattern: "balance",
     secondaryPatterns: [],
     intensity: "calm",
@@ -2091,7 +2091,7 @@ const balanceExercises: Exercise[] = [
   {
     id: "single_leg_reach",
     name: "Enbens marklyftsreach",
-    instruction: "Stå på ett ben. Fäll överkroppen framåt och sträck fram motsatt arm. Res dig upp igen.",
+    instruction: "Stå på ett ben. Fäll överkroppen framåt och sträck fram motsatt arm. Res dig upp igen. Byt ben efter halva tiden.",
     primaryPattern: "balance",
     secondaryPatterns: ["hip"],
     intensity: "normal",
@@ -2117,7 +2117,7 @@ const balanceExercises: Exercise[] = [
   {
     id: "single_leg_hip_hinge",
     name: "Enbens höftfällning",
-    instruction: "Stå på ett ben med handen mot en stol. Fäll höften framåt med rak rygg. Res dig upp igen.",
+    instruction: "Stå på ett ben med handen mot en stol. Fäll höften framåt med rak rygg. Res dig upp igen. Byt ben efter halva tiden.",
     primaryPattern: "balance",
     secondaryPatterns: ["hip"],
     intensity: "normal",
@@ -2143,7 +2143,7 @@ const balanceExercises: Exercise[] = [
   {
     id: "tree_pose_hold",
     name: "Trädpose",
-    instruction: "Stå på ett ben med andra foten mot vaden eller låret. Håll positionen still.",
+    instruction: "Stå på ett ben med andra foten mot vaden eller låret. Håll positionen still. Byt ben efter halva tiden.",
     primaryPattern: "balance",
     secondaryPatterns: ["mobility"],
     intensity: "calm",
@@ -2195,7 +2195,7 @@ const balanceExercises: Exercise[] = [
   {
     id: "single_leg_clock_reach",
     name: "Enbens klockreach",
-    instruction: "Stå på ett ben. Sträck det andra benet i olika riktningar som runt en klocka.",
+    instruction: "Stå på ett ben. Sträck det andra benet i olika riktningar som runt en klocka. Byt ben efter halva tiden.",
     primaryPattern: "balance",
     secondaryPatterns: ["hip"],
     intensity: "normal",
@@ -2221,7 +2221,7 @@ const balanceExercises: Exercise[] = [
   {
     id: "single_leg_balance_arm_reach",
     name: "Enbensbalans med armsträckning",
-    instruction: "Stå på ett ben. Sträck armarna växelvis framåt, uppåt och åt sidan.",
+    instruction: "Stå på ett ben. Sträck armarna växelvis framåt, uppåt och åt sidan. Byt ben efter halva tiden.",
     primaryPattern: "balance",
     secondaryPatterns: [],
     intensity: "normal",
@@ -2247,7 +2247,7 @@ const balanceExercises: Exercise[] = [
   {
     id: "single_leg_figure_four_hold",
     name: "Enbens figure four-håll",
-    instruction: "Stå på ett ben. Korsa den andra fotens ankel över låret och sänk höften bakåt. Håll still.",
+    instruction: "Stå på ett ben. Korsa den andra fotens ankel över låret och sänk höften bakåt. Håll still. Byt ben efter halva tiden.",
     primaryPattern: "balance",
     secondaryPatterns: ["mobility"],
     intensity: "normal",
@@ -2273,7 +2273,7 @@ const balanceExercises: Exercise[] = [
   {
     id: "single_leg_hop_stick",
     name: "Enbenshopp med landning",
-    instruction: "Stå på ett ben. Hoppa kort framåt och landa stilla på samma ben.",
+    instruction: "Stå på ett ben. Hoppa kort framåt och landa stilla på samma ben. Byt ben efter halva tiden.",
     primaryPattern: "balance",
     secondaryPatterns: ["conditioning"],
     intensity: "hard",
@@ -2329,7 +2329,7 @@ const mobilityExercises: Exercise[] = [
   {
     id: "worlds_greatest_stretch",
     name: "World's greatest stretch",
-    instruction: "Kliv fram i ett djupt utfall. Rotera överkroppen mot det främre benet och sträck upp.",
+    instruction: "Kliv fram i ett djupt utfall. Rotera överkroppen mot det främre benet och sträck upp. Byt sida efter halva tiden.",
     primaryPattern: "mobility",
     secondaryPatterns: ["knee"],
     intensity: "calm",
@@ -2381,7 +2381,7 @@ const mobilityExercises: Exercise[] = [
   {
     id: "thoracic_rotation",
     name: "Bröstryggsrotation",
-    instruction: "Stå på alla fyra. För en hand bakom nacken och rotera bröstryggen uppåt.",
+    instruction: "Stå på alla fyra. För en hand bakom nacken och rotera bröstryggen uppåt. Byt sida efter halva tiden.",
     primaryPattern: "mobility",
     secondaryPatterns: [],
     intensity: "calm",
@@ -2433,7 +2433,7 @@ const mobilityExercises: Exercise[] = [
   {
     id: "leg_swings",
     name: "Bensvingningar",
-    instruction: "Håll i en stol för balans. Svinga ett ben framåt och bakåt i en avslappnad rörelse.",
+    instruction: "Håll i en stol för balans. Svinga ett ben framåt och bakåt i en avslappnad rörelse. Byt ben efter halva tiden.",
     primaryPattern: "mobility",
     secondaryPatterns: ["balance"],
     intensity: "normal",
@@ -2485,7 +2485,7 @@ const mobilityExercises: Exercise[] = [
   {
     id: "ankle_circles",
     name: "Vristcirklar",
-    instruction: "Stå på ett ben och lyft den andra foten. Rotera foten i cirklar från vristen.",
+    instruction: "Stå på ett ben och lyft den andra foten. Rotera foten i cirklar från vristen. Byt fot efter halva tiden.",
     primaryPattern: "mobility",
     secondaryPatterns: ["balance"],
     intensity: "calm",
@@ -2563,7 +2563,7 @@ const mobilityExercises: Exercise[] = [
   {
     id: "mobility_flow_dynamic",
     name: "Rörlighetsflöde, dynamiskt",
-    instruction: "Växla snabbt mellan djup knäböj, utfall och framåtfällning i ett sammanhängande flöde.",
+    instruction: "Växla snabbt mellan djup knäböj, utfall och framåtfällning i ett sammanhängande flöde. Byt sida på utfallet varje gång.",
     primaryPattern: "mobility",
     secondaryPatterns: ["conditioning"],
     intensity: "hard",
@@ -2621,7 +2621,7 @@ const additionalExercises: Exercise[] = [
   {
     id: "pistol_squat_negative",
     name: "Pistolknäböj, excentrisk",
-    instruction: "Stå på ett ben. Sänk dig så långsamt som möjligt med andra benet sträckt framåt.",
+    instruction: "Stå på ett ben. Sänk dig så långsamt som möjligt med andra benet sträckt framåt. Byt ben efter halva tiden.",
     primaryPattern: "knee",
     secondaryPatterns: ["balance"],
     intensity: "hard",
@@ -2725,7 +2725,7 @@ const additionalExercises: Exercise[] = [
   {
     id: "archer_pull_up",
     name: "Archer pull-up",
-    instruction: "Häng i stången med brett grepp. Dra dig upp mot ena handen med andra armen sträckt.",
+    instruction: "Häng i stången med brett grepp. Dra dig upp mot ena handen med andra armen sträckt. Byt sida varje repetition.",
     primaryPattern: "vertical_pull",
     secondaryPatterns: ["core"],
     intensity: "hard",
@@ -2907,7 +2907,7 @@ const additionalExercises: Exercise[] = [
   {
     id: "eyes_closed_single_leg_stand",
     name: "Enbensstående med slutna ögon",
-    instruction: "Stå på ett ben. Blunda och håll positionen still.",
+    instruction: "Stå på ett ben. Blunda och håll positionen still. Byt ben efter halva tiden.",
     primaryPattern: "balance",
     secondaryPatterns: [],
     intensity: "hard",

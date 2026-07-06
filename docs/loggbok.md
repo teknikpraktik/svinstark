@@ -743,6 +743,28 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 
 ---
 
+### 2026-07-06 — Innehåll: Utökade övningsbeskrivningar
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- Gick igenom samtliga 114 övningar i `src/data/exerciseData.ts` och lade till explicit sidbytesinstruktion på alla ensidiga (`unilateral: true`) övningar som saknade det
+- Två mönster används beroende på övningens karaktär: "Byt sida/ben varje gång" för utfallsrörelser som återgår till neutral ställning varje repetition (t.ex. sidoutfall, utfall fram/bak, curtsy lunge), och "Byt sida/ben efter halva tiden" för statiska håll eller övningar med kostsam ombyggnad av ställning (enbensbalans, sidoplanka, enbenshöftlyft, m.fl.)
+- Övningar som redan tydligt uttryckte växelvis rörelse (t.ex. `mountain_climber`, `bicycle_crunch`, `high_knees`) lämnades oförändrade
+- 33 övningar uppdaterade totalt
+
+**Filer ändrade:**
+- `src/data/exerciseData.ts`
+
+**Testat:**
+- `npm run lint` och `npm run build` — felfria
+- Längsta instruktionstexten efter ändring: 132 tecken, i linje med redan existerande längre texter i filen (t.ex. `single_leg_squat_to_chair`, ~120 tecken)
+- `ExerciseCard.module.css` har ingen fast bredd/höjd på instruktionstexten (`white-space: pre-line`, ingen `max-width`), så längre texter radbryts naturligt utan overflow
+
+**Begränsningar:** Inga.
+
+---
+
 ## Mall för nästa post
 
 ```
