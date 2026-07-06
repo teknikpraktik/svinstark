@@ -43,6 +43,8 @@ interface StartScreenProps {
   onDurationChange: (duration: WorkoutDuration) => void;
   onIntensityChange: (intensity: WorkoutIntensity) => void;
   onSoundEnabledChange: (soundEnabled: boolean) => void;
+  onHasChairChange: (hasChair: boolean) => void;
+  onHasPullupBarChange: (hasPullupBar: boolean) => void;
   onStart: () => void;
 }
 
@@ -52,6 +54,8 @@ export default function StartScreen({
   onDurationChange,
   onIntensityChange,
   onSoundEnabledChange,
+  onHasChairChange,
+  onHasPullupBarChange,
   onStart,
 }: StartScreenProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -75,9 +79,8 @@ export default function StartScreen({
         <h1 className={styles.headline}>Kroppen svarar på signaler, inte på träningstid.</h1>
 
         <p className={styles.explanation}>
-          Styrka och funktion utvecklas när muskler, senor, skelett och nervsystem regelbundet får
-          en tydlig träningsstimulans. Svinstark levererar den minsta effektiva dosen genom korta,
-          balanserade helkroppspass.
+          Den minsta effektiva dosen: korta, balanserade helkroppspass som ger kroppen tydlig
+          träningsstimulans.
         </p>
 
         <ul className={styles.valueProps}>
@@ -111,6 +114,10 @@ export default function StartScreen({
         onClose={() => setIsSettingsOpen(false)}
         soundEnabled={settings.soundEnabled}
         onSoundEnabledChange={onSoundEnabledChange}
+        hasChair={settings.hasChair}
+        onHasChairChange={onHasChairChange}
+        hasPullupBar={settings.hasPullupBar}
+        onHasPullupBarChange={onHasPullupBarChange}
       />
     </div>
   );

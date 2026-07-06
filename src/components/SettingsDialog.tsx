@@ -9,11 +9,20 @@ const soundOptions: { value: "on" | "off"; label: string }[] = [
   { value: "off", label: "Av" },
 ];
 
+const equipmentOptions: { value: "yes" | "no"; label: string }[] = [
+  { value: "yes", label: "Ja" },
+  { value: "no", label: "Nej" },
+];
+
 interface SettingsDialogProps {
   isOpen: boolean;
   onClose: () => void;
   soundEnabled: boolean;
   onSoundEnabledChange: (soundEnabled: boolean) => void;
+  hasChair: boolean;
+  onHasChairChange: (hasChair: boolean) => void;
+  hasPullupBar: boolean;
+  onHasPullupBarChange: (hasPullupBar: boolean) => void;
 }
 
 export default function SettingsDialog({
@@ -21,6 +30,10 @@ export default function SettingsDialog({
   onClose,
   soundEnabled,
   onSoundEnabledChange,
+  hasChair,
+  onHasChairChange,
+  hasPullupBar,
+  onHasPullupBarChange,
 }: SettingsDialogProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -31,6 +44,20 @@ export default function SettingsDialog({
         options={soundOptions}
         value={soundEnabled ? "on" : "off"}
         onChange={(value) => onSoundEnabledChange(value === "on")}
+      />
+
+      <OptionSelector
+        label="Stol/pall"
+        options={equipmentOptions}
+        value={hasChair ? "yes" : "no"}
+        onChange={(value) => onHasChairChange(value === "yes")}
+      />
+
+      <OptionSelector
+        label="Chinsstång"
+        options={equipmentOptions}
+        value={hasPullupBar ? "yes" : "no"}
+        onChange={(value) => onHasPullupBarChange(value === "yes")}
       />
 
       <p className={styles.version}>Version {packageJson.version}</p>

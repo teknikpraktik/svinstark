@@ -706,6 +706,8 @@ type Equipment =
 
 Ingen annan utrustning får förekomma i MVP.
 
+`"bodyweight"` och `"floor"` antas alltid finnas tillgängligt. `"chair"` och `"pullup_bar"` filtreras bort från generatorns kandidatpool om användaren anger i Inställningar att de saknas (se B.9 `WorkoutSettings.hasChair`/`hasPullupBar`).
+
 ---
 
 ## B.8 MuscleGroup
@@ -741,8 +743,14 @@ export interface WorkoutSettings {
 
     soundEnabled: boolean;
 
+    hasChair: boolean;
+
+    hasPullupBar: boolean;
+
 }
 ```
+
+`hasChair`/`hasPullupBar` anges i Inställningar (standardvärde: båda `true`) och styr vilken utrustning generatorn får använda (se B.7).
 
 ---
 
@@ -960,7 +968,7 @@ Generatorn ska kontrollera:
 * två ensidiga övningar (`unilateral`) i rad
 * två övningar med samma `primaryPattern` i rad
 * två hängande övningar (`bodyPosition: "hanging"`) i rad
-* tre övningar med `bodyPosition: "floor"` i rad
+* tre övningar med `bodyPosition: "floor"` i rad — **avstängd** om användaren saknar stol och/eller chinsstång (`WorkoutSettings.hasChair`/`hasPullupBar`), eftersom hårda pull-övningar utan utrustning alltid utförs på golvet och regeln annars gör Tufft praktiskt taget omöjligt att generera för Standard/Längre (se `07-generator-specifikation.md` §8 och `docs/loggbok.md`)
 * tre övningar vars `muscleGroups` innehåller `"legs"` i rad
 
 Denna lista är synkroniserad med `03-exercise-library-specification.md` §14 och `07-generator-specifikation.md` §8, som är den fullständiga och gällande referensen.

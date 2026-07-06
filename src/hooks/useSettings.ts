@@ -9,6 +9,8 @@ const DEFAULT_SETTINGS: WorkoutSettings = {
   duration: "standard",
   intensity: "normal",
   soundEnabled: true,
+  hasChair: true,
+  hasPullupBar: true,
 };
 
 let cachedSettings: WorkoutSettings = DEFAULT_SETTINGS;
@@ -27,6 +29,8 @@ function readFromStorage(): WorkoutSettings {
       duration: parsed.duration ?? DEFAULT_SETTINGS.duration,
       intensity: parsed.intensity ?? DEFAULT_SETTINGS.intensity,
       soundEnabled: parsed.soundEnabled ?? DEFAULT_SETTINGS.soundEnabled,
+      hasChair: parsed.hasChair ?? DEFAULT_SETTINGS.hasChair,
+      hasPullupBar: parsed.hasPullupBar ?? DEFAULT_SETTINGS.hasPullupBar,
     };
   } catch {
     return DEFAULT_SETTINGS;
@@ -59,9 +63,10 @@ function setStoredSettings(next: WorkoutSettings): void {
   listeners.forEach((listener) => listener());
 }
 
-// Lagrar endast senast valda träningstid, intensitet och ljud på/av (C.28).
-// Ingen träningshistorik sparas. useSyncExternalStore läser localStorage
-// utan hydreringskrock mot serverrendering (server får alltid DEFAULT_SETTINGS).
+// Lagrar endast senast valda träningstid, intensitet, ljud på/av och
+// tillgänglig utrustning (C.28). Ingen träningshistorik sparas.
+// useSyncExternalStore läser localStorage utan hydreringskrock mot
+// serverrendering (server får alltid DEFAULT_SETTINGS).
 export function useSettings() {
   const settings = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
@@ -74,5 +79,7 @@ export function useSettings() {
     setDuration: (duration: WorkoutDuration) => update((prev) => ({ ...prev, duration })),
     setIntensity: (intensity: WorkoutIntensity) => update((prev) => ({ ...prev, intensity })),
     setSoundEnabled: (soundEnabled: boolean) => update((prev) => ({ ...prev, soundEnabled })),
+    setHasChair: (hasChair: boolean) => update((prev) => ({ ...prev, hasChair })),
+    setHasPullupBar: (hasPullupBar: boolean) => update((prev) => ({ ...prev, hasPullupBar })),
   };
 }

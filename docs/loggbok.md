@@ -789,6 +789,34 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 
 ---
 
+### 2026-07-06 — Utrustningsanpassning (stol/pall, chinsstång) + kortare förstasidestext
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- Startsidans hero-text förkortad till en mening ("Den minsta effektiva dosen: korta, balanserade helkroppspass som ger kroppen tydlig träningsstimulans.")
+- Två nya inställningar i Inställningar-dialogen (samma plats som Ljud): "Stol/pall" och "Chinsstång", ja/nej, standard "Ja" för båda. Sparas i `WorkoutSettings.hasChair`/`hasPullupBar` via `useSettings` (localStorage, samma mönster som övriga inställningar)
+- `workoutGenerator.ts`: `ALLOWED_EQUIPMENT` (som tidigare alltid tillät all utrustning, oavsett inställning — ett dött no-op sedan MVP) ersatt med `getAllowedEquipment(settings)`. `"bodyweight"`/`"floor"` alltid tillåtna, `"chair"`/`"pullup_bar"` endast om användaren angett att de finns
+
+**Innehållsgap som upptäcktes och åtgärdades:**
+- Stresstest av generatorn (100+ körningar per kombination av längd/intensitet, direkt i Node via `--experimental-strip-types`, utan webbläsare) visade att flera kombinationer helt saknade lösning utan utrustning: Tufft (alla längder) och Lugnt/Längre
+- Rotorsak 1 (utbudsgap): för hårt/utan utrustning fanns 0 giltiga pull-övningar (alla 7 vertical_pull kräver chinsstång; de 3 golv-baserade horizontal_pull-övningarna är alla lugna). Löst genom 6 nya övningar i `exerciseData.ts` (`additionalExercises`): `explosive_prone_y_raise`, `superman_row`, `prone_scapular_pulse` (hårt, golv, horizontal_pull), `half_kneeling_push_up`, `wall_incline_plank_hold` (lugnt, golv/bodyweight, horizontal_push), `single_leg_glute_bridge_explosive` (hårt, golv, hip, med sidbytesinstruktion)
+- Rotorsak 2 (sekvensregelkrock, upptäckt efter att rotorsak 1 var åtgärdad): sekvensregeln "aldrig tre golvövningar i rad" gjorde Tufft/Standard och Tufft/Längre praktiskt taget omöjliga att generera ändå (0/100 resp. 0/300 i stresstest), eftersom varje hård pull-övning utan utrustning måste utföras liggande på golvet — fler övningar löser inte detta eftersom de per definition också blir golvövningar. En mjukare gräns (max fyra i rad) testades men räckte inte för Längre (~6 % lyckade försök). Regeln stängs nu av helt när `!hasChair || !hasPullupBar` (`equipmentRestricted` i `workoutGenerator.ts`), oförändrad annars
+
+**Filer ändrade:**
+- `src/types/workout.ts` (`WorkoutSettings.hasChair`/`hasPullupBar`), `src/hooks/useSettings.ts`, `src/lib/workoutGenerator.ts`, `src/components/SettingsDialog.tsx`, `src/components/StartScreen.tsx`, `src/app/page.tsx`, `src/data/exerciseData.ts` (6 nya övningar)
+- `docs/02-teknisk-specifikation.md`: B.7 Equipment, B.9 WorkoutSettings, B.19 Sekvensregler
+- `docs/07-generator-specifikation.md`: §7 Kandidaturval, §8 Sekvensregler, §19 Framtida utveckling (tog bort "tillgänglig utrustning" — nu byggt)
+
+**Testat:**
+- `npm run lint`/`build` — felfria
+- Direkt stresstest av `generateWorkout` i Node (200 körningar per kombination av längd × intensitet × utrustning på/av = 3 600 pass): 100 % lyckade i alla kombinationer utan utrustning, ingen regression med full utrustning (oförändrad kodväg när `equipmentRestricted` är false)
+- Playwright mot produktionsbygge: förkortad hero-text verifierad, Stol/pall och Chinsstång växlas i Inställningar via riktiga klick, Tufft/Längre (värsta scenariot) genererar och startar korrekt utan utrustning. Noll konsolfel
+
+**Begränsningar:** Inga.
+
+---
+
 ## Mall för nästa post
 
 ```

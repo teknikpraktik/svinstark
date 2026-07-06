@@ -15,7 +15,16 @@ import { randomItem } from "@/utils/randomItem";
 
 const BLOCK_DURATION_SECONDS = 60;
 const MAX_GENERATION_ATTEMPTS = 50;
-const ALLOWED_EQUIPMENT = new Set<Equipment>(["bodyweight", "floor", "chair", "pullup_bar"]);
+
+// "bodyweight" och "floor" antas alltid finnas tillgängligt (07-generator-
+// specifikation.md §7). "chair"/"pullup_bar" beror på användarens val i
+// Inställningar (WorkoutSettings.hasChair/hasPullupBar).
+function getAllowedEquipment(settings: WorkoutSettings): Set<Equipment> {
+  const allowed = new Set<Equipment>(["bodyweight", "floor"]);
+  if (settings.hasChair) allowed.add("chair");
+  if (settings.hasPullupBar) allowed.add("pullup_bar");
+  return allowed;
+}
 
 export class NoExercisesFoundError extends Error {
   constructor(patternKey: PatternKey) {
@@ -44,8 +53,8 @@ function isIntensityAllowed(exerciseIntensity: string, workoutIntensity: Workout
   return exerciseIntensity === "hard";
 }
 
-function isEquipmentAllowed(exercise: Exercise): boolean {
-  return exercise.equipment.every((item) => ALLOWED_EQUIPMENT.has(item));
+function isEquipmentAllowed(exercise: Exercise, allowedEquipment: Set<Equipment>): boolean {
+  return exercise.equipment.every((item) => allowedEquipment.has(item));
 }
 
 function patternMatchesKey(pattern: ExercisePattern, key: PatternKey): boolean {
@@ -72,8 +81,18 @@ function exerciseMatchesKey(exercise: Exercise, key: PatternKey, allowSecondary:
 }
 
 // Sekvensregler enligt 03-exercise-library-specification.md §14 och
-// 07-generator-specifikation.md §8.
-function violatesSequenceRules(candidate: Exercise, chosen: Exercise[]): boolean {
+// 07-generator-specifikation.md §8. "Aldrig tre golvövningar i rad" stängs av
+// helt när användaren saknar stol/chinsstång (equipmentRestricted): varje
+// hård pull-övning utan utrustning måste utföras på golvet (inget att dra i
+// annars), så regeln gör annars Tufft praktiskt taget omöjligt att generera
+// för Standard/Längre utan utrustning. En mjukare gräns (t.ex. fyra i rad)
+// testades men räckte inte för Längre (endast ~6 % lyckade försök) - se
+// docs/loggbok.md.
+function violatesSequenceRules(
+  candidate: Exercise,
+  chosen: Exercise[],
+  equipmentRestricted: boolean
+): boolean {
   const prev = chosen[chosen.length - 1];
   if (!prev) return false;
 
@@ -85,16 +104,20 @@ function violatesSequenceRules(candidate: Exercise, chosen: Exercise[]): boolean
   if (prev.primaryPattern === candidate.primaryPattern) return true;
   if (prev.bodyPosition === "hanging" && candidate.bodyPosition === "hanging") return true;
 
-  const prev2 = chosen[chosen.length - 2];
-  if (prev2) {
+  if (!equipmentRestricted) {
+    const prev2Floor = chosen[chosen.length - 2];
     if (
-      prev2.bodyPosition === "floor" &&
+      prev2Floor &&
+      prev2Floor.bodyPosition === "floor" &&
       prev.bodyPosition === "floor" &&
       candidate.bodyPosition === "floor"
     ) {
       return true;
     }
+  }
 
+  const prev2 = chosen[chosen.length - 2];
+  if (prev2) {
     const legsInARow = [prev2, prev, candidate].every((exercise) =>
       exercise.muscleGroups.includes("legs")
     );
@@ -107,6 +130,8 @@ function violatesSequenceRules(candidate: Exercise, chosen: Exercise[]): boolean
 function findCandidates(
   key: PatternKey,
   intensity: WorkoutIntensity,
+  allowedEquipment: Set<Equipment>,
+  equipmentRestricted: boolean,
   usedIds: Set<string>,
   chosen: Exercise[],
   allowSecondary: boolean
@@ -114,20 +139,25 @@ function findCandidates(
   return exerciseData.filter((exercise) => {
     if (usedIds.has(exercise.id)) return false;
     if (!isIntensityAllowed(exercise.intensity, intensity)) return false;
-    if (!isEquipmentAllowed(exercise)) return false;
-    if (violatesSequenceRules(exercise, chosen)) return false;
+    if (!isEquipmentAllowed(exercise, allowedEquipment)) return false;
+    if (violatesSequenceRules(exercise, chosen, equipmentRestricted)) return false;
     return exerciseMatchesKey(exercise, key, allowSecondary);
   });
 }
 
-function buildMainExercises(patterns: PatternKey[], intensity: WorkoutIntensity): Exercise[] {
+function buildMainExercises(
+  patterns: PatternKey[],
+  intensity: WorkoutIntensity,
+  allowedEquipment: Set<Equipment>,
+  equipmentRestricted: boolean
+): Exercise[] {
   const chosen: Exercise[] = [];
   const usedIds = new Set<string>();
 
   for (const key of patterns) {
-    let candidates = findCandidates(key, intensity, usedIds, chosen, false);
+    let candidates = findCandidates(key, intensity, allowedEquipment, equipmentRestricted, usedIds, chosen, false);
     if (candidates.length === 0) {
-      candidates = findCandidates(key, intensity, usedIds, chosen, true);
+      candidates = findCandidates(key, intensity, allowedEquipment, equipmentRestricted, usedIds, chosen, true);
     }
     if (candidates.length === 0) {
       throw new NoExercisesFoundError(key);
@@ -143,14 +173,18 @@ function buildMainExercises(patterns: PatternKey[], intensity: WorkoutIntensity)
 
 // Slutkontroll enligt 07-generator-specifikation.md §19 och
 // 02-teknisk-specifikation.md B.19/B.23 (oberoende av hur passet byggdes).
-function isValidWorkout(exercises: Exercise[], intensity: WorkoutIntensity): boolean {
+function isValidWorkout(
+  exercises: Exercise[],
+  intensity: WorkoutIntensity,
+  equipmentRestricted: boolean
+): boolean {
   if (exercises.some((exercise) => !isIntensityAllowed(exercise.intensity, intensity))) return false;
 
   const uniqueIds = new Set(exercises.map((exercise) => exercise.id));
   if (uniqueIds.size !== exercises.length) return false;
 
   for (let i = 1; i < exercises.length; i++) {
-    if (violatesSequenceRules(exercises[i], exercises.slice(0, i))) return false;
+    if (violatesSequenceRules(exercises[i], exercises.slice(0, i), equipmentRestricted)) return false;
   }
 
   const hasAny = (predicate: (exercise: Exercise) => boolean) => exercises.some(predicate);
@@ -180,12 +214,19 @@ export function generateWorkout(settings: WorkoutSettings): Workout {
     throw new InvalidWorkoutTemplateError(settings.duration);
   }
 
+  const allowedEquipment = getAllowedEquipment(settings);
+  const equipmentRestricted = !settings.hasChair || !settings.hasPullupBar;
   let mainExercises: Exercise[] | null = null;
 
   for (let attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
     try {
-      const candidate = buildMainExercises(template.patterns, settings.intensity);
-      if (isValidWorkout(candidate, settings.intensity)) {
+      const candidate = buildMainExercises(
+        template.patterns,
+        settings.intensity,
+        allowedEquipment,
+        equipmentRestricted
+      );
+      if (isValidWorkout(candidate, settings.intensity, equipmentRestricted)) {
         mainExercises = candidate;
         break;
       }

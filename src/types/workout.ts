@@ -83,6 +83,9 @@ export interface WorkoutSettings {
   duration: WorkoutDuration;
   intensity: WorkoutIntensity;
   soundEnabled: boolean;
+  // "bodyweight" och "floor" antas alltid finnas tillgängligt.
+  hasChair: boolean;
+  hasPullupBar: boolean;
 }
 
 export interface WorkoutBlock {

@@ -146,7 +146,7 @@ För varje plats i passmallen:
 
 1. Filtrera på rörelsemönster.
 2. Filtrera på intensitet.
-3. Filtrera på utrustning.
+3. Filtrera på utrustning (`"bodyweight"`/`"floor"` alltid tillåtna, `"chair"`/`"pullup_bar"` endast om användaren angett att de finns tillgängliga i Inställningar).
 4. Filtrera bort redan använda övningar.
 5. Filtrera bort övningar som bryter sekvensregler.
 6. Slumpa bland återstående kandidater.
@@ -164,7 +164,7 @@ Generatorn får aldrig skapa:
 * två övningar med samma `primaryPattern` i rad
 * två övningar som finns i varandras `avoidAdjacent`
 * två hängande övningar i rad
-* tre golvövningar i rad
+* tre golvövningar i rad — undantag: regeln stängs av om användaren saknar stol och/eller chinsstång i Inställningar, eftersom alla hårda pull-övningar utan utrustning kräver golvet och regeln annars gör Tufft omöjligt att generera för Standard/Längre
 * tre benövningar i rad
 
 ---
@@ -323,7 +323,6 @@ Generatorn är utformad för att kunna utökas med:
 * adaptiv svårighetsgrad
 * personliga preferenser
 * skonsamma lägen (knä, axel, handled)
-* tillgänglig utrustning
 * träningshistorik
 * progression
 * AI-optimerade pass
