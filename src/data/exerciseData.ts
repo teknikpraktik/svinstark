@@ -238,8 +238,8 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "wall_sit",
-    name: "Väggsittande",
-    instruction: "Luta ryggen mot en vägg och sänk ned som på en osynlig stol. Håll positionen still.",
+    name: "Jägarvila",
+    instruction: "Luta ryggen mot en vägg och sätt dig i jägarvila. Håll positionen.",
     primaryPattern: "knee",
     secondaryPatterns: [],
     intensity: "normal",
@@ -265,7 +265,7 @@ const kneeExercises: Exercise[] = [
   {
     id: "chair_step_up",
     name: "Uppstigning på stol",
-    instruction: "Stig upp på en stabil stol med ett ben. Pressa upp till stående. Sänk kontrollerat.",
+    instruction: "Stig upp på en stabil stol med ett ben. Pressa upp till stående. Sänk kontrollerat. Byt ben efter halva tiden.",
     primaryPattern: "knee",
     secondaryPatterns: ["hip"],
     intensity: "normal",
@@ -291,7 +291,7 @@ const kneeExercises: Exercise[] = [
   {
     id: "bulgarian_split_squat",
     name: "Bulgarisk utfallsböj",
-    instruction: "Placera bakre foten på en stol bakom dig. Sänk det främre knäet. Pressa upp.",
+    instruction: "Placera bakre foten på en stol bakom dig. Sänk det främre knäet. Pressa upp. Byt ben efter halva tiden.",
     primaryPattern: "knee",
     secondaryPatterns: ["hip"],
     intensity: "hard",
@@ -317,7 +317,7 @@ const kneeExercises: Exercise[] = [
   {
     id: "cossack_squat",
     name: "Cossack squat",
-    instruction: "Stå brett. Skifta tyngden till ena sidan och böj det benet djupt. Håll andra benet rakt.",
+    instruction: "Stå brett. Skifta tyngden till ena sidan och böj det benet djupt. Håll andra benet rakt. Pressa upp. Byt ben.",
     primaryPattern: "knee",
     secondaryPatterns: ["mobility"],
     intensity: "normal",
@@ -369,7 +369,7 @@ const kneeExercises: Exercise[] = [
   {
     id: "single_leg_squat_to_chair",
     name: "Enbensböj mot stol",
-    instruction: "Stå på ett ben framför en stol. Sänk kontrollerat tills du precis nuddar stolen. Pressa upp.",
+    instruction: "Stå på ett ben framför en stol. Sänk kontrollerat tills du precis nuddar stolen. Pressa upp. Byt ben efter halva tiden.",
     primaryPattern: "knee",
     secondaryPatterns: ["balance"],
     intensity: "hard",
