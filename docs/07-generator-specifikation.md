@@ -30,9 +30,7 @@ Generatorn arbetar alltid enligt följande:
 3. Filtrera övningsbiblioteket.
 4. Bygg huvudpasset.
 5. Kontrollera regler.
-6. Lägg till signaturuppvärmning.
-7. Lägg till signaturavslut.
-8. Returnera färdigt pass.
+6. Returnera färdigt pass.
 
 ---
 
@@ -56,11 +54,11 @@ WorkoutSettings {
 
 Generatorn bygger alltid:
 
-| Träningstid | Uppvärmning | Huvuddel | Nedvarvning |  Total |
-| ----------- | ----------: | -------: | ----------: | -----: |
-| Kortare     |           1 |        7 |           1 |  9 min |
-| Standard    |           1 |       14 |           1 | 16 min |
-| Längre      |           1 |       21 |           1 | 23 min |
+| Träningstid | Antal övningar |  Total |
+| ----------- | -------------: | -----: |
+| Kortare     |              7 |  7 min |
+| Standard    |             14 | 14 min |
+| Längre      |             21 | 21 min |
 
 Alla block är exakt 60 sekunder.
 
@@ -261,32 +259,7 @@ Inga.
 
 ---
 
-# 15. Uppvärmning
-
-Generatorn skapar aldrig uppvärmningen.
-
-Den använder alltid:
-
-1. Djup knäböj med armlyft
-2. Utfall bakåt med rotation
-3. Inchworm
-4. Höga knän
-
----
-
-# 16. Nedvarvning
-
-Generatorn skapar aldrig nedvarvningen.
-
-Den använder alltid:
-
-1. Djup knäböj
-2. Framåtfällning
-3. Andning med armlyft
-
----
-
-# 17. Resultat
+# 15. Resultat
 
 Generatorn returnerar:
 
@@ -295,22 +268,14 @@ Workout
 
 ↓
 
-Warmup
-
-↓
-
 Exercise Blocks
-
-↓
-
-Cooldown
 ```
 
 UI bestämmer endast hur detta visas.
 
 ---
 
-# 18. Kvalitetskrav
+# 16. Kvalitetskrav
 
 Ett genererat pass ska upplevas som:
 
@@ -322,7 +287,7 @@ Ett genererat pass ska upplevas som:
 
 ---
 
-# 19. Validering
+# 17. Validering
 
 Efter att ett pass skapats ska generatorn kontrollera:
 
@@ -337,7 +302,7 @@ Misslyckas någon kontroll ska ett nytt pass genereras.
 
 ---
 
-# 20. Definition av ett bra pass
+# 18. Definition av ett bra pass
 
 Ett pass anses vara bra när:
 
@@ -351,7 +316,7 @@ Det viktigaste kvalitetskriteriet är att användaren upplever passet som genomt
 
 ---
 
-# 21. Framtida utveckling
+# 19. Framtida utveckling
 
 Generatorn är utformad för att kunna utökas med:
 

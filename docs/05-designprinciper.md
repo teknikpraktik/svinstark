@@ -128,8 +128,6 @@ Exempel:
 * alla övningar är 60 sekunder
 * samma timer överallt
 * samma ljudsignaler
-* samma uppvärmning
-* samma avslut
 
 Det ska skapa igenkänning.
 

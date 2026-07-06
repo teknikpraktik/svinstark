@@ -256,45 +256,21 @@ Ingen statistik.
 
 ---
 
-# 12. Fas 9 – Signaturuppvärmning
+# 12. Fas 9 – Signaturuppvärmning (borttagen 2026-07-06)
 
-Implementera fasta segment.
+Denna fas byggde en fast 60-sekunders uppvärmning som alltid kördes före huvudpasset.
 
-60 sekunder.
+Funktionen togs bort på uttrycklig begäran av användaren: passet går numera direkt på övningarna, utan uppvärmning eller nedvarvning. Se `docs/loggbok.md` för detaljer om ändringen.
 
-0–15 s
-
-Djup knäböj med armlyft
-
-15–30 s
-
-Utfall bakåt med rotation
-
-30–45 s
-
-Inchworm
-
-45–60 s
-
-Höga knän
+Fas-numret behålls oförändrat för att inte bryta spårbarheten mot tidigare loggbokposter.
 
 ---
 
-# 13. Fas 10 – Signaturavslut
+# 13. Fas 10 – Signaturavslut (borttagen 2026-07-06)
 
-60 sekunder.
+Denna fas byggde ett fast 60-sekunders avslut som alltid kördes efter huvudpasset.
 
-0–20 s
-
-Djup knäböj
-
-20–40 s
-
-Framåtfällning
-
-40–60 s
-
-Andning med armlyft
+Funktionen togs bort på uttrycklig begäran av användaren, av samma anledning som Fas 9. Se `docs/loggbok.md` för detaljer.
 
 ---
 
@@ -432,9 +408,7 @@ Version 1.0 är färdig när användaren kan:
 * välja träningstid
 * välja intensitet
 * starta ett pass
-* genomföra uppvärmning
 * genomföra huvudpass
-* genomföra nedvarvning
 * pausa
 * avsluta
 * köra appen offline

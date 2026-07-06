@@ -276,8 +276,7 @@ Exempel:
 
 * exerciseData.ts
 * workoutTemplates.ts
-* warmup.ts
-* cooldown.ts
+* workoutLabels.ts
 
 Ingen logik.
 
@@ -598,8 +597,6 @@ svinstark bygger på följande huvudobjekt:
 * Exercise
 * Workout
 * WorkoutBlock
-* Warmup
-* Cooldown
 * WorkoutSettings
 * WorkoutTemplate
 * AppState
@@ -615,9 +612,7 @@ WorkoutGenerator
         ▼
 Workout
         │
-        ├── Warmup
-        ├── Exercise Blocks
-        └── Cooldown
+        └── Exercise Blocks
 ```
 
 ---
@@ -729,7 +724,7 @@ type MuscleGroup =
     | "full_body";
 ```
 
-Generatorn använder `muscleGroups` i MVP endast för en specifik sekvensregel: att undvika tre övningar i rad vars `muscleGroups` innehåller `"legs"` (se B.23). Utöver detta används `muscleGroups` inte för filtrering eller urval i MVP.
+Generatorn använder `muscleGroups` i MVP endast för en specifik sekvensregel: att undvika tre övningar i rad vars `muscleGroups` innehåller `"legs"` (se B.19). Utöver detta används `muscleGroups` inte för filtrering eller urval i MVP.
 
 ---
 
@@ -773,84 +768,23 @@ export interface Workout {
 
 ## B.11 WorkoutBlock
 
-Alla block i passet följer samma modell.
+Alla block i passet följer samma modell. Varje block är en övning.
 
 ```typescript
 export interface WorkoutBlock {
 
     id: string;
 
-    phase: WorkoutPhase;
-
     duration: number;
 
-    exercise?: Exercise;
-
-    segments?: WorkoutSegment[];
+    exercise: Exercise;
 
 }
 ```
 
 ---
 
-## B.12 WorkoutPhase
-
-```typescript
-type WorkoutPhase =
-    | "warmup"
-    | "exercise"
-    | "cooldown";
-```
-
----
-
-## B.13 WorkoutSegment
-
-Används endast av uppvärmning och avslut.
-
-```typescript
-export interface WorkoutSegment {
-
-    startSecond: number;
-
-    endSecond: number;
-
-    title: string;
-
-    instruction: string;
-
-}
-```
-
----
-
-## B.14 Warmup
-
-Ett enda objekt.
-
-60 sekunder.
-
-Fyra segment.
-
-Generatorn skapar aldrig en ny uppvärmning.
-
-Den används alltid oförändrad.
-
----
-
-## B.15 Cooldown
-
-Ett enda objekt.
-
-60 sekunder.
-
-Tre segment.
-
-Generatorn skapar aldrig en ny avslutning.
-
----
-
-## B.16 WorkoutTemplate
+## B.12 WorkoutTemplate
 
 Passgeneratorn arbetar med mallar.
 
@@ -866,7 +800,7 @@ export interface WorkoutTemplate {
 
 ---
 
-## B.17 PatternKey
+## B.13 PatternKey
 
 Tillåtna värden:
 
@@ -919,7 +853,7 @@ Passmallar refererar ibland till generiska nycklar som inte finns direkt som `pr
 
 ---
 
-## B.18 Passgenerator
+## B.14 Passgenerator
 
 Generatorn exponeras som:
 
@@ -937,7 +871,7 @@ Ingen lokal lagring.
 
 ---
 
-## B.19 Genereringsprocess
+## B.15 Genereringsprocess
 
 Generatorn arbetar enligt följande:
 
@@ -947,13 +881,11 @@ Generatorn arbetar enligt följande:
 4. Filtrera övningar efter tillåten utrustning.
 5. Skapa huvudpass.
 6. Kontrollera sekvensregler.
-7. Lägg till uppvärmning.
-8. Lägg till avslut.
-9. Returnera Workout.
+7. Returnera Workout.
 
 ---
 
-## B.20 Intensitetsregler
+## B.16 Intensitetsregler
 
 ### Lugnt
 
@@ -988,7 +920,7 @@ Generatorn får aldrig bryta mot denna regel.
 
 ---
 
-## B.21 Passmallar
+## B.17 Passmallar
 
 Generatorn bygger alltid pass utifrån mallar.
 
@@ -1007,7 +939,7 @@ Det garanterar balans mellan:
 
 ---
 
-## B.22 Slumpning
+## B.18 Slumpning
 
 När flera kandidater återstår ska generatorn slumpa.
 
@@ -1017,7 +949,7 @@ Ingen viktning används i MVP.
 
 ---
 
-## B.23 Sekvensregler
+## B.19 Sekvensregler
 
 Generatorn ska kontrollera:
 
@@ -1037,7 +969,7 @@ Denna lista är synkroniserad med `03-exercise-library-specification.md` §14 oc
 
 ---
 
-## B.24 Fallback
+## B.20 Fallback
 
 Om ingen kandidat hittas:
 
@@ -1053,7 +985,7 @@ Om generatorn fortfarande misslyckas returneras ett fel som fångas av appen.
 
 ---
 
-## B.25 TimerModel
+## B.21 TimerModel
 
 Timern arbetar endast med ett Workout.
 
@@ -1075,7 +1007,7 @@ Timern känner inte till React.
 
 ---
 
-## B.26 AppState
+## B.22 AppState
 
 Applikationens globala state.
 
@@ -1095,7 +1027,7 @@ export interface AppState {
 
 ---
 
-## B.27 Screen
+## B.23 Screen
 
 ```typescript
 type Screen =
@@ -1111,7 +1043,7 @@ type Screen =
 
 ---
 
-## B.28 State Machine
+## B.24 State Machine
 
 ```text
 START
@@ -1119,10 +1051,6 @@ START
 ↓
 
 Workout Generated
-
-↓
-
-Warmup
 
 ↓
 
@@ -1142,10 +1070,6 @@ Exercise N
 
 ↓
 
-Cooldown
-
-↓
-
 Finished
 
 ↓
@@ -1155,9 +1079,7 @@ Back to Start
 
 Paus kan ske från:
 
-* Warmup
 * Exercise
-* Cooldown
 
 Inte från:
 
@@ -1166,7 +1088,7 @@ Inte från:
 
 ---
 
-## B.29 Timerregler
+## B.25 Timerregler
 
 Varje block är exakt:
 
@@ -1178,7 +1100,7 @@ Ingen individuell tidsjustering finns i MVP.
 
 ---
 
-## B.30 Affärslogik kontra UI
+## B.26 Affärslogik kontra UI
 
 Följande får aldrig finnas i React-komponenterna:
 
@@ -1196,7 +1118,7 @@ React ska endast:
 
 ---
 
-## B.31 Felhantering
+## B.27 Felhantering
 
 Generatorn ska kasta tydliga fel.
 
@@ -1216,7 +1138,7 @@ Appen ska istället försöka skapa ett nytt pass eller visa ett användarvänli
 
 ---
 
-## B.32 Framtidssäkerhet
+## B.28 Framtidssäkerhet
 
 Domänmodellen ska kunna utökas utan att bryta befintlig kod.
 
@@ -1301,9 +1223,9 @@ App
 │   └── StartButton
 │
 ├── WorkoutScreen
-│   ├── PhaseBadge
 │   ├── TimerDisplay
 │   ├── ExerciseCard
+│   ├── WorkoutProgress
 │   ├── PauseButton
 │   └── StopButton
 │
@@ -1330,7 +1252,7 @@ Visar:
 
 Standardval:
 
-* Standard (16 min)
+* Standard (14 min)
 * Normalt
 * Ljud på
 
@@ -1342,10 +1264,11 @@ WorkoutScreen är appens viktigaste vy.
 
 Den ska endast visa:
 
-* aktuell fas
+* total längd och intensitet för passet
 * stor timer
 * övningsnamn
 * instruktion
+* vilken övning i ordningen (t.ex. "Övning 4 av 14")
 * paus
 * avsluta
 
@@ -1355,28 +1278,11 @@ Den ska inte visa:
 * passlista
 * statistik
 * kalorier
-* antal övningar kvar
 * träningshistorik
 
 ---
 
-## C.7 PhaseBadge
-
-Visar aktuell fas.
-
-Tillåtna värden:
-
-* Uppvärmning
-* Träning
-* Nedvarvning
-
-Diskret utformning.
-
-Timern ska alltid dominera skärmen.
-
----
-
-## C.8 TimerDisplay
+## C.7 TimerDisplay
 
 Timern är den viktigaste komponenten.
 
@@ -1396,7 +1302,7 @@ Ingen cirkulär progressring i MVP.
 
 ---
 
-## C.9 ExerciseCard
+## C.8 ExerciseCard
 
 Visar:
 
@@ -1421,25 +1327,17 @@ Ingen animation.
 
 ---
 
-## C.10 Segmentvisning
+## C.9 WorkoutProgress
 
-Vid uppvärmning och nedvarvning visas aktuellt segment.
+Visar diskret vilken övning i ordningen användaren är på, t.ex. "Övning 4 av 14".
 
-Exempel:
+Uppdateras automatiskt vid varje övningsbyte.
 
-```text
-Utfall bakåt med rotation
-
-Kliv bakåt.
-Rotera över främre benet.
-Växla sida.
-```
-
-Segmentet byts automatiskt.
+Ska aldrig konkurrera visuellt med TimerDisplay.
 
 ---
 
-## C.11 PauseDialog
+## C.10 PauseDialog
 
 Visar:
 
@@ -1455,7 +1353,7 @@ Enkel modal.
 
 ---
 
-## C.12 FinishedScreen
+## C.11 FinishedScreen
 
 Visar:
 
@@ -1473,7 +1371,7 @@ Ingen konfetti.
 
 ---
 
-## C.13 Knappar
+## C.12 Knappar
 
 Alla knappar ska:
 
@@ -1487,7 +1385,7 @@ Minsta tryckyta:
 
 ---
 
-## C.14 Färgpalett
+## C.13 Färgpalett
 
 MVP använder få färger.
 
@@ -1504,7 +1402,7 @@ Statusfärger används sparsamt.
 
 ---
 
-## C.15 Typografi
+## C.14 Typografi
 
 Prioritet:
 
@@ -1517,7 +1415,7 @@ Produkten ska kännas lugn.
 
 ---
 
-## C.16 Animationer
+## C.15 Animationer
 
 Animationer används endast när de hjälper användaren.
 
@@ -1536,7 +1434,7 @@ Inte tillåtna:
 
 ---
 
-## C.17 Responsiv design
+## C.16 Responsiv design
 
 Appen utvecklas Mobile First.
 
@@ -1550,7 +1448,7 @@ Desktop är sekundärt.
 
 ---
 
-## C.18 Tillgänglighet
+## C.17 Tillgänglighet
 
 Krav:
 
@@ -1564,7 +1462,7 @@ Färg får aldrig vara enda informationsbärare.
 
 ---
 
-## C.19 Ljud
+## C.18 Ljud
 
 Ljud används endast som stöd.
 
@@ -1578,7 +1476,7 @@ Ljud ska kunna stängas av.
 
 ---
 
-## C.20 Komponentprinciper
+## C.19 Komponentprinciper
 
 Komponenter ska:
 
@@ -1590,7 +1488,7 @@ De ska inte innehålla affärslogik.
 
 ---
 
-## C.21 CSS-struktur
+## C.20 CSS-struktur
 
 Varje större komponent får en egen CSS Module.
 
@@ -1605,7 +1503,7 @@ Gemensamma variabler ligger i global CSS.
 
 ---
 
-## C.22 Ikoner
+## C.21 Ikoner
 
 Endast enkla ikoner används.
 
@@ -1620,7 +1518,7 @@ Ikoner ska stödja text, inte ersätta den.
 
 ---
 
-## C.23 PWA
+## C.22 PWA
 
 Appen ska kunna installeras på:
 
@@ -1632,7 +1530,7 @@ Installationen ska ge en app-liknande upplevelse.
 
 ---
 
-## C.24 Manifest
+## C.23 Manifest
 
 Manifestet ska innehålla:
 
@@ -1647,7 +1545,7 @@ Appen ska öppnas utan webbläsarens adressfält.
 
 ---
 
-## C.25 Ikoner (format)
+## C.24 Ikoner (format)
 
 Appen ska innehålla minst:
 
@@ -1658,7 +1556,7 @@ PNG-format.
 
 ---
 
-## C.26 Service Worker
+## C.25 Service Worker
 
 Service Worker ska:
 
@@ -1670,7 +1568,7 @@ Ingen dynamisk cache behövs i MVP.
 
 ---
 
-## C.27 Offline
+## C.26 Offline
 
 Efter första laddningen ska följande fungera utan internet:
 
@@ -1678,14 +1576,12 @@ Efter första laddningen ska följande fungera utan internet:
 * generera pass
 * timer
 * ljud
-* uppvärmning
-* avslut
 
 Ingen funktion i MVP kräver nätverk.
 
 ---
 
-## C.28 Lokal lagring
+## C.27 Lokal lagring
 
 MVP använder lokal lagring endast för:
 
@@ -1697,7 +1593,7 @@ Ingen träningshistorik sparas.
 
 ---
 
-## C.29 Prestanda
+## C.28 Prestanda
 
 Mål:
 
@@ -1708,7 +1604,7 @@ Mål:
 
 ---
 
-## C.30 Deployment
+## C.29 Deployment
 
 Appen publiceras på Vercel.
 
@@ -1730,7 +1626,7 @@ Deployment ska ske automatiskt från huvudgrenen.
 
 ---
 
-## C.31 Browserstöd
+## C.30 Browserstöd
 
 MVP ska fungera i:
 
@@ -1743,7 +1639,7 @@ MVP ska fungera i:
 
 ---
 
-## C.32 Definition av färdig UI
+## C.31 Definition av färdig UI
 
 UI är färdigt när användaren kan:
 
@@ -1942,49 +1838,7 @@ Timer ska hålla korrekt tid även om appen tillfälligt hamnar i bakgrunden.
 
 ---
 
-## D.12 Test av uppvärmning
-
-Kontrollera:
-
-0–15 s
-
-Djup knäböj med armlyft
-
-15–30 s
-
-Utfall bakåt med rotation
-
-30–45 s
-
-Inchworm
-
-45–60 s
-
-Höga knän
-
-Segmenten ska bytas exakt vid rätt tidpunkt.
-
----
-
-## D.13 Test av nedvarvning
-
-Kontrollera:
-
-0–20 s
-
-Djup knäböj
-
-20–40 s
-
-Framåtfällning
-
-40–60 s
-
-Andning med armlyft
-
----
-
-## D.14 UI-test
+## D.12 UI-test
 
 Verifiera:
 
@@ -1998,7 +1852,7 @@ Verifiera:
 
 ---
 
-## D.15 PWA-test
+## D.13 PWA-test
 
 Verifiera:
 
@@ -2011,7 +1865,7 @@ Verifiera:
 
 ---
 
-## D.16 Prestandatest
+## D.14 Prestandatest
 
 Mål:
 
@@ -2022,7 +1876,7 @@ Mål:
 
 ---
 
-## D.17 Kompatibilitet
+## D.15 Kompatibilitet
 
 Verifiera på:
 
@@ -2038,7 +1892,7 @@ Firefox
 
 ---
 
-## D.18 Tillgänglighet
+## D.16 Tillgänglighet
 
 Kontrollera:
 
@@ -2050,7 +1904,7 @@ Kontrollera:
 
 ---
 
-## D.19 Git-strategi
+## D.17 Git-strategi
 
 Projektet använder Git.
 
@@ -2074,7 +1928,7 @@ feature/pwa
 
 ---
 
-## D.20 Commits
+## D.18 Commits
 
 Commits ska vara små.
 
@@ -2094,7 +1948,7 @@ Undvik stora "allt-i-ett"-commits.
 
 ---
 
-## D.21 Deployment
+## D.19 Deployment
 
 Automatisk deployment från GitHub till Vercel.
 
@@ -2128,7 +1982,7 @@ main
 
 ---
 
-## D.22 Versionshantering
+## D.20 Versionshantering
 
 Semantisk versionshantering används.
 
@@ -2146,7 +2000,7 @@ Exempel:
 
 ---
 
-## D.23 Dokumentation
+## D.21 Dokumentation
 
 Vid större förändringar ska följande uppdateras vid behov:
 
@@ -2158,7 +2012,7 @@ Produkt- och designprinciper ändras endast om funktionaliteten faktiskt förän
 
 ---
 
-## D.24 Claude Code-arbetsflöde
+## D.22 Claude Code-arbetsflöde
 
 Varje större arbetsuppgift ska följa samma struktur:
 
@@ -2175,7 +2029,7 @@ Claude Code ska inte påbörja nästa större steg utan att föregående steg fu
 
 ---
 
-## D.25 Acceptanskriterier för MVP
+## D.23 Acceptanskriterier för MVP
 
 MVP anses färdig när följande fungerar:
 
@@ -2183,19 +2037,17 @@ MVP anses färdig när följande fungerar:
 * Träningstid kan väljas.
 * Intensitet kan väljas.
 * Pass genereras korrekt.
-* Uppvärmning visas.
 * Samtliga övningar visas i rätt ordning.
 * Timern fungerar genom hela passet.
 * Paus fungerar.
 * Avsluta fungerar.
-* Nedvarvning visas.
 * Färdigskärm visas.
 * Appen fungerar offline efter första laddning.
 * Appen kan installeras som PWA.
 
 ---
 
-## D.26 Tekniska mål
+## D.24 Tekniska mål
 
 Projektet ska efter MVP uppfylla följande:
 
@@ -2209,7 +2061,7 @@ Projektet ska efter MVP uppfylla följande:
 
 ---
 
-## D.27 Långsiktig målbild
+## D.25 Långsiktig målbild
 
 Den tekniska plattformen ska kunna bära framtida funktioner utan större ombyggnad, exempelvis:
 

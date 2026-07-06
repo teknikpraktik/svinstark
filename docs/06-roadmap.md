@@ -48,10 +48,8 @@ Målet är att bygga en stabil första version.
 ### Innehåll
 
 * Slumpgenererade helkroppspass
-* 9, 16 och 23 minuter
+* 7, 14 och 21 minuter
 * Lugnt, Normalt och Tufft
-* Signaturuppvärmning
-* Signaturnedvarvning
 * Timer
 * Ljud
 * Offline-stöd

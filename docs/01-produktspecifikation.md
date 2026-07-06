@@ -145,11 +145,7 @@ Trycker:
 
 **STARTA PASS**
 
-Appen leder därefter användaren genom:
-
-1. Signaturuppvärmning
-2. Huvudpass
-3. Signaturavslut
+Appen leder därefter användaren direkt genom huvudpasset, övning för övning.
 
 Passet avslutas.
 
@@ -163,25 +159,17 @@ Tre alternativ erbjuds.
 
 ## Kortare
 
-**9 minuter**
+**7 minuter**
 
-Består av:
-
-* 1 minut uppvärmning
-* 7 minuter huvudpass
-* 1 minut avslut
+7 övningar á 60 sekunder.
 
 ---
 
 ## Standard
 
-**16 minuter**
+**14 minuter**
 
-Består av:
-
-* 1 minut uppvärmning
-* 14 minuter huvudpass
-* 1 minut avslut
+14 övningar á 60 sekunder.
 
 Detta är det rekommenderade valet.
 
@@ -189,13 +177,9 @@ Detta är det rekommenderade valet.
 
 ## Längre
 
-**23 minuter**
+**21 minuter**
 
-Består av:
-
-* 1 minut uppvärmning
-* 21 minuter huvudpass
-* 1 minut avslut
+21 övningar á 60 sekunder.
 
 ---
 
@@ -247,44 +231,7 @@ Passet ska vara fysiskt krävande utan att kompromissa med rörelsekvalitet.
 
 ---
 
-# 12. Signaturuppvärmning
-
-Alla pass börjar med samma uppvärmning.
-
-Syftet är att:
-
-* skapa igenkänning
-* förbereda kroppen
-* skapa en tydlig identitet för svinstark
-
-Sekvens:
-
-1. Djup knäböj med armlyft
-2. Utfall bakåt med rotation
-3. Inchworm
-4. Höga knän
-
----
-
-# 13. Signaturavslut
-
-Alla pass avslutas på samma sätt.
-
-Syftet är att:
-
-* sänka pulsen
-* lugna andningen
-* markera att passet är klart
-
-Sekvens:
-
-1. Djup knäböj med lugn andning
-2. Långsam framfällning
-3. Andning med armlyft
-
----
-
-# 14. Användarupplevelse
+# 12. Användarupplevelse
 
 Efter ett pass ska användaren uppleva att:
 
@@ -298,7 +245,7 @@ Efter ett pass ska användaren uppleva att:
 
 ---
 
-# 15. Vad svinstark inte är
+# 13. Vad svinstark inte är
 
 svinstark är inte:
 
@@ -313,15 +260,13 @@ Fokus ligger på att genomföra ett bra pass här och nu.
 
 ---
 
-# 16. MVP
+# 14. MVP
 
 Version 1.0 ska innehålla:
 
 * automatiskt genererade pass
 * tre passlängder
 * tre intensitetsnivåer
-* signaturuppvärmning
-* signaturavslut
 * enkel timer
 * textinstruktioner
 * valbara ljudsignaler
@@ -342,7 +287,7 @@ Version 1.0 ska inte innehålla:
 
 ---
 
-# 17. Definition av färdig produkt
+# 15. Definition av färdig produkt
 
 En ny användare ska kunna öppna appen för första gången och, utan instruktioner eller förkunskaper:
 

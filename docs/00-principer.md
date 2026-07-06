@@ -74,13 +74,12 @@ Ordning:
 2. Skapa grundstruktur
 3. Bygg statisk startsida
 4. Implementera timer
-5. Implementera signaturuppvärmning och signaturavslut
-6. Skapa övningsbibliotek
-7. Implementera passgenerator
-8. Koppla ihop UI, timer och generator
-9. Lägg till ljud
-10. Lägg till PWA-stöd
-11. Testa manuellt
+5. Skapa övningsbibliotek
+6. Implementera passgenerator
+7. Koppla ihop UI, timer och generator
+8. Lägg till ljud
+9. Lägg till PWA-stöd
+10. Testa manuellt
 
 ---
 
@@ -226,7 +225,7 @@ Den ska:
 * använda passmallar
 * respektera `avoidAdjacent`
 * undvika dåliga sekvenser
-* returnera komplett pass med uppvärmning, huvudpass och avslut
+* returnera komplett pass med samtliga övningar
 
 ---
 
