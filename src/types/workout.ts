@@ -131,7 +131,7 @@ export interface TimerState {
   isPaused: boolean;
 }
 
-export type Screen = "start" | "workout" | "paused" | "finished";
+export type Screen = "start" | "warmup" | "workout" | "paused" | "finished";
 
 export interface AppState {
   screen: Screen;

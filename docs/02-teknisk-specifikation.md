@@ -1034,6 +1034,8 @@ type Screen =
 
     | "start"
 
+    | "warmup"
+
     | "workout"
 
     | "paused"
@@ -1047,6 +1049,10 @@ type Screen =
 
 ```text
 START
+
+↓
+
+Uppvärmning (valfri, ingen timer igång)
 
 ↓
 
@@ -1077,6 +1083,8 @@ Finished
 Back to Start
 ```
 
+Från Uppvärmning kan användaren välja Tillbaka och återgå direkt till Start utan att ett pass skapas.
+
 Paus kan ske från:
 
 * Exercise
@@ -1084,6 +1092,7 @@ Paus kan ske från:
 Inte från:
 
 * Start
+* Uppvärmning
 * Finished
 
 ---
@@ -1187,6 +1196,10 @@ Start
 
 ↓
 
+Uppvärmning
+
+↓
+
 Workout
 
 ↓
@@ -1206,7 +1219,7 @@ Finished
 Start
 ```
 
-Ingen annan navigering behövs i MVP.
+Från Uppvärmning finns en väg tillbaka till Start (utan att ett pass skapas). Ingen annan navigering behövs i MVP.
 
 ---
 
@@ -1221,6 +1234,12 @@ App
 │   ├── IntensitySelector
 │   ├── SoundToggle
 │   └── StartButton
+│
+├── WarmupScreen
+│   ├── Rubrik
+│   ├── Uppmaningstext
+│   ├── ReadyButton
+│   └── CancelButton
 │
 ├── WorkoutScreen
 │   ├── TimerDisplay
@@ -1258,7 +1277,28 @@ Standardval:
 
 ---
 
-## C.6 WorkoutScreen
+## C.6 WarmupScreen
+
+Visas efter att träningstid och intensitet valts, innan passet skapas och startas.
+
+Visar:
+
+* Rubrik: "Valfri uppvärmning"
+* Uppmaningstext om att värma upp på det sätt som passar användaren
+* Knapp: "Jag är uppvärmd" — genererar passet och startar det
+* Knapp: "Tillbaka" — återgår till Start utan att ett pass skapas
+
+Visar inte:
+
+* timer
+* övning
+* framstegsindikator
+
+Ingen timer är igång på denna skärm. Passet genereras och timern startar först när användaren trycker "Jag är uppvärmd".
+
+---
+
+## C.7 WorkoutScreen
 
 WorkoutScreen är appens viktigaste vy.
 
@@ -1282,7 +1322,7 @@ Den ska inte visa:
 
 ---
 
-## C.7 TimerDisplay
+## C.8 TimerDisplay
 
 Timern är den viktigaste komponenten.
 
@@ -1302,7 +1342,7 @@ Ingen cirkulär progressring i MVP.
 
 ---
 
-## C.8 ExerciseCard
+## C.9 ExerciseCard
 
 Visar:
 
@@ -1327,7 +1367,7 @@ Ingen animation.
 
 ---
 
-## C.9 WorkoutProgress
+## C.10 WorkoutProgress
 
 Visar diskret vilken övning i ordningen användaren är på, t.ex. "Övning 4 av 14".
 
@@ -1337,7 +1377,7 @@ Ska aldrig konkurrera visuellt med TimerDisplay.
 
 ---
 
-## C.10 PauseDialog
+## C.11 PauseDialog
 
 Visar:
 
@@ -1353,7 +1393,7 @@ Enkel modal.
 
 ---
 
-## C.11 FinishedScreen
+## C.12 FinishedScreen
 
 Visar:
 
@@ -1371,7 +1411,7 @@ Ingen konfetti.
 
 ---
 
-## C.12 Knappar
+## C.13 Knappar
 
 Alla knappar ska:
 
@@ -1385,7 +1425,7 @@ Minsta tryckyta:
 
 ---
 
-## C.13 Färgpalett
+## C.14 Färgpalett
 
 MVP använder få färger.
 
@@ -1402,7 +1442,7 @@ Statusfärger används sparsamt.
 
 ---
 
-## C.14 Typografi
+## C.15 Typografi
 
 Prioritet:
 
@@ -1415,7 +1455,7 @@ Produkten ska kännas lugn.
 
 ---
 
-## C.15 Animationer
+## C.16 Animationer
 
 Animationer används endast när de hjälper användaren.
 
@@ -1434,7 +1474,7 @@ Inte tillåtna:
 
 ---
 
-## C.16 Responsiv design
+## C.17 Responsiv design
 
 Appen utvecklas Mobile First.
 
@@ -1448,7 +1488,7 @@ Desktop är sekundärt.
 
 ---
 
-## C.17 Tillgänglighet
+## C.18 Tillgänglighet
 
 Krav:
 
@@ -1462,7 +1502,7 @@ Färg får aldrig vara enda informationsbärare.
 
 ---
 
-## C.18 Ljud
+## C.19 Ljud
 
 Ljud används endast som stöd.
 
@@ -1476,7 +1516,7 @@ Ljud ska kunna stängas av.
 
 ---
 
-## C.19 Komponentprinciper
+## C.20 Komponentprinciper
 
 Komponenter ska:
 
@@ -1488,7 +1528,7 @@ De ska inte innehålla affärslogik.
 
 ---
 
-## C.20 CSS-struktur
+## C.21 CSS-struktur
 
 Varje större komponent får en egen CSS Module.
 
@@ -1503,7 +1543,7 @@ Gemensamma variabler ligger i global CSS.
 
 ---
 
-## C.21 Ikoner
+## C.22 Ikoner
 
 Endast enkla ikoner används.
 
@@ -1518,7 +1558,7 @@ Ikoner ska stödja text, inte ersätta den.
 
 ---
 
-## C.22 PWA
+## C.23 PWA
 
 Appen ska kunna installeras på:
 
@@ -1530,7 +1570,7 @@ Installationen ska ge en app-liknande upplevelse.
 
 ---
 
-## C.23 Manifest
+## C.24 Manifest
 
 Manifestet ska innehålla:
 
@@ -1545,7 +1585,7 @@ Appen ska öppnas utan webbläsarens adressfält.
 
 ---
 
-## C.24 Ikoner (format)
+## C.25 Ikoner (format)
 
 Appen ska innehålla minst:
 
@@ -1556,7 +1596,7 @@ PNG-format.
 
 ---
 
-## C.25 Service Worker
+## C.26 Service Worker
 
 Service Worker ska:
 
@@ -1568,7 +1608,7 @@ Ingen dynamisk cache behövs i MVP.
 
 ---
 
-## C.26 Offline
+## C.27 Offline
 
 Efter första laddningen ska följande fungera utan internet:
 
@@ -1581,7 +1621,7 @@ Ingen funktion i MVP kräver nätverk.
 
 ---
 
-## C.27 Lokal lagring
+## C.28 Lokal lagring
 
 MVP använder lokal lagring endast för:
 
@@ -1593,7 +1633,7 @@ Ingen träningshistorik sparas.
 
 ---
 
-## C.28 Prestanda
+## C.29 Prestanda
 
 Mål:
 
@@ -1604,7 +1644,7 @@ Mål:
 
 ---
 
-## C.29 Deployment
+## C.30 Deployment
 
 Appen publiceras på Vercel.
 
@@ -1626,7 +1666,7 @@ Deployment ska ske automatiskt från huvudgrenen.
 
 ---
 
-## C.30 Browserstöd
+## C.31 Browserstöd
 
 MVP ska fungera i:
 
@@ -1639,7 +1679,7 @@ MVP ska fungera i:
 
 ---
 
-## C.31 Definition av färdig UI
+## C.32 Definition av färdig UI
 
 UI är färdigt när användaren kan:
 

@@ -3,14 +3,27 @@
 import FinishedScreen from "@/components/FinishedScreen";
 import PauseDialog from "@/components/PauseDialog";
 import StartScreen from "@/components/StartScreen";
+import WarmupScreen from "@/components/WarmupScreen";
 import WorkoutScreen from "@/components/WorkoutScreen";
 import { useSettings } from "@/hooks/useSettings";
 import { useWorkout } from "@/hooks/useWorkout";
 
 export default function Home() {
   const { settings, setDuration, setIntensity, setSoundEnabled } = useSettings();
-  const { screen, workout, currentBlock, timerState, error, start, pause, resume, stop, goToStart } =
-    useWorkout();
+  const {
+    screen,
+    workout,
+    currentBlock,
+    timerState,
+    error,
+    start,
+    beginWorkout,
+    cancelWarmup,
+    pause,
+    resume,
+    stop,
+    goToStart,
+  } = useWorkout();
 
   if (screen === "start") {
     return (
@@ -23,6 +36,10 @@ export default function Home() {
         onStart={() => start(settings)}
       />
     );
+  }
+
+  if (screen === "warmup") {
+    return <WarmupScreen onReady={beginWorkout} onCancel={cancelWarmup} />;
   }
 
   if (screen === "finished") {

@@ -765,6 +765,30 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 
 ---
 
+### 2026-07-06 — Ny skärm: Valfri uppvärmning
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- Ny skärm "Valfri uppvärmning" visas efter att träningstid/intensitet valts och "STARTA PASS" tryckts, innan passet skapas och startas. Uppmanar användaren att värma upp på valfritt sätt och har en knapp ("Jag är uppvärmd") som genererar passet och startar det, samt en "Tillbaka"-knapp som återgår till Start utan att skapa något pass
+- Ny skärmstate `"warmup"` i tillståndsmaskinen (`start` → `warmup` → `workout` → ...). `useWorkout.start()` unlockar ljudet (samma riktiga användargest som tidigare) och sparar valda inställningar i `pendingSettings`, men väntar med att generera passet och sätta `workout`-state tills `beginWorkout()` anropas — annars skulle timern (som startar automatiskt så fort `workout` är satt, se `useTimer.ts`) börja räkna ner medan uppvärmningsskärmen visas
+- Ny `cancelWarmup()` för "Tillbaka"-knappen, som nollställer `pendingSettings` och går till Start
+
+**Filer skapade:**
+- `src/components/WarmupScreen.tsx`, `src/components/WarmupScreen.module.css`
+
+**Filer ändrade:**
+- `src/types/workout.ts` (Screen-typen), `src/hooks/useWorkout.ts`, `src/app/page.tsx`
+- `docs/02-teknisk-specifikation.md`: B.23 Screen, B.24 State Machine, C.3 Skärmflöde och C.4 React-komponenter uppdaterade; ny sektion C.6 WarmupScreen infogad (C.6–C.31 → C.7–C.32, alla efterföljande C-sektioner skiftade +1)
+
+**Testat:**
+- `npm run lint`/`build` — felfria
+- Playwright mot produktionsbygge: uppvärmningsskärmen visas efter STARTA PASS, ingen övning/timer syns medan den visas, "Tillbaka" återgår korrekt till Start, och "Jag är uppvärmd" startar passet precis som tidigare (verifierat på Kortare/7 övningar). Noll konsolfel
+
+**Begränsningar:** Inga.
+
+---
+
 ## Mall för nästa post
 
 ```

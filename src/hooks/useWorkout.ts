@@ -12,6 +12,7 @@ import type { Screen, Workout, WorkoutSettings } from "@/types/workout";
 // (B.27/B.28) genom att koppla ihop passgeneratorn med useTimer.
 export function useWorkout() {
   const [screen, setScreen] = useState<Screen>("start");
+  const [pendingSettings, setPendingSettings] = useState<WorkoutSettings | null>(null);
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,23 +42,40 @@ export function useWorkout() {
   function start(settings: WorkoutSettings) {
     // Måste ske synkront här, i själva knapptryckningen, annars förblir
     // ljudet permanent avstängt på mobila webbläsare (se lib/audio.ts).
+    // Låset gäller för resten av sessionen, så det behöver inte upprepas
+    // när passet faktiskt startar efter uppvärmningsskärmen.
     if (settings.soundEnabled) {
       unlockAudioContext();
     }
 
     setError(null);
+    setPendingSettings(settings);
+    setScreen("warmup");
+  }
+
+  function beginWorkout() {
+    if (screen !== "warmup" || !pendingSettings) return;
+
     try {
-      setWorkout(generateWorkout(settings));
+      setWorkout(generateWorkout(pendingSettings));
       setScreen("workout");
     } catch {
       // Appen ska försöka återhämta sig innan ett felmeddelande visas (D.7).
       try {
-        setWorkout(generateWorkout(settings));
+        setWorkout(generateWorkout(pendingSettings));
         setScreen("workout");
       } catch {
         setError("Kunde inte skapa ett pass just nu. Försök igen.");
+        setPendingSettings(null);
+        setScreen("start");
       }
     }
+  }
+
+  function cancelWarmup() {
+    if (screen !== "warmup") return;
+    setPendingSettings(null);
+    setScreen("start");
   }
 
   // Paus är endast giltigt från "workout" och återuppta endast från "paused"
@@ -97,6 +115,8 @@ export function useWorkout() {
     timerState,
     error,
     start,
+    beginWorkout,
+    cancelWarmup,
     pause,
     resume,
     stop,
