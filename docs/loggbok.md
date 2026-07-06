@@ -706,6 +706,43 @@ Ytterligare en snabb iteration efter användarfeedback:
 
 ---
 
+### 2026-07-06 — Ta bort uppvärmning/nedvarvning
+
+**Status:** ✅ Klar
+
+På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslutet togs bort helt. Passet går nu direkt på övningarna för "ett renare upplägg". Passlängden ändras därmed från 9/16/23 till **7/14/21 minuter** (var tidigare 9/16/23 minuter inklusive 1 min uppvärmning + 1 min avslut).
+
+**Dokumentation uppdaterad** (ovanligt för loggboken, men en del av samma uppdrag): samtliga referenser till uppvärmning/nedvarvning/signatur städades bort i `00`, `01`, `02`, `04`, `05`, `06` och `07`. B-, C- och D-sektionerna i `02-teknisk-specifikation.md` samt sektionerna i `07-generator-specifikation.md` numrerades om. I `04-utvecklingsplan.md` behölls Fas 9/10:s nummer (markerade som borttagna) istället för att numrera om hela fas-sekvensen, för att inte bryta spårbarheten mot tidigare loggbokposter som redan refererar till "Fas 11", "Fas 15" osv.
+
+**Byggt:**
+- `src/types/workout.ts`: `WorkoutPhase` och `WorkoutSegment` borttagna. `WorkoutBlock.exercise` är nu obligatoriskt (var `Exercise | undefined`) — varje block är en övning
+- `src/data/warmup.ts`, `src/data/cooldown.ts`: borttagna
+- `src/data/workoutLabels.ts`: `durationMinutes` 9/16/23 → 7/14/21
+- `src/lib/workoutGenerator.ts`: tar bort `createWarmupBlock`/`createCooldownBlock`, returnerar bara övningsblock
+- `src/lib/timer.ts`: tar bort `getCurrentSegment`. `getExerciseProgress` kraftigt förenklad (ingen fasfiltrering behövs när alla block är övningar)
+- `src/components/PhaseBadge`: borttagen helt — hade bara visat en konstant "Träning" utan informationsvärde
+- `src/components/WorkoutScreen`: visar inte längre någon fasbadge
+
+**Filer skapade:** Inga (endast borttagningar och ändringar).
+
+**Filer borttagna:**
+- `src/data/warmup.ts`, `src/data/cooldown.ts`
+- `src/components/PhaseBadge.tsx`, `src/components/PhaseBadge.module.css`
+
+**Filer ändrade:**
+- `src/types/workout.ts`, `src/lib/timer.ts`, `src/lib/workoutGenerator.ts`, `src/data/workoutLabels.ts`, `src/components/WorkoutScreen.tsx`, `src/components/WorkoutProgress.tsx`, `src/hooks/useWorkout.ts`
+- `docs/00-principer.md`, `docs/01-produktspecifikation.md`, `docs/02-teknisk-specifikation.md`, `docs/04-utvecklingsplan.md`, `docs/05-designprinciper.md`, `docs/06-roadmap.md`, `docs/07-generator-specifikation.md`
+
+**Testat:**
+- `npm run build`/`lint` — felfria
+- Genererade 179 pass (20 per kombination av längd/intensitet): korrekt antal block (7/14/21), alla block har en övning och exakt 60 sekunders längd, inget kvarvarande `phase`-fält
+- **Fullständig, verklig genomspelning** (Kortare/Normalt, 7 minuter i realtid, produktionsbygge): startar direkt på första övningen (ingen uppvärmning), paus fryser tiden exakt (00:30 → 00:30 efter 3 s), återupptas korrekt, avslutas naturligt till Klart!-skärmen efter ~7 minuter. Noll konsolfel
+- Offline (Standard/14 övningar) och manuell Avsluta (Längre/21 övningar) verifierade separat, båda felfria
+
+**Begränsningar:** Inga.
+
+---
+
 ## Mall för nästa post
 
 ```
