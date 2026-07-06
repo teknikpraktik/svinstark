@@ -5,9 +5,8 @@ interface WorkoutProgressProps {
   total: number;
 }
 
-// Diskret indikator för vilken övning i passet användaren är på. Visas endast
-// under träningsfasen (inte uppvärmning/nedvarvning). Ska aldrig konkurrera
-// visuellt med den stora TimerDisplay-komponenten eller ExerciseCard.
+// Diskret indikator för vilken övning i passet användaren är på. Ska aldrig
+// konkurrera visuellt med den stora TimerDisplay-komponenten eller ExerciseCard.
 export default function WorkoutProgress({ current, total }: WorkoutProgressProps) {
   return (
     <p className={styles.progress}>

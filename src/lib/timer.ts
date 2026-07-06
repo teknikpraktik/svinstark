@@ -1,38 +1,19 @@
-import type { TimerState, Workout, WorkoutBlock, WorkoutSegment } from "@/types/workout";
+import type { TimerState, Workout, WorkoutBlock } from "@/types/workout";
 
 const TICK_INTERVAL_MS = 250;
-
-// Härleder vilket segment (t.ex. under uppvärmning/nedvarvning) som är
-// aktuellt just nu, utifrån hur mycket av blocket som redan förflutit.
-export function getCurrentSegment(block: WorkoutBlock, remainingSeconds: number): WorkoutSegment | undefined {
-  if (!block.segments) return undefined;
-
-  const elapsedSeconds = block.duration - remainingSeconds;
-  return block.segments.find(
-    (segment) => elapsedSeconds >= segment.startSecond && elapsedSeconds < segment.endSecond
-  );
-}
 
 export interface ExerciseProgress {
   current: number;
   total: number;
 }
 
-// Vilken övning (inte uppvärmning/nedvarvning) det aktuella blocket är, av
-// det totala antalet övningar i passet. Returnerar null utanför träningsfasen
-// - uppvärmning och nedvarvning har inget "övning X av Y" att visa.
+// Vilken övning det aktuella blocket är, av det totala antalet övningar i
+// passet (alla block är övningar sedan uppvärmning/nedvarvning togs bort).
 export function getExerciseProgress(
   blocks: WorkoutBlock[],
   currentBlockIndex: number
-): ExerciseProgress | null {
-  if (blocks[currentBlockIndex]?.phase !== "exercise") return null;
-
-  const total = blocks.filter((block) => block.phase === "exercise").length;
-  const current = blocks
-    .slice(0, currentBlockIndex + 1)
-    .filter((block) => block.phase === "exercise").length;
-
-  return { current, total };
+): ExerciseProgress {
+  return { current: currentBlockIndex + 1, total: blocks.length };
 }
 
 export interface WorkoutTimerCallbacks {

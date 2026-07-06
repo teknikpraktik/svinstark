@@ -61,9 +61,8 @@ export function useWorkout() {
   }
 
   // Paus är endast giltigt från "workout" och återuppta endast från "paused"
-  // (B.28: paus kan ske från uppvärmning/övning/nedvarvning, aldrig från
-  // start eller finished). Hooken skyddar övergångarna själv istället för
-  // att lita på att UI:t bara anropar dem vid rätt tillfälle.
+  // (B.24: aldrig från start eller finished). Hooken skyddar övergångarna
+  // själv istället för att lita på att UI:t bara anropar dem vid rätt tillfälle.
   function pause() {
     if (screen !== "workout") return;
     pauseTimer();

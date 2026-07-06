@@ -1,6 +1,4 @@
-import { cooldownSegments } from "@/data/cooldown";
 import { exerciseData } from "@/data/exerciseData";
-import { warmupSegments } from "@/data/warmup";
 import { workoutTemplates } from "@/data/workoutTemplates";
 import type {
   Equipment,
@@ -168,28 +166,9 @@ function isValidWorkout(exercises: Exercise[], intensity: WorkoutIntensity): boo
   );
 }
 
-function createWarmupBlock(): WorkoutBlock {
-  return {
-    id: createId(),
-    phase: "warmup",
-    duration: BLOCK_DURATION_SECONDS,
-    segments: warmupSegments,
-  };
-}
-
-function createCooldownBlock(): WorkoutBlock {
-  return {
-    id: createId(),
-    phase: "cooldown",
-    duration: BLOCK_DURATION_SECONDS,
-    segments: cooldownSegments,
-  };
-}
-
 function createExerciseBlock(exercise: Exercise): WorkoutBlock {
   return {
     id: createId(),
-    phase: "exercise",
     duration: BLOCK_DURATION_SECONDS,
     exercise,
   };
@@ -223,10 +202,6 @@ export function generateWorkout(settings: WorkoutSettings): Workout {
     id: createId(),
     createdAt: new Date(),
     settings,
-    blocks: [
-      createWarmupBlock(),
-      ...mainExercises.map((exercise) => createExerciseBlock(exercise)),
-      createCooldownBlock(),
-    ],
+    blocks: mainExercises.map((exercise) => createExerciseBlock(exercise)),
   };
 }

@@ -85,21 +85,10 @@ export interface WorkoutSettings {
   soundEnabled: boolean;
 }
 
-export type WorkoutPhase = "warmup" | "exercise" | "cooldown";
-
-export interface WorkoutSegment {
-  startSecond: number;
-  endSecond: number;
-  title: string;
-  instruction: string;
-}
-
 export interface WorkoutBlock {
   id: string;
-  phase: WorkoutPhase;
   duration: number;
-  exercise?: Exercise;
-  segments?: WorkoutSegment[];
+  exercise: Exercise;
 }
 
 export interface Workout {

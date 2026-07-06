@@ -13,9 +13,9 @@ export const durationLabels: Record<WorkoutDuration, string> = {
 
 // Total passlängd i minuter, enligt 01-produktspecifikation.md §10.
 export const durationMinutes: Record<WorkoutDuration, number> = {
-  short: 9,
-  standard: 16,
-  long: 23,
+  short: 7,
+  standard: 14,
+  long: 21,
 };
 
 export const intensityOrder: WorkoutIntensity[] = ["calm", "normal", "hard"];
