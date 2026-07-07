@@ -47,7 +47,7 @@ const COMMANDS = {
     // BASE_URL - a leftover instance from a killed previous run (or a
     // half-compiled one) answers HTTP fine but reliably produced flaky
     // "Page crashed" / 30s navigation timeouts here. See Gotchas in SKILL.md.
-    devServer = spawn("npm run dev", {
+    devServer = spawn(process.env.DEV_SERVER_CMD || "npm run dev", {
       cwd: APP_DIR,
       stdio: ["ignore", "pipe", "pipe"],
       shell: true,
@@ -84,6 +84,16 @@ const COMMANDS = {
     const [width, height] = args.split(/\s+/).map(Number);
     await page.setViewportSize({ width, height });
     console.log("viewport ->", width, "x", height);
+  },
+
+  // Runs before every subsequent navigation (Playwright's addInitScript),
+  // not immediately - always follow with `nav` to apply it. Useful for
+  // spoofing things a page reads once at load, e.g. navigator.userAgent or
+  // matchMedia, that can't be changed by simple eval after the fact.
+  async "init-script"(js) {
+    if (!page) return console.log("ERROR: launch first");
+    await page.addInitScript(js);
+    console.log("init-script added - follow with `nav` to apply");
   },
 
   async wait(selector) {

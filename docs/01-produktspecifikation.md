@@ -146,13 +146,15 @@ Trycker:
 
 **STARTA PASS**
 
-Appen leder därefter användaren direkt genom huvudpasset, övning för övning.
+Appen leder därefter användaren direkt genom huvudpasset, övning för övning. Om en övning inte passar går det att hoppa över den direkt, utan bekräftelse - nästa övning startar automatiskt med full tid.
 
 Passet avslutas.
 
 Klart.
 
 Utöver detta finns två små, sekundära ikoner på startsidan: en ljudikon (ljud på/av) och en informationsikon som öppnar en kort text om appen. Ingen separat inställningssida finns i MVP - allt som påverkar dagens pass syns och ändras direkt på startsidan.
+
+Startsidan visar även, diskret under STARTA PASS, en installationsruta när appen körs i en vanlig webbläsare (aldrig när appen redan är installerad som PWA). Den går att stänga och kommer då inte tillbaka.
 
 ---
 

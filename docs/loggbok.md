@@ -29,6 +29,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 15  | Sluttest                    | ✅ Klar — MVP färdig |
 | v1.1| Experience Update           | ✅ Klar      |
 | v1.2| Fria vikter + förenklat startflöde | ✅ Klar |
+| v1.3| PWA-installation, ny appikon, hoppa över övning | ✅ Klar |
 
 ---
 
@@ -911,6 +912,53 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 
 **Filer ändrade:**
 - `docs/01-produktspecifikation.md`, `docs/02-teknisk-specifikation.md`, `docs/03-exercise-library-specification.md`, `docs/04-utvecklingsplan.md`, `docs/06-roadmap.md`, `docs/07-generator-specifikation.md`
+
+**Testat:**
+- Endast dokumentationsändringar, ingen kodpåverkan
+
+---
+
+### 2026-07-07 — v1.3: PWA-installation, ny appikon, hoppa över övning
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- **Hoppa över övning:** `WorkoutTimer.skip()` (`src/lib/timer.ts`) - avancerar direkt till nästa block med dess fulla tid (till skillnad från `tick()`s kumulativa katch-up-logik för bakgrundsfördröjning, som inte är relevant för en explicit engångshandling). Om sista övningen hoppas över anropas samma `onFinish`-väg som normal timeout. Exponerad via `useTimer`/`useWorkout` (`skip()`, giltig endast under `screen === "workout"`) och en diskret textknapp "Hoppa över" i `WorkoutScreen.tsx`, placerad under övningskortet (mindre framträdande än Paus/Avsluta). Ljud för nytt block spelas automatiskt eftersom skip återanvänder samma `onBlockChange`-callback som den vanliga timerloopen
+- **Ny appikon:** Den gamla ikonen visade bokstäverna "SS" i fet stil - för nära den historiska nazistiska symboliken. Ersatt med ett enda fett "S" (en av de uttryckligen godkända, säkra riktningarna i uppdraget), genererad programmatiskt (HTML/CSS + Playwright-skärmdump vid varje målstorlek, skript sparat i sessionens scratchpad, inte i repot) i samma svart/vit-palett som appen i övrigt. Nya filer: `icon-192x192.png`, `icon-512x512.png`, `apple-touch-icon.png` (180×180), samt två nya maskable-varianter (`icon-maskable-192x192.png`/`-512x512.png`, bokstaven hålls inom Androids säkerhetszon på 80 % av kanvasen). `monogram.png` (startsidans hero-bild) fick samma behandling. `manifest.json` uppdaterad med `purpose: "any"`/`"maskable"` per ikon; `layout.tsx` pekar nu apple-ikonen mot den dedikerade `apple-touch-icon.png` istället för att återanvända `icon-192x192.png`
+- **Tydligare PWA-installation:** Ny självständig komponent `InstallPrompt.tsx`, placerad direkt under STARTA PASS-knappen på startsidan. Döljs helt när appen körs i standalone-läge (`matchMedia('(display-mode: standalone)')` eller `navigator.standalone` på iOS). Tre lägen beroende på vad webbläsaren faktiskt stödjer: (1) om `beforeinstallprompt` har skjutits upp av webbläsaren (Chrome/Edge, Android *och* desktop) visas en riktig "Lägg till på hemskärmen"-knapp som triggar webbläsarens egen dialog, (2) på iOS (som aldrig skickar det eventet) visas en kort textinstruktion om Dela-ikonen, (3) annars en generell instruktion om webbläsarens meny. Stängs med en liten ×-knapp, kommer ihåg valet permanent via `localStorage` (`svinstark:install-prompt-dismissed`)
+
+**Tekniska val värda att notera:**
+- `InstallPrompt` läser `localStorage`/`navigator`/`matchMedia` via `useSyncExternalStore` (samma mönster som `useSettings.ts`), inte ett vanligt `useEffect`+`setState` - det senare triggar `react-hooks/set-state-in-effect`-lintregeln och riskerar en hydreringskrock mellan serverns första rendering (utan `window`) och klientens
+- Install-knappen gates på att `beforeinstallprompt` faktiskt har inträffat, inte på user-agent-sniffing för "Android" - fångar därmed även desktop Chrome/Edge, som skickar samma event
+
+**Filer ändrade:**
+- `src/lib/timer.ts`, `src/hooks/useTimer.ts`, `src/hooks/useWorkout.ts`, `src/components/WorkoutScreen.tsx`, `src/components/WorkoutScreen.module.css`, `src/app/page.tsx`, `public/manifest.json`, `src/app/layout.tsx`, `public/icons/icon-192x192.png`, `public/icons/icon-512x512.png`, `public/icons/monogram.png`, `.claude/skills/run-svinstark/driver.mjs` (nya kommandon `init-script` och `DEV_SERVER_CMD`-stöd), `.claude/skills/run-svinstark/SKILL.md`
+
+**Filer skapade:**
+- `src/components/InstallPrompt.tsx`, `src/components/InstallPrompt.module.css`, `public/icons/apple-touch-icon.png`, `public/icons/icon-maskable-192x192.png`, `public/icons/icon-maskable-512x512.png`
+
+**Testat:**
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` - felfria
+- Live mot produktionsbygge (`npm run build && npm run start`, nödvändigt eftersom `next-pwa` stänger av service worker i dev-läge) via `.claude/skills/run-svinstark/driver.mjs`: service worker registrerar sig, alla ikonfiler svarar 200, installationsrutan visar rätt läge (generisk text i vanlig Chromium, iOS-instruktion vid spoofad iPhone-UA via nytt `init-script`-kommando, helt dold vid spoofad standalone-`matchMedia`), stängs och kommer ihåg valet efter omladdning
+- Hoppa över testat genom ett helt kort pass (7 övningar): övning och timer (01:00) byts korrekt vid varje hopp, paus/återuppta fungerar oförändrat tillsammans med hoppa över, och att hoppa över sista övningen landar korrekt på Klart!-skärmen
+
+**Begränsningar / öppna frågor:**
+- Inga - på användarens godkännande uppdaterades `00`, `01`, `02` och `04` i samma session (se separat loggpost nedan) innan commit.
+
+---
+
+### 2026-07-07 — Dokumentationsuppdatering: spec-dokument synkade med v1.3
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- `00-principer.md` §13: "hoppa över" tillagd i listan över vad som visas under passet
+- `01-produktspecifikation.md` §9: nämner nu att en övning kan hoppas över utan bekräftelse, och att en diskret installationsruta visas under Starta pass i vanlig webbläsare
+- `02-teknisk-specifikation.md`: C.5 (StartScreen) uppdaterad fullt ut - den hade redan halkat efter v1.2 (saknade utrustningsval och ikoner) och fick nu även installationsrutan; C.7 (WorkoutScreen) fick "hoppa över" i listan över vad som visas; C.23/C.24/C.25 (PWA/manifest/ikonformat) beskriver nu maskable-ikoner, Apple touch icon och principen bakom det nya enkla "S"-monogrammet; ny C.28a dokumenterar `InstallPrompt`; C.28 nämner den nya lagrade nyckeln; B.25 (Timerregler) beskriver `skip()`
+- `04-utvecklingsplan.md`: Fas 13 ("PWA") fick ett tillägg om ikonbytet och installationsrutan, samma mönster som tidigare tillägg till Fas 9/10/12
+
+**Filer ändrade:**
+- `docs/00-principer.md`, `docs/01-produktspecifikation.md`, `docs/02-teknisk-specifikation.md`, `docs/04-utvecklingsplan.md`
 
 **Testat:**
 - Endast dokumentationsändringar, ingen kodpåverkan

@@ -31,7 +31,7 @@ export function useWorkout() {
     [handleFinish, playNewBlock, playCountdown]
   );
 
-  const { timerState, pause: pauseTimer, resume: resumeTimer, stop: stopTimer } = useTimer(
+  const { timerState, pause: pauseTimer, resume: resumeTimer, stop: stopTimer, skip: skipTimer } = useTimer(
     workout,
     timerCallbacks
   );
@@ -100,6 +100,14 @@ export function useWorkout() {
     setScreen("start");
   }
 
+  // Giltigt endast under pågående pass (aldrig pausad/start/finished).
+  // skipTimer avslutar passet själv (via onFinish -> handleFinish) om det
+  // var sista övningen, så inget extra skärmbyte behövs här för det fallet.
+  function skip() {
+    if (screen !== "workout") return;
+    skipTimer();
+  }
+
   function goToStart() {
     if (screen !== "finished") return;
     setWorkout(null);
@@ -120,6 +128,7 @@ export function useWorkout() {
     pause,
     resume,
     stop,
+    skip,
     goToStart,
   };
 }

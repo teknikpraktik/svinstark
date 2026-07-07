@@ -58,6 +58,18 @@ workout screen. Every command echoes its own result line, so you don't need
 Screenshots and the dev server log land in `%TEMP%\svinstark-shots\` (override
 with `SCREENSHOT_DIR`). `BASE_URL` overrides the default `http://localhost:3000`.
 
+`next-pwa` disables the service worker in development (`disable: process.env.NODE_ENV === "development"`
+in `next.config.ts`) - PWA-specific checks (service worker registration,
+`beforeinstallprompt`, install banner) need a production server instead:
+
+```bash
+npm run build
+DEV_SERVER_CMD="npm run start" node .claude/skills/run-svinstark/driver.mjs <<'EOF'
+launch
+...
+EOF
+```
+
 ### Commands
 
 | command | what it does |
@@ -65,6 +77,7 @@ with `SCREENSHOT_DIR`). `BASE_URL` overrides the default `http://localhost:3000`
 | `launch` | start a fresh dev server, launch Chromium, navigate to it |
 | `nav <path>` | go to `<path>` (relative to `BASE_URL`) |
 | `viewport <width> <height>` | resize the page (e.g. `viewport 390 844` for a phone-sized check) |
+| `init-script <js>` | run `<js>` before the next navigation (e.g. spoof `navigator.userAgent` or `matchMedia`) - follow with `nav` to apply |
 | `wait <css-selector>` | wait up to 10s for a selector |
 | `wait-text <text>` | wait up to 10s for text anywhere on the page |
 | `click <css-selector>` | click via Playwright locator |

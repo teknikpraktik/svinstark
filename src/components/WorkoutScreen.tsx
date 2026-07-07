@@ -13,6 +13,7 @@ interface WorkoutScreenProps {
   timerState: TimerState;
   onPause: () => void;
   onStop: () => void;
+  onSkip: () => void;
 }
 
 export default function WorkoutScreen({
@@ -22,6 +23,7 @@ export default function WorkoutScreen({
   timerState,
   onPause,
   onStop,
+  onSkip,
 }: WorkoutScreenProps) {
   const exerciseProgress = getExerciseProgress(blocks, timerState.currentBlock);
 
@@ -37,6 +39,9 @@ export default function WorkoutScreen({
       <div className={styles.content}>
         <ExerciseCard name={block.exercise.name} instruction={block.exercise.instruction} />
         <WorkoutProgress current={exerciseProgress.current} total={exerciseProgress.total} />
+        <button className={styles.skipButton} onClick={onSkip}>
+          Hoppa över
+        </button>
       </div>
 
       <div className={styles.actions}>

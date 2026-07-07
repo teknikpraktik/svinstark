@@ -88,6 +88,30 @@ export class WorkoutTimer {
     this.emit();
   }
 
+  // Hoppar direkt till nästa block med dess fulla tid, till skillnad från
+  // tick()'s katch-up-logik (som skjuter fram deadline kumulativt för att
+  // hålla wall-clock-schemat efter bakgrundsfördröjning). Ett skip är en
+  // explicit, engångs-handling just nu - nästa block ska få hela sin tid
+  // räknat från detta ögonblick, inte från när det "borde" ha startat.
+  skip(): void {
+    if (!this.state.isRunning) return;
+
+    const isLastBlock = this.state.currentBlock >= this.blockDurationsSeconds.length - 1;
+    if (isLastBlock) {
+      this.stopTicking();
+      this.state = { ...this.state, remainingSeconds: 0, isRunning: false, isPaused: false };
+      this.emit();
+      this.callbacks.onFinish?.();
+      return;
+    }
+
+    const nextBlock = this.state.currentBlock + 1;
+    this.blockDeadline = Date.now() + this.blockDurationsSeconds[nextBlock] * 1000;
+    this.state = { ...this.state, currentBlock: nextBlock, remainingSeconds: this.blockDurationsSeconds[nextBlock] };
+    this.callbacks.onBlockChange?.(nextBlock);
+    this.emit();
+  }
+
   private beginTicking(): void {
     this.stopTicking();
     this.intervalId = setInterval(() => this.tick(), TICK_INTERVAL_MS);

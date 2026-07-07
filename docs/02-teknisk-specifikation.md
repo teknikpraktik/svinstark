@@ -1139,6 +1139,8 @@ Varje block är exakt:
 
 Ingen individuell tidsjustering finns i MVP.
 
+`WorkoutTimer.skip()` avslutar det aktuella blocket omedelbart och startar nästa block med dess fulla 60 sekunder räknat från anropsögonblicket - en engångshandling, till skillnad från `tick()`s kumulativa katch-up-logik som håller schemat efter bakgrundsfördröjning. Om det skippade blocket var det sista avslutas passet på samma sätt som vid normal timeout (`onFinish`). Giltigt endast medan passet pågår (`screen === "workout"`), inte under paus. Ingen bekräftelsedialog, ingen historik över skippade övningar.
+
 ---
 
 ## B.26 Affärslogik kontra UI
@@ -1298,13 +1300,16 @@ Visar:
 * Den minsta effektiva dosen
 * Träningstid
 * Intensitet
-* Ljud på/av
+* Utrustning: Chinsstång, Stol/pall, Fria vikter (se B.7/B.7a)
+* Ljudikon och informationsikon (öppnar `AboutModal`), uppe till höger
 * Starta pass
+* Installationsruta (`InstallPrompt`, se C.28a), diskret under Starta pass
 
 Standardval:
 
 * Standard (14 min)
 * Normalt
+* Chinsstång: Ja, Stol/pall: Ja, Fria vikter: Nej
 * Ljud på
 
 ---
@@ -1343,6 +1348,7 @@ Den ska endast visa:
 * vilken övning i ordningen (t.ex. "Övning 4 av 14")
 * paus
 * avsluta
+* hoppa över (diskret textknapp, se B.25)
 
 Den ska inte visa:
 
@@ -1600,6 +1606,8 @@ Appen ska kunna installeras på:
 
 Installationen ska ge en app-liknande upplevelse.
 
+Startsidan visar en diskret, valbar installationsruta (`InstallPrompt`) för att göra installationen tydligare, se C.28a.
+
 ---
 
 ## C.24 Manifest
@@ -1608,7 +1616,7 @@ Manifestet ska innehålla:
 
 * namn
 * kortnamn
-* ikon
+* ikon (`"any"` och `"maskable"`, se C.25)
 * theme color
 * background color
 * standalone
@@ -1621,10 +1629,13 @@ Appen ska öppnas utan webbläsarens adressfält.
 
 Appen ska innehålla minst:
 
-* 192×192 px
-* 512×512 px
+* 192×192 px och 512×512 px, `purpose: "any"`
+* 192×192 px och 512×512 px, `purpose: "maskable"` (motivet inom Androids säkerhetszon, en cirkel med diameter 80 % av kanvasen, så att runda/squircle-launchermasker inte klipper bort det)
+* en Apple touch icon, 180×180 px, utan egen rundning eller transparens (iOS applierar sin egen mask)
 
 PNG-format.
+
+Ikonen är ett enda bokstavsmonogram ("S") i appens svart/vita palett - inte en dubbel "SS" (kan associeras med historisk symbolik och undviks därför uttryckligen) och inte heller en illustration i MVP. Se `docs/loggbok.md` v1.3.
 
 ---
 
@@ -1655,9 +1666,25 @@ Ingen funktion i MVP kräver nätverk.
 
 ## C.28 Lokal lagring
 
-MVP använder lokal lagring endast för hela `WorkoutSettings` (B.9): senaste valda träningstid, intensitet, ljud på/av, chinsstång, stol/pall och fria vikter.
+MVP använder lokal lagring för:
+
+* hela `WorkoutSettings` (B.9): senaste valda träningstid, intensitet, ljud på/av, chinsstång, stol/pall och fria vikter
+* om användaren stängt installationsrutan (`svinstark:install-prompt-dismissed`, se C.28a) - permanent, tills webbläsarens lagring rensas
 
 Ingen träningshistorik sparas.
+
+---
+
+## C.28a InstallPrompt
+
+Självständig, propless komponent på startsidan (under STARTA PASS) som avgör helt själv om, och i vilken variant, installationsinformation ska visas:
+
+* **Döljs helt** om appen körs i standalone-läge (`matchMedia("(display-mode: standalone)")` eller `navigator.standalone` på iOS), eller om användaren tidigare stängt den (C.28)
+* **Riktig installationsknapp** om webbläsaren skjutit upp ett `beforeinstallprompt`-event (Chrome/Edge, både Android och desktop) - triggar webbläsarens egen dialog via `event.prompt()`
+* **iOS-instruktion** (kort text om Dela-ikonen) om enheten är en iPhone/iPad/iPod, eftersom Safari aldrig skickar `beforeinstallprompt`
+* **Generell instruktion** om webbläsarens meny annars
+
+Läsning av `localStorage`/`navigator`/`matchMedia` sker via `useSyncExternalStore` (samma mönster som B.9/`useSettings`), inte ett vanligt `useEffect`+`setState`, för att undvika en hydreringskrock mellan serverns första rendering (utan `window`) och klientens.
 
 ---
 

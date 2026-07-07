@@ -251,6 +251,7 @@ Under passet visas endast:
 * instruktion
 * paus
 * avsluta
+* hoppa över (diskret, se `docs/loggbok.md` v1.3)
 
 ---
 

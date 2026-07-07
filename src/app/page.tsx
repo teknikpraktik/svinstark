@@ -30,6 +30,7 @@ export default function Home() {
     pause,
     resume,
     stop,
+    skip,
     goToStart,
   } = useWorkout();
 
@@ -68,6 +69,7 @@ export default function Home() {
         timerState={timerState}
         onPause={pause}
         onStop={stop}
+        onSkip={skip}
       />
       <PauseDialog isOpen={screen === "paused"} onResume={resume} onStop={stop} />
     </>

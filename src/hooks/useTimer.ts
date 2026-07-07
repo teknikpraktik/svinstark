@@ -48,5 +48,6 @@ export function useTimer(workout: Workout | null, callbacks: UseTimerCallbacks =
     pause: () => timerRef.current?.pause(),
     resume: () => timerRef.current?.resume(),
     stop: () => timerRef.current?.stop(),
+    skip: () => timerRef.current?.skip(),
   };
 }

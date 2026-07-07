@@ -316,6 +316,8 @@ Verifiera:
 * installation fungerar
 * offline fungerar
 
+**Tillägg 2026-07-07 (v1.3):** Ikonerna (som visade "SS") ersattes med ett enda bokstavsmonogram, maskable-varianter och en dedikerad Apple touch icon lades till, och en diskret installationsruta (`InstallPrompt`) lades till på startsidan för att göra installationen tydligare. Se `docs/loggbok.md` och `02-teknisk-specifikation.md` C.23–C.25/C.28a.
+
 ---
 
 # 17. Fas 14 – Optimering

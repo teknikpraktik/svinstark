@@ -3,6 +3,7 @@
 import { useState } from "react";
 import AboutModal from "@/components/AboutModal";
 import IconButton from "@/components/IconButton";
+import InstallPrompt from "@/components/InstallPrompt";
 import OptionSelector from "@/components/OptionSelector";
 import PrimaryButton from "@/components/PrimaryButton";
 import {
@@ -140,6 +141,8 @@ export default function StartScreen({
       {error && <p className={styles.error}>{error}</p>}
 
       <PrimaryButton onClick={onStart}>STARTA PASS</PrimaryButton>
+
+      <InstallPrompt />
 
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
     </div>
