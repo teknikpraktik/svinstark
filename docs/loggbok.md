@@ -30,6 +30,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | v1.1| Experience Update           | ✅ Klar      |
 | v1.2| Fria vikter + förenklat startflöde | ✅ Klar |
 | v1.3| PWA-installation, ny appikon, hoppa över övning | ✅ Klar |
+| v1.4| UI-förbättringar: renare startsida, tydligare passkärm | ✅ Klar |
 
 ---
 
@@ -959,6 +960,45 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 
 **Filer ändrade:**
 - `docs/00-principer.md`, `docs/01-produktspecifikation.md`, `docs/02-teknisk-specifikation.md`, `docs/04-utvecklingsplan.md`
+
+**Testat:**
+- Endast dokumentationsändringar, ingen kodpåverkan
+
+---
+
+### 2026-07-07 — v1.4: UI-förbättringar (renare startsida, tydligare passkärm)
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- **Startsidan förenklad:** rubriken "Kroppen svarar på signaler, inte på träningstid." och förklaringsstycket under den togs bort. Ersatt av en kort tagline "Träna med minsta effektiva dosen". Kvar: monogram, "svinstark", taglinen, de tre value props (Helkropp/Tidseffektivt/Regelstyrt), valen (träningstid/intensitet/utrustning) och Starta pass
+- **Informationsrutan:** den borttagna rubriken/förklaringen flyttades in som en ny inledning i `AboutModal` (`Kroppen svarar på signaler...` + det gamla förklaringsstycket), före den befintliga "Träning ska vara enkel"-rubriken. `IconButton` fick en ny `size`-prop (`"default" | "large"`); informationsikonen på startsidan använder nu `size="large"` (56×56, större glyf) - påverkar inte andra `IconButton`-användningar (t.ex. `InstallPrompt`s stäng-knapp) eftersom `"default"` är oförändrad
+- **Ljud på/av flyttat till träningsskärmen:** ikonen (nu också `size="large"`) togs bort från `StartScreen` och visas istället uppe till höger på `WorkoutScreen`, positionerad absolut i headern så den centrerade sammanfattningstexten (Total längd/Intensitet) inte påverkas. `useWorkout` tog tidigare `workout.settings.soundEnabled` (en fryst kopia från när passet skapades) - eftersom ljudikonen nu är synlig och kan tryckas på *under* passet ändrades hooken till att ta emot `soundEnabled` live som argument (`useWorkout(settings.soundEnabled)`), så en tryckning under passet hörs direkt i samma pass, inte bara i nästa
+- **Övningsnamnet större:** `ExerciseCard`s `.name` gick från fast `1.5rem` till `clamp(1.75rem, 8vw, 2.75rem)` - skalar med skärmbredden men med golv och tak, så korta namn inte blir för små och långa namn inte flödar över (radbryts istället, som tidigare)
+- **"Hoppa över" flyttad:** låg tidigare direkt under övningskortet/progress-texten, mitt i huvudinnehållet. Flyttad till en egen högerjusterad rad direkt ovanför Paus/Avsluta-knapparna (`.content` har `flex:1` och trycker därmed ner den mot botten) - nere till höger, sekundär (ingen ram/bakgrund), i vägen för varken timer eller övningsnamn
+
+**Filer ändrade:**
+- `src/components/StartScreen.tsx`, `src/components/AboutModal.tsx`, `src/components/AboutModal.module.css`, `src/components/IconButton.tsx`, `src/components/IconButton.module.css`, `src/components/WorkoutScreen.tsx`, `src/components/WorkoutScreen.module.css`, `src/components/ExerciseCard.module.css`, `src/hooks/useWorkout.ts`, `src/app/page.tsx`
+
+**Testat:**
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` - felfria
+- Live i appen (mobilbredd 390px) via `.claude/skills/run-svinstark/driver.mjs`: startsidan renderad och jämförd visuellt (endast angiven kortinformation kvar, infoikonen märkbart större), informationsrutan visar den flyttade texten överst, ljudikonen (56px, bekräftat via `getComputedStyle`) syns och togglar korrekt på träningsskärmen och sparar till `localStorage`, övningsnamnet klart större/tydligare i skärmdump, "Hoppa över" nere till höger ovanför Paus/Avsluta. Ett fullständigt kort pass kört med hoppa-över genom samtliga sju övningar (inklusive sista) för att bekräfta att flytten inte påverkade funktionen
+
+**Begränsningar / öppna frågor:**
+- Inga - på användarens godkännande uppdaterades `01` och `02` i samma session (se separat loggpost nedan) innan commit.
+
+---
+
+### 2026-07-07 — Dokumentationsuppdatering: spec-dokument synkade med v1.4
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- `01-produktspecifikation.md` §9: ljudikonen flyttad från "på startsidan" till "under passet, uppe till höger"; nämner nu bara informationsikonen kvar på startsidan
+- `02-teknisk-specifikation.md`: C.5 (StartScreen) uppdaterad - ny tagline och value props i listan, ljudikonen borttagen därifrån med en förklarande rad om flytten och om att den längre texten gick till `AboutModal`; C.7 (WorkoutScreen) fick ljudikonen tillagd (med hänvisning till varför den flyttades hit) och en notering om att övningsnamnet är huvudfokus samt var "hoppa över" nu sitter; C.9 (ExerciseCard) beskriver den responsiva textstorleken; C.19 (Ljud) pekar nu mot WorkoutScreen istället för startsidan, med motiveringen att en tryckning ska gälla omedelbart för pågående pass; C.22 (Ikoner) dokumenterar `IconButton`s nya `size`-variant; B.9 (WorkoutSettings) förklarar att `soundEnabled` läses live via `useWorkout`, inte den frusna kopian i `workout.settings`
+
+**Filer ändrade:**
+- `docs/01-produktspecifikation.md`, `docs/02-teknisk-specifikation.md`
 
 **Testat:**
 - Endast dokumentationsändringar, ingen kodpåverkan

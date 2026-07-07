@@ -37,3 +37,10 @@
   color: var(--foreground);
   font-weight: 600;
 }
+
+.text p.intro {
+  color: var(--foreground);
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+}

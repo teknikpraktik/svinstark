@@ -775,7 +775,9 @@ export interface WorkoutSettings {
 }
 ```
 
-Samtliga fält väljs på startsidan (se `01-produktspecifikation.md` §9) - det finns ingen separat inställningssida i MVP. `hasChair`/`hasPullupBar` (standardvärde: båda `true`) och `freeWeights` (standardvärde `"none"`) styr vilken utrustning generatorn får använda (se B.7/B.7a). `soundEnabled` styrs av en liten ljudikon på startsidan (se C.19) och är inte kopplad till passgenereringen.
+`duration`, `intensity`, `hasChair`, `hasPullupBar` och `freeWeights` väljs på startsidan (se `01-produktspecifikation.md` §9) - det finns ingen separat inställningssida i MVP. `hasChair`/`hasPullupBar` (standardvärde: båda `true`) och `freeWeights` (standardvärde `"none"`) styr vilken utrustning generatorn får använda (se B.7/B.7a).
+
+`soundEnabled` styrs istället av en ljudikon på WorkoutScreen (se C.7/C.19) och är inte kopplad till passgenereringen. Eftersom ikonen är synlig och kan tryckas på medan passet pågår läser ljuduppspelningen (`useAudio` via `useWorkout`) `soundEnabled` live från `WorkoutSettings` i `useSettings`, inte den frusna kopian i `workout.settings` som skapades när passet startade - annars skulle en tryckning under passet inte höras förrän nästa pass.
 
 ---
 
@@ -1297,13 +1299,16 @@ Alla komponenter ska ha ett tydligt ansvar.
 Visar:
 
 * svinstark
-* Den minsta effektiva dosen
+* Kort tagline: "Träna med minsta effektiva dosen"
+* Helkropp · Tidseffektivt · Regelstyrt (value props)
 * Träningstid
 * Intensitet
 * Utrustning: Chinsstång, Stol/pall, Fria vikter (se B.7/B.7a)
-* Ljudikon och informationsikon (öppnar `AboutModal`), uppe till höger
+* Informationsikon (öppnar `AboutModal`), uppe till höger, större variant (se C.22)
 * Starta pass
 * Installationsruta (`InstallPrompt`, se C.28a), diskret under Starta pass
+
+Visar inte längre en ljudikon - flyttad till WorkoutScreen (se C.7/C.19), eftersom ljud är mest relevant medan passet faktiskt pågår. Den längre förklarande texten som tidigare stod på startsidan (om minsta effektiva dosen m.m.) flyttades till `AboutModal` för att hålla startsidan kort och direkt.
 
 Standardval:
 
@@ -1342,13 +1347,14 @@ WorkoutScreen är appens viktigaste vy.
 Den ska endast visa:
 
 * total längd och intensitet för passet
+* ljudikon (större variant, se C.22), uppe till höger - flyttad hit från startsidan eftersom ljud är mest relevant medan passet pågår (C.19)
 * stor timer
-* övningsnamn
+* övningsnamn - passets visuella huvudfokus, responsiv storlek (se C.9)
 * instruktion
 * vilken övning i ordningen (t.ex. "Övning 4 av 14")
+* hoppa över (diskret textknapp, nere till höger direkt ovanför Paus/Avsluta, se B.25)
 * paus
 * avsluta
-* hoppa över (diskret textknapp, se B.25)
 
 Den ska inte visa:
 
@@ -1402,6 +1408,8 @@ Ingen bild.
 Ingen video.
 
 Ingen animation.
+
+Övningsnamnet är skärmens visuella huvudfokus under passet och renderas märkbart större än instruktionen och övrig text, med responsiv skalning (`clamp()`, golv och tak) så att korta namn förblir stora och långa namn radbryts istället för att flöda över eller krympa layouten.
 
 ---
 
@@ -1550,7 +1558,7 @@ Signaler:
 * sista tre sekunderna
 * pass klart
 
-Ljud ska kunna stängas av. Detta görs via en liten ljudikon (🔊/🔇) uppe till höger på startsidan, inte via en separat inställningsskärm (se B.9).
+Ljud ska kunna stängas av. Detta görs via en ljudikon (🔊/🔇) uppe till höger på WorkoutScreen, inte via en separat inställningsskärm (se B.9). Placerad på träningsskärmen snarare än startsidan eftersom ljud är mest relevant medan passet faktiskt pågår - en tryckning gäller omedelbart för det pågående passet, inte bara framtida pass.
 
 ---
 
@@ -1593,6 +1601,8 @@ Exempel:
 * speaker
 
 Ikoner ska stödja text, inte ersätta den.
+
+`IconButton` har två storlekar: standard (44×44 px) och en större variant (56×56 px, `size="large"`) för ikoner som ska vara extra lätta att upptäcka och trycka på - informationsikonen på startsidan och ljudikonen på WorkoutScreen (se C.5/C.7/C.19). Båda är fortfarande sekundära (ingen ram eller fylld bakgrund).
 
 ---
 

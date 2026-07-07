@@ -46,7 +46,6 @@ interface StartScreenProps {
   error: string | null;
   onDurationChange: (duration: WorkoutDuration) => void;
   onIntensityChange: (intensity: WorkoutIntensity) => void;
-  onSoundEnabledChange: (soundEnabled: boolean) => void;
   onHasChairChange: (hasChair: boolean) => void;
   onHasPullupBarChange: (hasPullupBar: boolean) => void;
   onFreeWeightsChange: (freeWeights: FreeWeightsLevel) => void;
@@ -58,7 +57,6 @@ export default function StartScreen({
   error,
   onDurationChange,
   onIntensityChange,
-  onSoundEnabledChange,
   onHasChairChange,
   onHasPullupBarChange,
   onFreeWeightsChange,
@@ -73,11 +71,7 @@ export default function StartScreen({
           icon="ⓘ"
           ariaLabel="Om Svinstark"
           onClick={() => setIsAboutOpen(true)}
-        />
-        <IconButton
-          icon={settings.soundEnabled ? "🔊" : "🔇"}
-          ariaLabel={settings.soundEnabled ? "Stäng av ljud" : "Sätt på ljud"}
-          onClick={() => onSoundEnabledChange(!settings.soundEnabled)}
+          size="large"
         />
       </header>
 
@@ -87,12 +81,7 @@ export default function StartScreen({
 
         <p className={styles.wordmark}>svinstark</p>
 
-        <h1 className={styles.headline}>Kroppen svarar på signaler, inte på träningstid.</h1>
-
-        <p className={styles.explanation}>
-          Den minsta effektiva dosen: korta, balanserade helkroppspass som ger kroppen tydlig
-          träningsstimulans.
-        </p>
+        <h1 className={styles.headline}>Träna med minsta effektiva dosen</h1>
 
         <ul className={styles.valueProps}>
           {valueProps.map((value) => (

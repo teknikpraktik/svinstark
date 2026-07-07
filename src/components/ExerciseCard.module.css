@@ -7,8 +7,12 @@
 }
 
 .name {
-  font-size: 1.5rem;
+  /* Huvudfokus på skärmen under passet - skalar med viewportbredden men
+     har ett golv/tak så att korta namn inte blir för små och långa namn
+     inte flödar över (radbryts istället, se .card/text-align: center). */
+  font-size: clamp(1.75rem, 8vw, 2.75rem);
   font-weight: 700;
+  line-height: 1.15;
 }
 
 .instruction {

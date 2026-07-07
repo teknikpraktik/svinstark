@@ -10,16 +10,17 @@ import type { Screen, Workout, WorkoutSettings } from "@/types/workout";
 
 // Orkestrerar skärmflödet Start -> Workout -> Paused -> Finished -> Start
 // (B.27/B.28) genom att koppla ihop passgeneratorn med useTimer.
-export function useWorkout() {
+//
+// soundEnabled tas emot live (inte som en frusen kopia av inställningen vid
+// passets start) eftersom ljudikonen numera visas och kan togglas på
+// WorkoutScreen medan passet pågår (se docs/loggbok.md v1.4).
+export function useWorkout(soundEnabled: boolean) {
   const [screen, setScreen] = useState<Screen>("start");
   const [pendingSettings, setPendingSettings] = useState<WorkoutSettings | null>(null);
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Ljud på/av avgörs av inställningen som gällde när passet skapades
-  // (workout.settings), eftersom det inte finns någon inställningsdialog
-  // synlig under själva passet.
-  const { playNewBlock, playCountdown, playFinish } = useAudio(workout?.settings.soundEnabled ?? true);
+  const { playNewBlock, playCountdown, playFinish } = useAudio(soundEnabled);
 
   const handleFinish = useCallback(() => {
     playFinish();

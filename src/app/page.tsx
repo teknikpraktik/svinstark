@@ -32,7 +32,7 @@ export default function Home() {
     stop,
     skip,
     goToStart,
-  } = useWorkout();
+  } = useWorkout(settings.soundEnabled);
 
   if (screen === "start") {
     return (
@@ -41,7 +41,6 @@ export default function Home() {
         error={error}
         onDurationChange={setDuration}
         onIntensityChange={setIntensity}
-        onSoundEnabledChange={setSoundEnabled}
         onHasChairChange={setHasChair}
         onHasPullupBarChange={setHasPullupBar}
         onFreeWeightsChange={setFreeWeights}
@@ -67,9 +66,11 @@ export default function Home() {
         block={currentBlock}
         settings={workout.settings}
         timerState={timerState}
+        soundEnabled={settings.soundEnabled}
         onPause={pause}
         onStop={stop}
         onSkip={skip}
+        onSoundEnabledChange={setSoundEnabled}
       />
       <PauseDialog isOpen={screen === "paused"} onResume={resume} onStop={stop} />
     </>
