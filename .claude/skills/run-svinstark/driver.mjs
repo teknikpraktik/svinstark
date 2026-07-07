@@ -79,6 +79,13 @@ const COMMANDS = {
     console.log("nav ->", page.url());
   },
 
+  async viewport(args) {
+    if (!page) return console.log("ERROR: launch first");
+    const [width, height] = args.split(/\s+/).map(Number);
+    await page.setViewportSize({ width, height });
+    console.log("viewport ->", width, "x", height);
+  },
+
   async wait(selector) {
     if (!page) return console.log("ERROR: launch first");
     try {

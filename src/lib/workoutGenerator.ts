@@ -18,11 +18,15 @@ const MAX_GENERATION_ATTEMPTS = 50;
 
 // "bodyweight" och "floor" antas alltid finnas tillgängligt (07-generator-
 // specifikation.md §7). "chair"/"pullup_bar" beror på användarens val i
-// Inställningar (WorkoutSettings.hasChair/hasPullupBar).
+// Inställningar (WorkoutSettings.hasChair/hasPullupBar). "Tunga" fria vikter
+// ger tillgång till både lätta och tunga viktövningar (Tunga är en
+// superset), eftersom en användare med tunga vikter också har lätta.
 function getAllowedEquipment(settings: WorkoutSettings): Set<Equipment> {
   const allowed = new Set<Equipment>(["bodyweight", "floor"]);
   if (settings.hasChair) allowed.add("chair");
   if (settings.hasPullupBar) allowed.add("pullup_bar");
+  if (settings.freeWeights === "light" || settings.freeWeights === "heavy") allowed.add("weights_light");
+  if (settings.freeWeights === "heavy") allowed.add("weights_heavy");
   return allowed;
 }
 

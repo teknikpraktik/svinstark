@@ -94,7 +94,7 @@ Fokus:
 
 Möjliga funktioner:
 
-* Tillgänglig utrustning
+* ✅ Tillgänglig utrustning (chinsstång, stol/pall, fria vikter i tre nivåer - Nej/Lätta/Tunga) - levererad, se `docs/loggbok.md`
 * Skonsamt läge för knä
 * Skonsamt läge för axlar
 * Skonsamt läge för handleder

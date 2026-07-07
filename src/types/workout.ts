@@ -1,6 +1,12 @@
 // Övningsklassificering (se 03-exercise-library-specification.md)
 
-export type Equipment = "bodyweight" | "floor" | "chair" | "pullup_bar";
+export type Equipment =
+  | "bodyweight"
+  | "floor"
+  | "chair"
+  | "pullup_bar"
+  | "weights_light"
+  | "weights_heavy";
 
 export type ExercisePattern =
   | "knee"
@@ -79,6 +85,8 @@ export type WorkoutDuration = "short" | "standard" | "long";
 
 export type WorkoutIntensity = "calm" | "normal" | "hard";
 
+export type FreeWeightsLevel = "none" | "light" | "heavy";
+
 export interface WorkoutSettings {
   duration: WorkoutDuration;
   intensity: WorkoutIntensity;
@@ -86,6 +94,7 @@ export interface WorkoutSettings {
   // "bodyweight" och "floor" antas alltid finnas tillgängligt.
   hasChair: boolean;
   hasPullupBar: boolean;
+  freeWeights: FreeWeightsLevel;
 }
 
 export interface WorkoutBlock {

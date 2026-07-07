@@ -44,10 +44,16 @@ export type Equipment =
   | "bodyweight"
   | "floor"
   | "chair"
-  | "pullup_bar";
+  | "pullup_bar"
+  | "weights_light"
+  | "weights_heavy";
 ```
 
 Ingen annan utrustning används i MVP.
+
+`"weights_light"`/`"weights_heavy"` representerar fria vikter (t.ex. hantlar eller kettlebells) i två grova nivåer, styrda av `WorkoutSettings.freeWeights` (`"none"`/`"light"`/`"heavy"`, se `02-teknisk-specifikation.md` B.7a). MVP anger aldrig exakta kiloangivelser - endast om en övning fungerar med lätt eller tung belastning. En övning som kräver tunga vikter ska inte samtidigt kräva lätta vikter i `equipment` - `"weights_heavy"` räcker, eftersom en användare med tunga vikter alltid antas ha tillgång till lätta också (se B.7).
+
+Övningar som kräver fria vikter ska väljas med omdöme: enkla, säkra rörelser (goblet squat, marklyftsvarianter, roddvarianter, press, carries, statiska håll). Tekniskt avancerade kettlebellrörelser som swings, cleans, snatches och Turkish get-ups ska undvikas i MVP - de kräver instruktion och säkerhetsmarginaler som inte ryms i en kort textinstruktion.
 
 ---
 
@@ -328,22 +334,22 @@ Enbenshöftlyft
 
 # 16. Övningsbank – omfattning
 
-MVP innehåller 100 övningar fördelade på:
+MVP innehåller 124 övningar fördelade på:
 
 | Kategori          | Antal |
 | ----------------- | ----: |
-| Knädominanta      |    18 |
-| Höftdominanta     |    13 |
-| Horisontell press |    12 |
-| Vertikal press    |     2 |
-| Horisontellt drag |     3 |
+| Knädominanta      |    25 |
+| Höftdominanta     |    15 |
+| Horisontell press |    14 |
+| Vertikal press    |     4 |
+| Horisontellt drag |     6 |
 | Vertikalt drag    |     7 |
-| Bål               |    14 |
-| Kondition         |    10 |
+| Bål               |    19 |
+| Kondition         |    13 |
 | Balans            |     9 |
 | Rörlighet         |    12 |
 
-Biblioteket ska hellre vara konsekvent och kvalitetssäkrat än stort. Antalet minskade från 121 till 100 efter en manuell genomgång 2026-07-06 där otydliga eller ej önskvärda övningar togs bort (se `docs/loggbok.md`).
+Biblioteket ska hellre vara konsekvent och kvalitetssäkrat än stort. Antalet minskade från 121 till 100 efter en manuell genomgång 2026-07-06 där otydliga eller ej önskvärda övningar togs bort, och ökade sedan till 124 efter att 24 övningar för fria vikter lades till (se `docs/loggbok.md`).
 
 ---
 

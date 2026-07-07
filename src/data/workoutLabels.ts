@@ -1,4 +1,4 @@
-import type { WorkoutDuration, WorkoutIntensity } from "@/types/workout";
+import type { FreeWeightsLevel, WorkoutDuration, WorkoutIntensity } from "@/types/workout";
 
 // Delade visningsetiketter för träningstid/intensitet, använda av både
 // StartScreen och WorkoutScreen (undviker att samma text/siffror underhålls
@@ -24,4 +24,12 @@ export const intensityLabels: Record<WorkoutIntensity, string> = {
   calm: "Lugnt",
   normal: "Normalt",
   hard: "Tufft",
+};
+
+export const freeWeightsOrder: FreeWeightsLevel[] = ["none", "light", "heavy"];
+
+export const freeWeightsLabels: Record<FreeWeightsLevel, string> = {
+  none: "Nej",
+  light: "Lätta",
+  heavy: "Tunga",
 };

@@ -136,10 +136,11 @@ Appen ska aldrig kännas:
 
 Användaren öppnar appen.
 
-Väljer:
+Väljer, allt på startsidan:
 
 * träningstid
 * intensitet
+* utrustning (chinsstång, stol/pall, fria vikter)
 
 Trycker:
 
@@ -150,6 +151,8 @@ Appen leder därefter användaren direkt genom huvudpasset, övning för övning
 Passet avslutas.
 
 Klart.
+
+Utöver detta finns två små, sekundära ikoner på startsidan: en ljudikon (ljud på/av) och en informationsikon som öppnar en kort text om appen. Ingen separat inställningssida finns i MVP - allt som påverkar dagens pass syns och ändras direkt på startsidan.
 
 ---
 

@@ -64,6 +64,7 @@ with `SCREENSHOT_DIR`). `BASE_URL` overrides the default `http://localhost:3000`
 |---|---|
 | `launch` | start a fresh dev server, launch Chromium, navigate to it |
 | `nav <path>` | go to `<path>` (relative to `BASE_URL`) |
+| `viewport <width> <height>` | resize the page (e.g. `viewport 390 844` for a phone-sized check) |
 | `wait <css-selector>` | wait up to 10s for a selector |
 | `wait-text <text>` | wait up to 10s for text anywhere on the page |
 | `click <css-selector>` | click via Playwright locator |

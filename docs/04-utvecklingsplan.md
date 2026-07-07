@@ -290,17 +290,15 @@ Ljud på/av.
 
 ---
 
-# 15. Fas 12 – Inställningar
+# 15. Fas 12 – Inställningar (ersatt 2026-07-07)
 
-Skapa enkel dialog.
+Byggde ursprungligen en separat inställningsdialog (kugghjul på startsidan) med ljud, versionsnummer och "Om svinstark".
 
-Innehåll:
+Ersatt på uttrycklig begäran av användaren av två små ikoner direkt på startsidan: en ljudikon (🔊/🔇) och en informationsikon som öppnar "Om Svinstark" som en scrollbar modal. Utrustningsvalen som senare lades till i samma dialog (Fas "Anpassa efter utrustning", se `docs/loggbok.md` v1.1) flyttades till startsidan i samma ändring. Ingen separat inställningsskärm finns längre. Versionsnumret visas inte längre någonstans i UI:t - det fanns inget uttryckligt krav på det i den nya specen.
 
-* Ljud
-* Versionsnummer
-* Om svinstark
+Inställningar (träningstid, intensitet, ljud, utrustning, fria vikter) lagras fortfarande lokalt, se `02-teknisk-specifikation.md` C.28.
 
-Lagra inställningar lokalt.
+Fas-numret behålls oförändrat för att inte bryta spårbarheten mot tidigare loggbokposter.
 
 ---
 

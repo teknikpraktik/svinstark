@@ -36,7 +36,7 @@ Generatorn arbetar alltid enligt följande:
 
 # 3. Användarens val
 
-Generatorn får följande indata:
+Generatorn får följande indata, samtliga valda på startsidan (se `01-produktspecifikation.md` §9):
 
 ```ts
 WorkoutSettings {
@@ -44,6 +44,12 @@ WorkoutSettings {
     duration: short | standard | long
 
     intensity: calm | normal | hard
+
+    hasChair: boolean
+
+    hasPullupBar: boolean
+
+    freeWeights: none | light | heavy
 
 }
 ```
@@ -146,7 +152,7 @@ För varje plats i passmallen filtreras övningsbiblioteket på:
 
 * rörelsemönster (matchar `primaryPattern`, se mappningstabellen i `02-teknisk-specifikation.md` B.13)
 * intensitet
-* utrustning (`"bodyweight"`/`"floor"` alltid tillåtna, `"chair"`/`"pullup_bar"` endast om användaren angett att de finns tillgängliga i Inställningar)
+* utrustning (`"bodyweight"`/`"floor"` alltid tillåtna, `"chair"`/`"pullup_bar"` endast om användaren angett att de finns tillgängliga på startsidan, `"weights_light"`/`"weights_heavy"` styrt av startsidans val Fria vikter - `"heavy"` ger tillgång till båda)
 * redan använda övningar (exkluderas)
 * sekvensregler (se §8)
 
@@ -178,7 +184,7 @@ Generatorn får aldrig skapa:
 * två övningar med samma `primaryPattern` i rad
 * två övningar som finns i varandras `avoidAdjacent`
 * två hängande övningar i rad
-* tre golvövningar i rad — undantag: regeln stängs av helt om användaren saknar stol och/eller chinsstång i Inställningar, eftersom alla hårda pull-övningar utan utrustning kräver golvet och regeln annars gör Tufft omöjligt att generera för Standard/Längre
+* tre golvövningar i rad — undantag: regeln stängs av helt om användaren saknar stol och/eller chinsstång på startsidan, eftersom alla hårda pull-övningar utan utrustning kräver golvet och regeln annars gör Tufft omöjligt att generera för Standard/Längre
 * tre benövningar i rad (`muscleGroups` innehåller `"legs"`)
 
 Två av reglerna ovan (två ensidiga övningar i rad, tre benövningar i rad) kan stängas av som sista utväg för hela passet, se §13. Generatorn försöker alltid först generera med samtliga regler aktiva.

@@ -1,18 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import AboutModal from "@/components/AboutModal";
 import IconButton from "@/components/IconButton";
 import OptionSelector from "@/components/OptionSelector";
 import PrimaryButton from "@/components/PrimaryButton";
-import SettingsDialog from "@/components/SettingsDialog";
 import {
   durationLabels,
   durationMinutes,
   durationOrder,
+  freeWeightsLabels,
+  freeWeightsOrder,
   intensityLabels,
   intensityOrder,
 } from "@/data/workoutLabels";
-import type { WorkoutDuration, WorkoutIntensity, WorkoutSettings } from "@/types/workout";
+import type { FreeWeightsLevel, WorkoutDuration, WorkoutIntensity, WorkoutSettings } from "@/types/workout";
 import styles from "./StartScreen.module.css";
 
 const trainingTimes = durationOrder.map((value) => ({
@@ -26,16 +28,17 @@ const intensities = intensityOrder.map((value) => ({
   label: intensityLabels[value],
 }));
 
-const valueProps = ["Helkropp", "Tidseffektivt", "Regelstyrt"];
+const freeWeightOptions = freeWeightsOrder.map((value) => ({
+  value,
+  label: freeWeightsLabels[value],
+}));
 
-function SettingsIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.96 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.96a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.04 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9c.26.43.7.7 1.56 1.04H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.56 1.04Z" />
-    </svg>
-  );
-}
+const equipmentOptions = [
+  { value: "yes" as const, label: "Ja" },
+  { value: "no" as const, label: "Nej" },
+];
+
+const valueProps = ["Helkropp", "Tidseffektivt", "Regelstyrt"];
 
 interface StartScreenProps {
   settings: WorkoutSettings;
@@ -45,6 +48,7 @@ interface StartScreenProps {
   onSoundEnabledChange: (soundEnabled: boolean) => void;
   onHasChairChange: (hasChair: boolean) => void;
   onHasPullupBarChange: (hasPullupBar: boolean) => void;
+  onFreeWeightsChange: (freeWeights: FreeWeightsLevel) => void;
   onStart: () => void;
 }
 
@@ -56,17 +60,23 @@ export default function StartScreen({
   onSoundEnabledChange,
   onHasChairChange,
   onHasPullupBarChange,
+  onFreeWeightsChange,
   onStart,
 }: StartScreenProps) {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   return (
     <div className={styles.page}>
       <header className={styles.header}>
         <IconButton
-          icon={<SettingsIcon />}
-          ariaLabel="Inställningar"
-          onClick={() => setIsSettingsOpen(true)}
+          icon="ⓘ"
+          ariaLabel="Om Svinstark"
+          onClick={() => setIsAboutOpen(true)}
+        />
+        <IconButton
+          icon={settings.soundEnabled ? "🔊" : "🔇"}
+          ariaLabel={settings.soundEnabled ? "Stäng av ljud" : "Sätt på ljud"}
+          onClick={() => onSoundEnabledChange(!settings.soundEnabled)}
         />
       </header>
 
@@ -103,22 +113,35 @@ export default function StartScreen({
           value={settings.intensity}
           onChange={onIntensityChange}
         />
+
+        <div className={styles.equipment}>
+          <span className={styles.equipmentLabel}>Utrustning</span>
+          <OptionSelector
+            label="Chinsstång"
+            options={equipmentOptions}
+            value={settings.hasPullupBar ? "yes" : "no"}
+            onChange={(value) => onHasPullupBarChange(value === "yes")}
+          />
+          <OptionSelector
+            label="Stol/pall"
+            options={equipmentOptions}
+            value={settings.hasChair ? "yes" : "no"}
+            onChange={(value) => onHasChairChange(value === "yes")}
+          />
+          <OptionSelector
+            label="Fria vikter"
+            options={freeWeightOptions}
+            value={settings.freeWeights}
+            onChange={onFreeWeightsChange}
+          />
+        </div>
       </div>
 
       {error && <p className={styles.error}>{error}</p>}
 
       <PrimaryButton onClick={onStart}>STARTA PASS</PrimaryButton>
 
-      <SettingsDialog
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        soundEnabled={settings.soundEnabled}
-        onSoundEnabledChange={onSoundEnabledChange}
-        hasChair={settings.hasChair}
-        onHasChairChange={onHasChairChange}
-        hasPullupBar={settings.hasPullupBar}
-        onHasPullupBarChange={onHasPullupBarChange}
-      />
+      <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
     </div>
   );
 }

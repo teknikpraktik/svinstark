@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import type { WorkoutDuration, WorkoutIntensity, WorkoutSettings } from "@/types/workout";
+import type { FreeWeightsLevel, WorkoutDuration, WorkoutIntensity, WorkoutSettings } from "@/types/workout";
 
 const STORAGE_KEY = "svinstark:settings";
 
@@ -11,6 +11,7 @@ const DEFAULT_SETTINGS: WorkoutSettings = {
   soundEnabled: true,
   hasChair: true,
   hasPullupBar: true,
+  freeWeights: "none",
 };
 
 let cachedSettings: WorkoutSettings = DEFAULT_SETTINGS;
@@ -31,6 +32,7 @@ function readFromStorage(): WorkoutSettings {
       soundEnabled: parsed.soundEnabled ?? DEFAULT_SETTINGS.soundEnabled,
       hasChair: parsed.hasChair ?? DEFAULT_SETTINGS.hasChair,
       hasPullupBar: parsed.hasPullupBar ?? DEFAULT_SETTINGS.hasPullupBar,
+      freeWeights: parsed.freeWeights ?? DEFAULT_SETTINGS.freeWeights,
     };
   } catch {
     return DEFAULT_SETTINGS;
@@ -81,5 +83,6 @@ export function useSettings() {
     setSoundEnabled: (soundEnabled: boolean) => update((prev) => ({ ...prev, soundEnabled })),
     setHasChair: (hasChair: boolean) => update((prev) => ({ ...prev, hasChair })),
     setHasPullupBar: (hasPullupBar: boolean) => update((prev) => ({ ...prev, hasPullupBar })),
+    setFreeWeights: (freeWeights: FreeWeightsLevel) => update((prev) => ({ ...prev, freeWeights })),
   };
 }

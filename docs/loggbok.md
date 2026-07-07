@@ -28,6 +28,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | 14  | Optimering                  | ✅ Klar      |
 | 15  | Sluttest                    | ✅ Klar — MVP färdig |
 | v1.1| Experience Update           | ✅ Klar      |
+| v1.2| Fria vikter + förenklat startflöde | ✅ Klar |
 
 ---
 
@@ -855,6 +856,61 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 
 **Filer ändrade:**
 - `docs/02-teknisk-specifikation.md`, `docs/03-exercise-library-specification.md`, `docs/07-generator-specifikation.md`
+
+**Testat:**
+- Endast dokumentationsändringar, ingen kodpåverkan
+
+---
+
+### 2026-07-07 — v1.2: Fria vikter + förenklat startflöde
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- Alla passval (träningstid, intensitet, chinsstång, stol/pall, fria vikter) flyttade till startsidan. Inställningssidan (kugghjul + `SettingsDialog`) togs bort helt - inget appbeteende blev kvar att visa där när ljud också flyttade ut
+- Ny ljudikon (🔊/🔇) och infoikon (ⓘ) längst upp till höger på startsidan, ersätter kugghjulet. Ljudvalet sparas som tidigare i `localStorage` (`svinstark:settings`) och styr fortfarande nedräkningsljudet under passet oförändrat (via `workout.settings.soundEnabled`, satt vid passets start)
+- Ny `AboutModal`-komponent ("Om Svinstark") - scrollbar, öppnas via infoikonen. `Modal.module.css` fick `max-height: 90vh; overflow-y: auto` på content-containern (gäller nu alla modaler, inklusive `PauseDialog`)
+- Nytt utrustningsval **Fria vikter** (`FreeWeightsLevel`: `none`/`light`/`heavy`, visas som Nej/Lätta/Tunga) i datamodellen (`WorkoutSettings.freeWeights`), `useSettings` (persisteras, bakåtkompatibel default `"none"` för redan sparade inställningar) och generatorn
+- `Equipment` utökad med `weights_light`/`weights_heavy`. `getAllowedEquipment` lägger till dessa baserat på `freeWeights` - Tunga ger tillgång till både lätta och tunga övningar (superset). Ingen annan generatorlogik behövde ändras: befintlig `isEquipmentAllowed` (kräver att *alla* en övnings utrustningsposter finns tillgängliga) löser redan "kräver både stol och vikt → båda måste finnas"
+- 24 nya övningar i `exerciseData.ts` (ny `freeWeightExercises`-array, samma mönster som `additionalExercises`): 12 med lätta vikter, 12 med tunga, enligt användarens lista. Inga swings/cleans/snatches/Turkish get-ups. Två tunga roddövningar (`one_arm_row_heavy`, `bent_over_row`) lades särskilt till för att fylla det tidigare tunna `horizontal_pull`-hard-utbudet (0 övningar utan chinsstång innan denna ändring) - fungerar automatiskt genom den befintliga kandidatsökningen, ingen viktning/prioriteringslogik byggdes (se nedan)
+
+**Medvetna tolkningar av specen:**
+- "Dragövningar med fria vikter ska prioriteras som alternativ när användaren saknar chinsstång" tolkades som att övningarna ska *finnas tillgängliga*, inte att slumpen ska viktas - `07-generator-specifikation.md` §12/B.18 är uttryckliga om att generatorn aldrig viktar slumpen i MVP. Att lägga till övningarna med rätt `primaryPattern`/`equipment` räcker för att lösa behovet.
+- `weighted_russian_twist` återinför "russian twist" som rörelse, vars kroppsviktsvariant togs bort 2026-07-06 för att vara otydlig - byggdes ändå eftersom användaren uttryckligen listade den i den här specen (senaste instruktionen gäller, `99-ai-instructions.md` §14).
+
+**Filer ändrade:**
+- `src/types/workout.ts`, `src/hooks/useSettings.ts`, `src/data/workoutLabels.ts`, `src/lib/workoutGenerator.ts`, `src/data/exerciseData.ts`, `src/components/StartScreen.tsx`, `src/components/StartScreen.module.css`, `src/components/Modal.module.css`, `src/app/page.tsx`
+
+**Filer skapade:**
+- `src/components/AboutModal.tsx`, `src/components/AboutModal.module.css`
+
+**Filer borttagna:**
+- `src/components/SettingsDialog.tsx`, `src/components/SettingsDialog.module.css`
+
+**Testat:**
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` - felfria
+- Stresstest av `generateWorkout` i Node (samma `--experimental-strip-types` + alias-loader-teknik som tidigare), 30 körningar per kombination av längd × intensitet × chinsstång × stol/pall × fria vikter = 3 240 pass över 108 kombinationer: 0 misslyckanden, och en extra kontroll per pass att ingen vald övning kräver utrustning som inte är tillåten enligt inställningarna
+- Live i appen via `.claude/skills/run-svinstark/driver.mjs` (utökad med ett nytt `viewport`-kommando för mobilkontroll): startsidan på 390 px bredd med alla val synliga, Tufft + fria vikter Tunga + ingen chinsstång gav ett giltigt pass, infomodalen öppnas/scrollar/stängs korrekt, ljudikonen togglar och sparar till `localStorage` (verifierat att fältet `freeWeights` finns med i den sparade posten)
+
+**Begränsningar / öppna frågor:**
+- Inga - på användarens godkännande uppdaterades `01`, `02`, `03`, `04`, `06` och `07` i samma session (se separat loggpost nedan) innan commit.
+
+---
+
+### 2026-07-07 — Dokumentationsuppdatering: spec-dokument synkade med v1.2
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- `01-produktspecifikation.md` §9: användarflödet uppdaterat med utrustningsvalen och de två nya ikonerna, och en rad om att ingen separat inställningssida längre finns
+- `02-teknisk-specifikation.md`: B.7 fick `weights_light`/`weights_heavy`; ny B.7a (`FreeWeightsLevel`); B.9 (`WorkoutSettings`) fick `freeWeights` och en rad om att allt väljs på startsidan; C.19 och C.28 uppdaterade för ljudikonen respektive den fullständiga lagrade inställningsmängden
+- `03-exercise-library-specification.md` §3: `Equipment` utökad, med förklaring av `"weights_light"`/`"weights_heavy"` som en superset-relation samt riktlinjer för säkra/enkla viktövningar (inga swings/cleans/snatches/TGU); §16 uppdaterad till 124 övningar med nya kategorital (knä 25, höft 15, horisontell press 14, vertikal press 4, horisontellt drag 6, vertikalt drag 7, bål 19, kondition 13, balans 9, rörlighet 12)
+- `04-utvecklingsplan.md`: Fas 12 ("Inställningar") märkt "(ersatt 2026-07-07)" och omskriven, samma mönster som Fas 9/10 använde när de togs bort - fasnumret behålls för spårbarhet
+- `06-roadmap.md`: "Tillgänglig utrustning" under Version 1.2 markerad som levererad
+- `07-generator-specifikation.md` §3, §7, §8: `WorkoutSettings`-exemplet utökat med utrustningsfälten; alla kvarvarande referenser till en "Inställningar"-skärm ändrade till "startsidan"; utrustningsfiltreringen i §7 nämner nu fria vikter explicit
+
+**Filer ändrade:**
+- `docs/01-produktspecifikation.md`, `docs/02-teknisk-specifikation.md`, `docs/03-exercise-library-specification.md`, `docs/04-utvecklingsplan.md`, `docs/06-roadmap.md`, `docs/07-generator-specifikation.md`
 
 **Testat:**
 - Endast dokumentationsändringar, ingen kodpåverkan

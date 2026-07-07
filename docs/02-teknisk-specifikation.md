@@ -701,12 +701,35 @@ type Equipment =
     | "bodyweight"
     | "floor"
     | "chair"
-    | "pullup_bar";
+    | "pullup_bar"
+    | "weights_light"
+    | "weights_heavy";
 ```
 
 Ingen annan utrustning får förekomma i MVP.
 
-`"bodyweight"` och `"floor"` antas alltid finnas tillgängligt. `"chair"` och `"pullup_bar"` filtreras bort från generatorns kandidatpool om användaren anger i Inställningar att de saknas (se B.9 `WorkoutSettings.hasChair`/`hasPullupBar`).
+`"bodyweight"` och `"floor"` antas alltid finnas tillgängligt. `"chair"` och `"pullup_bar"` filtreras bort från generatorns kandidatpool om användaren anger på startsidan att de saknas (se B.9 `WorkoutSettings.hasChair`/`hasPullupBar`).
+
+`"weights_light"` och `"weights_heavy"` styrs av `WorkoutSettings.freeWeights` (se B.9a): `"light"` ger `"weights_light"`, `"heavy"` ger både `"weights_light"` och `"weights_heavy"` (tunga fria vikter täcker per definition även lätta övningar). Ingen övning i MVP kräver annan utrustning än ovanstående sex värden.
+
+---
+
+## B.7a FreeWeightsLevel
+
+```typescript
+type FreeWeightsLevel =
+    | "none"
+    | "light"
+    | "heavy";
+```
+
+Visas i gränssnittet som:
+
+* Nej
+* Lätta
+* Tunga
+
+Inga exakta kiloangivelser anges i MVP - "Lätta"/"Tunga" är en grov klassificering av vilka övningar som är lämpliga (se `03-exercise-library-specification.md`).
 
 ---
 
@@ -747,10 +770,12 @@ export interface WorkoutSettings {
 
     hasPullupBar: boolean;
 
+    freeWeights: FreeWeightsLevel;
+
 }
 ```
 
-`hasChair`/`hasPullupBar` anges i Inställningar (standardvärde: båda `true`) och styr vilken utrustning generatorn får använda (se B.7).
+Samtliga fält väljs på startsidan (se `01-produktspecifikation.md` §9) - det finns ingen separat inställningssida i MVP. `hasChair`/`hasPullupBar` (standardvärde: båda `true`) och `freeWeights` (standardvärde `"none"`) styr vilken utrustning generatorn får använda (se B.7/B.7a). `soundEnabled` styrs av en liten ljudikon på startsidan (se C.19) och är inte kopplad till passgenereringen.
 
 ---
 
@@ -1519,7 +1544,7 @@ Signaler:
 * sista tre sekunderna
 * pass klart
 
-Ljud ska kunna stängas av.
+Ljud ska kunna stängas av. Detta görs via en liten ljudikon (🔊/🔇) uppe till höger på startsidan, inte via en separat inställningsskärm (se B.9).
 
 ---
 
@@ -1630,11 +1655,7 @@ Ingen funktion i MVP kräver nätverk.
 
 ## C.28 Lokal lagring
 
-MVP använder lokal lagring endast för:
-
-* senaste vald träningstid
-* senaste vald intensitet
-* ljud på/av
+MVP använder lokal lagring endast för hela `WorkoutSettings` (B.9): senaste valda träningstid, intensitet, ljud på/av, chinsstång, stol/pall och fria vikter.
 
 Ingen träningshistorik sparas.
 
