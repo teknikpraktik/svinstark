@@ -276,6 +276,11 @@ Generatorn ska använda metadata för att undvika:
 * två övningar med samma `primaryPattern` i rad
 * övningar som finns i varandras `avoidAdjacent`
 
+Två undantag från ovanstående, båda beskrivna i detalj i `07-generator-specifikation.md` §8 och `docs/loggbok.md`:
+
+* Regeln om tre golvövningar i rad stängs av helt när användaren saknar stol och/eller chinsstång, eftersom hårda drag-övningar utan utrustning alltid utförs på golvet och regeln annars gör Tufft praktiskt taget omöjligt att generera för Standard/Längre.
+* Reglerna om två ensidiga övningar i rad och tre benövningar (`muscleGroups` innehåller `legs`) i rad kan stängas av som sista utväg för hela passet, om ingen giltig sekvens går att generera med dem aktiva. Generatorn försöker alltid först med reglerna aktiva.
+
 Generatorn ska eftersträva variation mellan:
 
 * stående/golv/hängande
@@ -323,22 +328,22 @@ Enbenshöftlyft
 
 # 16. Övningsbank – omfattning
 
-MVP innehåller cirka 100 övningar fördelade på:
+MVP innehåller 100 övningar fördelade på:
 
-| Kategori          |    Antal |
-| ----------------- | -------: |
-| Knädominanta      |    ca 15 |
-| Höftdominanta     |    ca 12 |
-| Horisontell press |    ca 10 |
-| Vertikal press    |   ca 2–5 |
-| Horisontellt drag |   ca 3–5 |
-| Vertikalt drag    |   ca 5–7 |
-| Bål               | ca 12–15 |
-| Kondition         | ca 10–12 |
-| Balans            |     ca 8 |
-| Rörlighet         |    ca 10 |
+| Kategori          | Antal |
+| ----------------- | ----: |
+| Knädominanta      |    18 |
+| Höftdominanta     |    13 |
+| Horisontell press |    12 |
+| Vertikal press    |     2 |
+| Horisontellt drag |     3 |
+| Vertikalt drag    |     7 |
+| Bål               |    14 |
+| Kondition         |    10 |
+| Balans            |     9 |
+| Rörlighet         |    12 |
 
-Biblioteket ska hellre vara konsekvent och kvalitetssäkrat än stort.
+Biblioteket ska hellre vara konsekvent och kvalitetssäkrat än stort. Antalet minskade från 121 till 100 efter en manuell genomgång 2026-07-06 där otydliga eller ej önskvärda övningar togs bort (se `docs/loggbok.md`).
 
 ---
 

@@ -142,14 +142,28 @@ Passmallarna definieras i `workoutTemplates.ts`.
 
 # 7. Kandidaturval
 
-För varje plats i passmallen:
+För varje plats i passmallen filtreras övningsbiblioteket på:
 
-1. Filtrera på rörelsemönster.
-2. Filtrera på intensitet.
-3. Filtrera på utrustning (`"bodyweight"`/`"floor"` alltid tillåtna, `"chair"`/`"pullup_bar"` endast om användaren angett att de finns tillgängliga i Inställningar).
-4. Filtrera bort redan använda övningar.
-5. Filtrera bort övningar som bryter sekvensregler.
-6. Slumpa bland återstående kandidater.
+* rörelsemönster (matchar `primaryPattern`, se mappningstabellen i `02-teknisk-specifikation.md` B.13)
+* intensitet
+* utrustning (`"bodyweight"`/`"floor"` alltid tillåtna, `"chair"`/`"pullup_bar"` endast om användaren angett att de finns tillgängliga i Inställningar)
+* redan använda övningar (exkluderas)
+* sekvensregler (se §8)
+
+Om ingen kandidat hittas med strikta villkor (unik övning, endast primärt mönster, korrekt intensitet), luckras filtren upp stegvis i åtta nivåer, i denna prioritetsordning:
+
+1. unik övning · primärt mönster · korrekt intensitet
+2. unik övning · **primärt eller sekundärt mönster** · korrekt intensitet
+3. **upprepad övning tillåten** · primärt mönster · korrekt intensitet
+4. upprepad övning tillåten · primärt eller sekundärt mönster · korrekt intensitet
+5. unik övning · primärt mönster · **närmast lägre intensitet tillåten**
+6. unik övning · primärt eller sekundärt mönster · närmast lägre intensitet tillåten
+7. upprepad övning tillåten · primärt mönster · närmast lägre intensitet tillåten
+8. upprepad övning tillåten · primärt eller sekundärt mönster · närmast lägre intensitet tillåten
+
+Den första nivån som ger minst en kandidat används. Ordningen (unikt före upprepning, korrekt intensitet före nedgraderad) valdes eftersom vissa kombinationer av mönster/intensitet/utrustning (t.ex. drag på Tufft utan stol/chinsstång) annars saknar övningar helt. Se `docs/loggbok.md`.
+
+Bland återstående kandidater på den nivå som används slumpas en övning fram (alla med samma sannolikhet, se §12).
 
 ---
 
@@ -164,8 +178,10 @@ Generatorn får aldrig skapa:
 * två övningar med samma `primaryPattern` i rad
 * två övningar som finns i varandras `avoidAdjacent`
 * två hängande övningar i rad
-* tre golvövningar i rad — undantag: regeln stängs av om användaren saknar stol och/eller chinsstång i Inställningar, eftersom alla hårda pull-övningar utan utrustning kräver golvet och regeln annars gör Tufft omöjligt att generera för Standard/Längre
-* tre benövningar i rad
+* tre golvövningar i rad — undantag: regeln stängs av helt om användaren saknar stol och/eller chinsstång i Inställningar, eftersom alla hårda pull-övningar utan utrustning kräver golvet och regeln annars gör Tufft omöjligt att generera för Standard/Längre
+* tre benövningar i rad (`muscleGroups` innehåller `"legs"`)
+
+Två av reglerna ovan (två ensidiga övningar i rad, tre benövningar i rad) kan stängas av som sista utväg för hela passet, se §13. Generatorn försöker alltid först generera med samtliga regler aktiva.
 
 ---
 
@@ -230,22 +246,16 @@ Ingen viktning används i MVP.
 
 # 13. Om inga kandidater finns
 
-Generatorn arbetar enligt följande:
+Per plats i passmallen hanteras brist på kandidater av de åtta fallback-nivåerna i §7 (upprepning, sekundärt mönster, nedgraderad intensitet). Om ingen övning hittas ens på den sista nivån avbryts försöket.
 
-1. Försök hitta annan övning inom samma kategori.
-2. Tillåt sekundärt rörelsemönster.
-3. Välj alternativ passmall.
-4. Starta om genereringen.
+För hela passet:
 
-Maximalt:
+1. Generera en fullständig sekvens med samtliga sekvensregler (§8) aktiva. Validera resultatet (§17). Vid fel, prova igen med en ny slumpad sekvens — maximalt 50 försök.
+2. Om inget av dessa 50 försök gav ett giltigt pass: gör om samma sak, men med reglerna "två ensidiga övningar i rad" och "tre benövningar i rad" avstängda — återigen maximalt 50 försök.
 
-```text
-50
-```
+Detta andra steg krävs för Tufft-intensitet: hard-poolerna för bål, höft och rörlighet är så tunna att nästan alla kandidater delar `muscleGroups: "legs"` och/eller är ensidiga, vilket annars gör vissa passmallar olösliga (se `docs/loggbok.md`).
 
-försök.
-
-Om generatorn fortfarande misslyckas returneras ett fel.
+Om generatorn fortfarande misslyckas efter båda stegen returneras ett fel.
 
 ---
 

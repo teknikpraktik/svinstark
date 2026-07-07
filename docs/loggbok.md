@@ -817,6 +817,50 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 
 ---
 
+### 2026-07-06 — Manuell genomgång av övningsbanken + generatorfixar
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- Användaren gick igenom hela övningsbanken manuellt: döpte om ett antal övningar, utökade instruktioner på andra, och tog bort 22 övningar hen tyckte var otydliga eller ej önskvärda (100 övningar kvar, ner från 121). `inverted_row`s instruktion utökades till att tillåta ett bord som alternativ till stång; utrustningstaggen uppdaterades i linje med detta, från `["pullup_bar"]` till `["bodyweight"]`
+- `exerciseData.ts`: rensade `avoidAdjacent`-referenser till borttagna övningar (`single_leg_hip_thrust`, `russian_twist`, `star_jump`), uppdaterade antals-kommentarer per kategori till faktiska värden
+- `workoutGenerator.ts`: kandidatsökningen per plats görs nu i åtta nivåer (unikt/upprepning × primärt/sekundärt mönster × korrekt/nedgraderad intensitet) istället för två, eftersom borttagningen av övningar gjorde vissa mönster/intensitet/utrustnings-kombinationer tomma (t.ex. 0 drag-övningar på Tufft utan chinsstång)
+- `isValidWorkout`s slutkontroll matchar nu samma sekundära-mönster-logik som kandidatsökningen (`exerciseMatchesKey`) istället för att bara läsa `primaryPattern` - annars avvisades pass som byggts giltigt via sekundärt mönster
+- Ny sista utväg i `generateWorkout`: om separation av liknande övningar (två ensidiga eller tre benövningar i rad) gör passmallen olöslig på Tufft (core/höft/rörlighet-poolerna på hård intensitet överlappar nästan helt i "ben" och "ensidig"), körs en andra generationsomgång med de två reglerna avstängda. Separation försöks alltid först
+
+**Rotorsak (upptäckt via stresstest, inte i produktionskoden förrän nu):**
+- Borttagningen av övningar tunnade ut hard-poolerna för core (2), höft (2) och rörlighet (3) till den grad att i princip alla alternativ i alla tre kategorier delar muskelgrupp "legs" och/eller är `unilateral`. Eftersom passmallarna (Standard, Längre) placerar core → höft → rörlighet i följd, gjorde reglerna "tre benövningar i rad" och "två ensidiga i rad" dessa platser praktiskt taget olösliga på Tufft (100 % misslyckande utan chinsstång, sporadiskt misslyckande även med full utrustning)
+
+**Filer ändrade:**
+- `src/data/exerciseData.ts`, `src/lib/workoutGenerator.ts`
+
+**Testat:**
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` - felfria
+- Stresstest av `generateWorkout` i Node (`--experimental-strip-types` + en alias-resolvande loader för `@/`, 200 körningar per kombination av längd × intensitet × utrustning = 7 200 pass): 0 misslyckanden i alla 36 kombinationer, ner från flera kombinationer med 100 % misslyckande innan fixarna
+
+**Begränsningar / öppna frågor:**
+- `02-teknisk-specifikation.md` (B.19/B.20), `03-exercise-library-specification.md` och `07-generator-specifikation.md` beskriver fortfarande den gamla tvånivå-kandidatsökningen och den strikta unika/primära-mönster-kontrollen - uppdaterades inte denna gång eftersom dokändringar kräver godkännande (se `99-ai-instructions.md`)
+
+---
+
+### 2026-07-07 — Dokumentationsuppdatering: spec-dokument synkade med generatorkoden
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- På användarens godkännande uppdaterades de tre spec-dokumenten som låg efter koden sedan förra sessionen:
+  - `02-teknisk-specifikation.md`: B.19 fick ett tillägg om att "två ensidiga i rad"/"tre benövningar i rad" kan stängas av som sista utväg för hela passet; B.20 skrevs om från den gamla 3-stegs-fallbacken till den faktiska processen (åtta kandidatnivåer per plats, två genereringsomgångar för hela passet); tog bort en inaktuell "Historisk notering"
+  - `03-exercise-library-specification.md`: §14 fick samma två undantag tillagda; §16 (övningsbankens omfattning) uppdaterades med exakta antal per `primaryPattern` (100 totalt: knä 18, höft 13, horisontell press 12, vertikal press 2, horisontellt drag 3, vertikalt drag 7, bål 14, kondition 10, balans 9, rörlighet 12), och en rad om minskningen från 121 lades till
+  - `07-generator-specifikation.md`: §7 skrevs om till den faktiska 8-nivåers fallback-ordningen (unikt/upprepning × primärt/sekundärt mönster × korrekt/nedgraderad intensitet); §8 fick en referens till att två av reglerna kan stängas av; §13 skrevs om från den gamla vaga listan till den faktiska tvåomgångsprocessen
+
+**Filer ändrade:**
+- `docs/02-teknisk-specifikation.md`, `docs/03-exercise-library-specification.md`, `docs/07-generator-specifikation.md`
+
+**Testat:**
+- Endast dokumentationsändringar, ingen kodpåverkan
+
+---
+
 ## Mall för nästa post
 
 ```

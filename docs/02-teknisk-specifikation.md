@@ -971,25 +971,24 @@ Generatorn ska kontrollera:
 * tre övningar med `bodyPosition: "floor"` i rad — **avstängd** om användaren saknar stol och/eller chinsstång (`WorkoutSettings.hasChair`/`hasPullupBar`), eftersom hårda pull-övningar utan utrustning alltid utförs på golvet och regeln annars gör Tufft praktiskt taget omöjligt att generera för Standard/Längre (se `07-generator-specifikation.md` §8 och `docs/loggbok.md`)
 * tre övningar vars `muscleGroups` innehåller `"legs"` i rad
 
-Denna lista är synkroniserad med `03-exercise-library-specification.md` §14 och `07-generator-specifikation.md` §8, som är den fullständiga och gällande referensen.
+De två sistnämnda reglerna (två ensidiga i rad, tre benövningar i rad) kan dessutom stängas av som sista utväg för hela passet om ingen giltig sekvens går att generera med dem aktiva (se B.20 och `07-generator-specifikation.md` §13). Generatorn försöker alltid först med samtliga regler aktiva.
 
-> **Historisk notering:** en tidigare version av denna lista saknade regeln om två explosiva övningar i rad och definierade inte hur "tre benövningar i rad" avgörs. Listan ovan är uppdaterad så att den stämmer överens med 03 och 07.
+Denna lista är synkroniserad med `03-exercise-library-specification.md` §14 och `07-generator-specifikation.md` §8, som är den fullständiga och gällande referensen.
 
 ---
 
 ## B.20 Fallback
 
-Om ingen kandidat hittas:
+**Per plats i passmallen** (se `07-generator-specifikation.md` §7): om ingen kandidat hittas med strikta villkor (unik övning, primärt mönster, korrekt intensitet) luckras filtren upp i åtta nivåer — upprepning tillåten, sekundärt mönster tillåtet och nedgraderad intensitet tillåten, i alla kombinationer, i den ordningen. Ger den sista nivån heller ingen kandidat kastas ett fel och hela försöket görs om (se nedan).
 
-1. prova wildcard
-2. prova annan kandidat
-3. starta om genereringen
+**För hela passet:**
 
-Max:
+1. Generera en fullständig sekvens med alla sekvensregler (B.19) aktiva. Validera. Vid fel, prova en ny slumpad sekvens. Max 50 försök.
+2. Lyckas inget av dessa: gör om samma sak med reglerna "två ensidiga i rad" och "tre benövningar i rad" avstängda. Max 50 nya försök.
 
-50 försök.
+Steg 2 krävs på Tufft-intensitet eftersom hard-poolerna för bål/höft/rörlighet är så tunna att nästan alla kandidater delar muskelgrupp `"legs"` och/eller är ensidiga, vilket annars gör vissa passmallar olösliga (se `docs/loggbok.md`).
 
-Om generatorn fortfarande misslyckas returneras ett fel som fångas av appen.
+Om generatorn fortfarande misslyckas efter båda stegen returneras ett fel som fångas av appen.
 
 ---
 

@@ -47,10 +47,16 @@ export class SequenceGenerationFailedError extends Error {
   }
 }
 
-function isIntensityAllowed(exerciseIntensity: string, workoutIntensity: WorkoutIntensity): boolean {
-  if (workoutIntensity === "calm") return exerciseIntensity === "calm";
+function isIntensityAllowed(
+  exerciseIntensity: string,
+  workoutIntensity: WorkoutIntensity,
+  allowIntensityFallback = false
+): boolean {
+  if (workoutIntensity === "calm") {
+    return exerciseIntensity === "calm" || (allowIntensityFallback && exerciseIntensity === "normal");
+  }
   if (workoutIntensity === "normal") return exerciseIntensity === "calm" || exerciseIntensity === "normal";
-  return exerciseIntensity === "hard";
+  return exerciseIntensity === "hard" || (allowIntensityFallback && exerciseIntensity === "normal");
 }
 
 function isEquipmentAllowed(exercise: Exercise, allowedEquipment: Set<Equipment>): boolean {
@@ -88,10 +94,17 @@ function exerciseMatchesKey(exercise: Exercise, key: PatternKey, allowSecondary:
 // för Standard/Längre utan utrustning. En mjukare gräns (t.ex. fyra i rad)
 // testades men räckte inte för Längre (endast ~6 % lyckade försök) - se
 // docs/loggbok.md.
+//
+// relaxSimilarityRules: undantag för "två ensidiga övningar i rad" och "tre
+// benövningar i rad". På Tufft är hard-poolerna för core/höft/rörlighet så
+// tunna att alla alternativ delar "ben" och/eller är ensidiga - reglerna gör
+// annars vissa passmallar omöjliga att generera. Separation försöks alltid
+// först (se generateWorkout); undantaget används bara om det krävs.
 function violatesSequenceRules(
   candidate: Exercise,
   chosen: Exercise[],
-  equipmentRestricted: boolean
+  equipmentRestricted: boolean,
+  relaxSimilarityRules: boolean
 ): boolean {
   const prev = chosen[chosen.length - 1];
   if (!prev) return false;
@@ -100,7 +113,7 @@ function violatesSequenceRules(
   if (prev.jump && candidate.jump) return true;
   if (prev.explosive && candidate.explosive) return true;
   if (prev.movementType === "isometric" && candidate.movementType === "isometric") return true;
-  if (prev.unilateral && candidate.unilateral) return true;
+  if (!relaxSimilarityRules && prev.unilateral && candidate.unilateral) return true;
   if (prev.primaryPattern === candidate.primaryPattern) return true;
   if (prev.bodyPosition === "hanging" && candidate.bodyPosition === "hanging") return true;
 
@@ -116,12 +129,14 @@ function violatesSequenceRules(
     }
   }
 
-  const prev2 = chosen[chosen.length - 2];
-  if (prev2) {
-    const legsInARow = [prev2, prev, candidate].every((exercise) =>
-      exercise.muscleGroups.includes("legs")
-    );
-    if (legsInARow) return true;
+  if (!relaxSimilarityRules) {
+    const prev2 = chosen[chosen.length - 2];
+    if (prev2) {
+      const legsInARow = [prev2, prev, candidate].every((exercise) =>
+        exercise.muscleGroups.includes("legs")
+      );
+      if (legsInARow) return true;
+    }
   }
 
   return false;
@@ -134,30 +149,60 @@ function findCandidates(
   equipmentRestricted: boolean,
   usedIds: Set<string>,
   chosen: Exercise[],
-  allowSecondary: boolean
+  allowSecondary: boolean,
+  allowRepeat: boolean,
+  allowIntensityFallback: boolean,
+  relaxSimilarityRules: boolean
 ): Exercise[] {
   return exerciseData.filter((exercise) => {
-    if (usedIds.has(exercise.id)) return false;
-    if (!isIntensityAllowed(exercise.intensity, intensity)) return false;
+    if (!allowRepeat && usedIds.has(exercise.id)) return false;
+    if (!isIntensityAllowed(exercise.intensity, intensity, allowIntensityFallback)) return false;
     if (!isEquipmentAllowed(exercise, allowedEquipment)) return false;
-    if (violatesSequenceRules(exercise, chosen, equipmentRestricted)) return false;
+    if (violatesSequenceRules(exercise, chosen, equipmentRestricted, relaxSimilarityRules)) return false;
     return exerciseMatchesKey(exercise, key, allowSecondary);
   });
 }
+
+// Fallback-ordning per plats: unikt före upprepning, korrekt intensitet före
+// nedgraderad, eftersom ett fåtal mönster/intensitet/utrustnings-kombinationer
+// (t.ex. drag på Tufft utan stol/chinsstång) annars saknar övningar helt.
+const CANDIDATE_TIERS: Array<{ allowSecondary: boolean; allowRepeat: boolean; allowIntensityFallback: boolean }> = [
+  { allowSecondary: false, allowRepeat: false, allowIntensityFallback: false },
+  { allowSecondary: true, allowRepeat: false, allowIntensityFallback: false },
+  { allowSecondary: false, allowRepeat: true, allowIntensityFallback: false },
+  { allowSecondary: true, allowRepeat: true, allowIntensityFallback: false },
+  { allowSecondary: false, allowRepeat: false, allowIntensityFallback: true },
+  { allowSecondary: true, allowRepeat: false, allowIntensityFallback: true },
+  { allowSecondary: false, allowRepeat: true, allowIntensityFallback: true },
+  { allowSecondary: true, allowRepeat: true, allowIntensityFallback: true },
+];
 
 function buildMainExercises(
   patterns: PatternKey[],
   intensity: WorkoutIntensity,
   allowedEquipment: Set<Equipment>,
-  equipmentRestricted: boolean
+  equipmentRestricted: boolean,
+  relaxSimilarityRules: boolean
 ): Exercise[] {
   const chosen: Exercise[] = [];
   const usedIds = new Set<string>();
 
   for (const key of patterns) {
-    let candidates = findCandidates(key, intensity, allowedEquipment, equipmentRestricted, usedIds, chosen, false);
-    if (candidates.length === 0) {
-      candidates = findCandidates(key, intensity, allowedEquipment, equipmentRestricted, usedIds, chosen, true);
+    let candidates: Exercise[] = [];
+    for (const tier of CANDIDATE_TIERS) {
+      candidates = findCandidates(
+        key,
+        intensity,
+        allowedEquipment,
+        equipmentRestricted,
+        usedIds,
+        chosen,
+        tier.allowSecondary,
+        tier.allowRepeat,
+        tier.allowIntensityFallback,
+        relaxSimilarityRules
+      );
+      if (candidates.length > 0) break;
     }
     if (candidates.length === 0) {
       throw new NoExercisesFoundError(key);
@@ -176,27 +221,28 @@ function buildMainExercises(
 function isValidWorkout(
   exercises: Exercise[],
   intensity: WorkoutIntensity,
-  equipmentRestricted: boolean
+  equipmentRestricted: boolean,
+  relaxSimilarityRules: boolean
 ): boolean {
-  if (exercises.some((exercise) => !isIntensityAllowed(exercise.intensity, intensity))) return false;
-
-  const uniqueIds = new Set(exercises.map((exercise) => exercise.id));
-  if (uniqueIds.size !== exercises.length) return false;
+  if (exercises.some((exercise) => !isIntensityAllowed(exercise.intensity, intensity, true))) return false;
 
   for (let i = 1; i < exercises.length; i++) {
-    if (violatesSequenceRules(exercises[i], exercises.slice(0, i), equipmentRestricted)) return false;
+    if (violatesSequenceRules(exercises[i], exercises.slice(0, i), equipmentRestricted, relaxSimilarityRules)) return false;
   }
 
-  const hasAny = (predicate: (exercise: Exercise) => boolean) => exercises.some(predicate);
+  // Matchar samma sätt som findCandidates (inklusive sekundära mönster) -
+  // annars kan ett giltigt byggt pass avvisas här för att en plats fylldes
+  // via en övnings sekundära mönster istället för dess primära.
+  const hasAny = (key: PatternKey) => exercises.some((exercise) => exerciseMatchesKey(exercise, key, true));
 
   return (
-    hasAny((exercise) => exercise.primaryPattern === "knee") &&
-    hasAny((exercise) => exercise.primaryPattern === "hip") &&
-    hasAny((exercise) => exercise.primaryPattern === "horizontal_push" || exercise.primaryPattern === "vertical_push") &&
-    hasAny((exercise) => exercise.primaryPattern === "horizontal_pull" || exercise.primaryPattern === "vertical_pull") &&
-    hasAny((exercise) => exercise.primaryPattern === "core") &&
-    hasAny((exercise) => exercise.primaryPattern === "conditioning") &&
-    hasAny((exercise) => exercise.primaryPattern === "balance" || exercise.primaryPattern === "mobility")
+    hasAny("knee") &&
+    hasAny("hip") &&
+    hasAny("push") &&
+    hasAny("pull") &&
+    hasAny("core") &&
+    hasAny("conditioning") &&
+    hasAny("balance_or_mobility")
   );
 }
 
@@ -218,21 +264,29 @@ export function generateWorkout(settings: WorkoutSettings): Workout {
   const equipmentRestricted = !settings.hasChair || !settings.hasPullupBar;
   let mainExercises: Exercise[] | null = null;
 
-  for (let attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
-    try {
-      const candidate = buildMainExercises(
-        template.patterns,
-        settings.intensity,
-        allowedEquipment,
-        equipmentRestricted
-      );
-      if (isValidWorkout(candidate, settings.intensity, equipmentRestricted)) {
-        mainExercises = candidate;
-        break;
+  // Separation av liknande övningar (undvik två ensidiga eller tre
+  // benövningar i rad) försöks alltid först. Bara om det är omöjligt att
+  // fylla passmallen med separation (t.ex. Tufft där core/höft/rörlighet
+  // alla delar "ben") körs en andra omgång med undantaget aktiverat.
+  for (const relaxSimilarityRules of [false, true]) {
+    for (let attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
+      try {
+        const candidate = buildMainExercises(
+          template.patterns,
+          settings.intensity,
+          allowedEquipment,
+          equipmentRestricted,
+          relaxSimilarityRules
+        );
+        if (isValidWorkout(candidate, settings.intensity, equipmentRestricted, relaxSimilarityRules)) {
+          mainExercises = candidate;
+          break;
+        }
+      } catch {
+        // Försöket misslyckades, prova igen med en ny slumpad sekvens.
       }
-    } catch {
-      // Försöket misslyckades, prova igen med en ny slumpad sekvens.
     }
+    if (mainExercises) break;
   }
 
   if (!mainExercises) {
