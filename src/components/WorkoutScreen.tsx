@@ -49,7 +49,7 @@ export default function WorkoutScreen({
         </div>
       </div>
 
-      <TimerDisplay seconds={timerState.remainingSeconds} />
+      <TimerDisplay seconds={timerState.remainingSeconds} totalSeconds={block.duration} />
 
       <div className={styles.content}>
         <ExerciseCard name={block.exercise.name} instruction={block.exercise.instruction} />

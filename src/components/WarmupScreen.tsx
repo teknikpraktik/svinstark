@@ -11,9 +11,7 @@ export default function WarmupScreen({ onReady, onCancel }: WarmupScreenProps) {
     <div className={styles.screen}>
       <div className={styles.content}>
         <h1 className={styles.title}>Valfri uppvärmning</h1>
-        <p className={styles.message}>
-          Värm upp på det sätt som passar dig. Tryck på knappen när du är redo att köra igång.
-        </p>
+        <p className={styles.message}>Värm upp på det sätt som passar dig.</p>
       </div>
 
       <div className={styles.actions}>

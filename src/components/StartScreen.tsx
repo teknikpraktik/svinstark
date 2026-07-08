@@ -77,11 +77,9 @@ export default function StartScreen({
 
       <div className={styles.hero}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/icons/monogram.png" alt="" width={56} height={56} className={styles.monogram} />
+        <img src="/icons/monogram.png" alt="" width={44} height={44} className={styles.monogram} />
 
         <p className={styles.wordmark}>svinstark</p>
-
-        <h1 className={styles.headline}>Träna med minsta effektiva dosen</h1>
 
         <ul className={styles.valueProps}>
           {valueProps.map((value) => (

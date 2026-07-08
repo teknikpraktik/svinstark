@@ -4,13 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { WorkoutTimer } from "@/lib/timer";
 import type { TimerState, Workout } from "@/types/workout";
 
-const INITIAL_STATE: TimerState = {
-  currentBlock: 0,
-  remainingSeconds: 0,
-  isRunning: false,
-  isPaused: false,
-};
-
 export interface UseTimerCallbacks {
   onFinish?: () => void;
   onBlockChange?: (blockIndex: number) => void;
@@ -22,7 +15,15 @@ export interface UseTimerCallbacks {
 // tas bort eller byts ut. All state uppdateras uteslutande via timerns
 // egna callbacks (onTick), aldrig direkt i effektens kropp.
 export function useTimer(workout: Workout | null, callbacks: UseTimerCallbacks = {}) {
-  const [timerState, setTimerState] = useState<TimerState>(INITIAL_STATE);
+  // Sätts direkt från passets första block istället för 0, annars hinner
+  // TimerDisplay-ringen rendera en tom cirkel (fraction 0) innan timerns
+  // egen start()-emit rättar till det ett ögonblick senare.
+  const [timerState, setTimerState] = useState<TimerState>(() => ({
+    currentBlock: 0,
+    remainingSeconds: workout?.blocks[0]?.duration ?? 0,
+    isRunning: false,
+    isPaused: false,
+  }));
   const timerRef = useRef<WorkoutTimer | null>(null);
 
   useEffect(() => {
