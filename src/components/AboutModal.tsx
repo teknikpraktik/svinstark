@@ -14,10 +14,6 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         <h2 className={styles.title}>Om Svinstark</h2>
 
         <p className={styles.intro}>Kroppen svarar på signaler, inte på träningstid.</p>
-        <p>
-          Den minsta effektiva dosen: korta, balanserade helkroppspass som ger kroppen tydlig
-          träningsstimulans.
-        </p>
 
         <h3>Träning ska vara enkel</h3>
         <p>

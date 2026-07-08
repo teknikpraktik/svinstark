@@ -1,4 +1,5 @@
 .page {
+  position: relative;
   min-height: 100%;
   flex: 1;
   display: flex;
@@ -8,6 +9,9 @@
 }
 
 .header {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
@@ -21,8 +25,12 @@
   gap: 0.35rem;
 }
 
-.monogram {
-  border-radius: 10px;
+.mark {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--foreground);
   margin-bottom: 0.1rem;
 }
 

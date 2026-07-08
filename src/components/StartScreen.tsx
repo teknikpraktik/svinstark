@@ -71,13 +71,11 @@ export default function StartScreen({
           icon="ⓘ"
           ariaLabel="Om Svinstark"
           onClick={() => setIsAboutOpen(true)}
-          size="large"
         />
       </header>
 
       <div className={styles.hero}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/icons/monogram.png" alt="" width={44} height={44} className={styles.monogram} />
+        <p className={styles.mark} aria-hidden="true">SS</p>
 
         <p className={styles.wordmark}>svinstark</p>
 
