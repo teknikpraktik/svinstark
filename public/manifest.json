@@ -1,8 +1,11 @@
 {
+  "id": "/",
   "name": "svinstark",
   "short_name": "svinstark",
   "description": "Den minsta effektiva dosen",
   "start_url": "/",
+  "scope": "/",
+  "lang": "sv",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#171717",

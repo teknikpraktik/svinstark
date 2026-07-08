@@ -1,0 +1,24 @@
+# Svinstark
+
+> Svinstark är en enkel webbapp/PWA för korta, tidseffektiva hemmaträningspass. Ingen inloggning, inga annonser, ingen träningsdata som skickas till en server – allt körs i webbläsaren.
+
+## Vad det är
+
+Svinstark genererar ett komplett träningspass utifrån hur mycket tid du har och hur tufft du vill köra. Passet består av en serie kroppsviktsövningar med inbyggd timer, ljudsignaler och en valfri uppvärmning innan start.
+
+## Vem det är för
+
+Personer som vill träna hemma utan gym, utrustning eller planering – man öppnar appen, väljer inställningar och kör igång direkt.
+
+## Huvudfunktioner
+
+- Välj träningstid (kortare/standard/längre) och intensitet (lugnt/normalt/tufft)
+- Ange vilken utrustning som finns tillgänglig (chinsstång, stol/pall, fria vikter) – passet anpassas efter det
+- Automatiskt genererat övningspass med nedräkningstimer per övning
+- Ljudsignaler för nytt block, sista sekunderna och pass klart (kan stängas av)
+- Går att hoppa över enskilda övningar eller pausa passet
+- Installerbar som PWA (fungerar offline, ikon på hemskärmen)
+
+## URL
+
+https://svinstark.vercel.app/
