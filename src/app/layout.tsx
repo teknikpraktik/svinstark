@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "svinstark",
+    title: "SVINSTARK",
   },
   icons: {
     icon: [
