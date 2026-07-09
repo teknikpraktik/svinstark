@@ -1,6 +1,6 @@
 import type { Exercise } from "@/types/workout";
 
-// Knädominanta (15)
+// Knädominanta (14)
 const kneeExercises: Exercise[] = [
   {
     id: "squat",
@@ -156,33 +156,7 @@ const kneeExercises: Exercise[] = [
     mobilityDemand: "medium",
     balanceDemand: "medium",
     coordinationDemand: "low",
-    avoidAdjacent: ["curtsy_lunge"],
-  },
-  {
-    id: "curtsy_lunge",
-    name: "Curtsy lunge",
-    instruction: "Kliv bakåt diagonalt bakom det stödjande benet. Sänk kontrollerat. Pressa tillbaka till start. Byt sida varje gång.",
-    primaryPattern: "knee",
-    secondaryPatterns: ["hip"],
-    intensity: "normal",
-    equipment: ["bodyweight"],
-    muscleGroups: ["legs", "glutes"],
-    bodyPosition: "standing",
-    movementType: "dynamic",
-    movementPlane: "transverse",
-    impact: "low",
-    explosive: false,
-    unilateral: true,
-    jump: false,
-    rotation: true,
-    overhead: false,
-    locomotion: false,
-    strengthDemand: "medium",
-    cardioDemand: "low",
-    mobilityDemand: "medium",
-    balanceDemand: "medium",
-    coordinationDemand: "medium",
-    avoidAdjacent: ["lateral_lunge"],
+    avoidAdjacent: [],
   },
   {
     id: "jump_squat",
@@ -394,7 +368,7 @@ const kneeExercises: Exercise[] = [
   },
 ];
 
-// Höftdominanta (11)
+// Höftdominanta (9)
 const hipExercises: Exercise[] = [
   {
     id: "glute_bridge",
@@ -628,58 +602,6 @@ const hipExercises: Exercise[] = [
     mobilityDemand: "low",
     balanceDemand: "medium",
     coordinationDemand: "high",
-    avoidAdjacent: [],
-  },
-  {
-    id: "reverse_hyper_floor",
-    name: "Bålsträckning liggande",
-    instruction: "Ligg på mage. Lyft båda benen samtidigt mot taket. Sänk kontrollerat.",
-    primaryPattern: "hip",
-    secondaryPatterns: ["core"],
-    intensity: "normal",
-    equipment: ["floor"],
-    muscleGroups: ["glutes", "back", "legs"],
-    bodyPosition: "floor",
-    movementType: "dynamic",
-    movementPlane: "sagittal",
-    impact: "low",
-    explosive: false,
-    unilateral: false,
-    jump: false,
-    rotation: false,
-    overhead: false,
-    locomotion: false,
-    strengthDemand: "medium",
-    cardioDemand: "low",
-    mobilityDemand: "low",
-    balanceDemand: "low",
-    coordinationDemand: "low",
-    avoidAdjacent: [],
-  },
-  {
-    id: "standing_kickback",
-    name: "Höftsträckning stående",
-    instruction: "Stå och håll i en stol för balans. Sträck ett ben rakt bakåt utan att luta bålen. Byt ben efter halva tiden.",
-    primaryPattern: "hip",
-    secondaryPatterns: [],
-    intensity: "normal",
-    equipment: ["chair"],
-    muscleGroups: ["glutes"],
-    bodyPosition: "standing",
-    movementType: "dynamic",
-    movementPlane: "sagittal",
-    impact: "low",
-    explosive: false,
-    unilateral: true,
-    jump: false,
-    rotation: false,
-    overhead: false,
-    locomotion: false,
-    strengthDemand: "low",
-    cardioDemand: "low",
-    mobilityDemand: "low",
-    balanceDemand: "medium",
-    coordinationDemand: "low",
     avoidAdjacent: [],
   },
 ];
@@ -948,7 +870,7 @@ const horizontalPushExercises: Exercise[] = [
   },
 ];
 
-// Vertikal press (2)
+// Vertikal press (1)
 const verticalPushExercises: Exercise[] = [
   {
     id: "pike_push_up",
@@ -976,35 +898,9 @@ const verticalPushExercises: Exercise[] = [
     coordinationDemand: "low",
     avoidAdjacent: ["push_up"],
   },
-  {
-    id: "wall_handstand_hold",
-    name: "Handstående mot vägg",
-    instruction: "Kliv upp i handstående med fötterna mot en vägg. Håll positionen still.",
-    primaryPattern: "vertical_push",
-    secondaryPatterns: ["core", "balance"],
-    intensity: "hard",
-    equipment: ["bodyweight"],
-    muscleGroups: ["shoulders", "arms", "core"],
-    bodyPosition: "floor",
-    movementType: "isometric",
-    movementPlane: "sagittal",
-    impact: "low",
-    explosive: false,
-    unilateral: false,
-    jump: false,
-    rotation: false,
-    overhead: true,
-    locomotion: false,
-    strengthDemand: "high",
-    cardioDemand: "low",
-    mobilityDemand: "high",
-    balanceDemand: "high",
-    coordinationDemand: "high",
-    avoidAdjacent: [],
-  },
 ];
 
-// Horisontellt drag (3)
+// Horisontellt drag (2)
 const horizontalPullExercises: Exercise[] = [
   {
     id: "inverted_row",
@@ -1033,32 +929,6 @@ const horizontalPullExercises: Exercise[] = [
     avoidAdjacent: [],
   },
   {
-    id: "prone_reverse_fly",
-    name: "Liggande bakåtlyft",
-    instruction: "Ligg på mage med armarna ut åt sidan. Lyft armarna och kläm ihop skulderbladen.",
-    primaryPattern: "horizontal_pull",
-    secondaryPatterns: [],
-    intensity: "calm",
-    equipment: ["floor"],
-    muscleGroups: ["back", "shoulders"],
-    bodyPosition: "floor",
-    movementType: "dynamic",
-    movementPlane: "frontal",
-    impact: "low",
-    explosive: false,
-    unilateral: false,
-    jump: false,
-    rotation: false,
-    overhead: false,
-    locomotion: false,
-    strengthDemand: "low",
-    cardioDemand: "low",
-    mobilityDemand: "low",
-    balanceDemand: "low",
-    coordinationDemand: "low",
-    avoidAdjacent: ["prone_y_raise"],
-  },
-  {
     id: "prone_y_raise",
     name: "Liggande Y-lyft",
     instruction: "Ligg på mage med armarna sträckta framåt i en Y-form. Lyft armarna mot taket.",
@@ -1082,7 +952,7 @@ const horizontalPullExercises: Exercise[] = [
     mobilityDemand: "low",
     balanceDemand: "low",
     coordinationDemand: "low",
-    avoidAdjacent: ["prone_reverse_fly"],
+    avoidAdjacent: [],
   },
 ];
 
@@ -1220,7 +1090,7 @@ const verticalPullExercises: Exercise[] = [
   },
   {
     id: "towel_grip_hang",
-    name: "Grepphäng",
+    name: "Häng",
     instruction: "Häng i stången med ett smalare, alternativt grepp. Håll positionen still.",
     primaryPattern: "vertical_pull",
     secondaryPatterns: [],
@@ -1246,7 +1116,7 @@ const verticalPullExercises: Exercise[] = [
   },
 ];
 
-// Bål (13)
+// Bål (12)
 const coreExercises: Exercise[] = [
   {
     id: "plank",
@@ -1540,7 +1410,7 @@ const coreExercises: Exercise[] = [
     instruction: "Stå i sidoplanka. Lyft det översta benet och den översta armen ut i en stjärnform. Byt sida efter halva tiden.",
     primaryPattern: "core",
     secondaryPatterns: ["balance"],
-    intensity: "normal",
+    intensity: "hard",
     equipment: ["floor"],
     muscleGroups: ["core"],
     bodyPosition: "floor",
@@ -1553,38 +1423,12 @@ const coreExercises: Exercise[] = [
     rotation: false,
     overhead: false,
     locomotion: false,
-    strengthDemand: "medium",
+    strengthDemand: "high",
     cardioDemand: "low",
     mobilityDemand: "low",
     balanceDemand: "high",
     coordinationDemand: "medium",
     avoidAdjacent: ["side_plank"],
-  },
-  {
-    id: "toe_touch",
-    name: "Tåpekning",
-    instruction: "Ligg på rygg med raka ben lyfta mot taket. Lyft överkroppen och sträck mot tårna.",
-    primaryPattern: "core",
-    secondaryPatterns: [],
-    intensity: "calm",
-    equipment: ["floor"],
-    muscleGroups: ["core"],
-    bodyPosition: "floor",
-    movementType: "dynamic",
-    movementPlane: "sagittal",
-    impact: "low",
-    explosive: false,
-    unilateral: false,
-    jump: false,
-    rotation: false,
-    overhead: false,
-    locomotion: false,
-    strengthDemand: "low",
-    cardioDemand: "low",
-    mobilityDemand: "medium",
-    balanceDemand: "low",
-    coordinationDemand: "low",
-    avoidAdjacent: [],
   },
 ];
 
@@ -1826,7 +1670,7 @@ const conditioningExercises: Exercise[] = [
   },
 ];
 
-// Balans (7)
+// Balans (6)
 const balanceExercises: Exercise[] = [
   {
     id: "single_leg_stand",
@@ -1853,32 +1697,6 @@ const balanceExercises: Exercise[] = [
     balanceDemand: "high",
     coordinationDemand: "low",
     avoidAdjacent: ["tree_pose_hold"],
-  },
-  {
-    id: "single_leg_reach",
-    name: "Enbens marklyftsreach",
-    instruction: "Stå på ett ben. Fäll överkroppen framåt och sträck fram motsatt arm. Res dig upp igen. Byt ben efter halva tiden.",
-    primaryPattern: "balance",
-    secondaryPatterns: ["hip"],
-    intensity: "normal",
-    equipment: ["bodyweight"],
-    muscleGroups: ["legs", "glutes", "core"],
-    bodyPosition: "standing",
-    movementType: "dynamic",
-    movementPlane: "sagittal",
-    impact: "low",
-    explosive: false,
-    unilateral: true,
-    jump: false,
-    rotation: false,
-    overhead: false,
-    locomotion: false,
-    strengthDemand: "low",
-    cardioDemand: "low",
-    mobilityDemand: "medium",
-    balanceDemand: "high",
-    coordinationDemand: "medium",
-    avoidAdjacent: [],
   },
   {
     id: "single_leg_hip_hinge",
@@ -2121,11 +1939,11 @@ const mobilityExercises: Exercise[] = [
   {
     id: "leg_swings",
     name: "Bensvingningar",
-    instruction: "Håll i en stol för balans. Svinga ett ben framåt och bakåt i en avslappnad rörelse. Byt ben efter halva tiden.",
+    instruction: "Stå fritt. Svinga ett ben framåt och bakåt i en avslappnad rörelse. Byt ben efter halva tiden.",
     primaryPattern: "mobility",
     secondaryPatterns: ["balance"],
     intensity: "normal",
-    equipment: ["chair"],
+    equipment: ["bodyweight"],
     muscleGroups: ["legs"],
     bodyPosition: "standing",
     movementType: "dynamic",
@@ -2140,7 +1958,7 @@ const mobilityExercises: Exercise[] = [
     strengthDemand: "low",
     cardioDemand: "low",
     mobilityDemand: "high",
-    balanceDemand: "medium",
+    balanceDemand: "high",
     coordinationDemand: "low",
     avoidAdjacent: [],
   },
@@ -2276,7 +2094,7 @@ const mobilityExercises: Exercise[] = [
   },
 ];
 
-// Tillägg (14): säkerställer tillräcklig calm/hard-täckning per rörelsemönster
+// Tillägg (13): säkerställer tillräcklig calm/hard-täckning per rörelsemönster
 // för att passgeneratorn (Fas 5) ska kunna fylla samtliga platser i alla
 // passmallar, inklusive de längre malelmarna, för både Lugnt och Tufft.
 // Se docs/loggbok.md.
@@ -2464,32 +2282,6 @@ const additionalExercises: Exercise[] = [
     avoidAdjacent: ["marching_in_place", "butt_kicks"],
   },
   {
-    id: "high_kick_walk",
-    name: "Höga sparkar i gång",
-    instruction: "Gå framåt och spark ett rakt ben högt mot motsatt hand växelvis.",
-    primaryPattern: "mobility",
-    secondaryPatterns: ["conditioning"],
-    intensity: "hard",
-    equipment: ["bodyweight"],
-    muscleGroups: ["legs", "core"],
-    bodyPosition: "standing",
-    movementType: "dynamic",
-    movementPlane: "sagittal",
-    impact: "medium",
-    explosive: false,
-    unilateral: true,
-    jump: false,
-    rotation: false,
-    overhead: false,
-    locomotion: true,
-    strengthDemand: "low",
-    cardioDemand: "medium",
-    mobilityDemand: "high",
-    balanceDemand: "medium",
-    coordinationDemand: "medium",
-    avoidAdjacent: [],
-  },
-  {
     id: "lateral_lunge_flow_dynamic",
     name: "Sidoutfallsflöde, dynamiskt",
     instruction: "Växla snabbt mellan sidoutfall åt höger och vänster i ett sammanhängande flöde.",
@@ -2648,12 +2440,11 @@ const additionalExercises: Exercise[] = [
   },
 ];
 
-// Fria vikter (24): övningar som kräver "weights_light" och/eller
+// Fria vikter (21): övningar som kräver "weights_light" och/eller
 // "weights_heavy" (WorkoutSettings.freeWeights). Blandade rörelsemönster,
-// samma princip som additionalExercises ovan. Tunga roddövningar
-// (one_arm_row_heavy, bent_over_row) fyller medvetet det tunna
-// horizontal_pull-hard-utbudet som annars bara finns via pullup_bar - se
-// docs/loggbok.md.
+// samma princip som additionalExercises ovan. one_arm_row_heavy fyller
+// medvetet det tunna horizontal_pull-hard-utbudet som annars bara finns
+// via pullup_bar - se docs/loggbok.md.
 const freeWeightExercises: Exercise[] = [
   {
     id: "goblet_squat",
@@ -2809,33 +2600,7 @@ const freeWeightExercises: Exercise[] = [
     mobilityDemand: "low",
     balanceDemand: "low",
     coordinationDemand: "low",
-    avoidAdjacent: ["heavy_floor_press", "push_up"],
-  },
-  {
-    id: "weighted_russian_twist",
-    name: "Russian twist med vikt",
-    instruction: "Sitt med lätt bakåtlutad överkropp och lyfta fötter. Håll en vikt med båda händerna. Rotera vikten mot golvet på vardera sida.",
-    primaryPattern: "core",
-    secondaryPatterns: [],
-    intensity: "normal",
-    equipment: ["floor", "weights_light"],
-    muscleGroups: ["core"],
-    bodyPosition: "floor",
-    movementType: "dynamic",
-    movementPlane: "transverse",
-    impact: "low",
-    explosive: false,
-    unilateral: true,
-    jump: false,
-    rotation: true,
-    overhead: false,
-    locomotion: false,
-    strengthDemand: "medium",
-    cardioDemand: "low",
-    mobilityDemand: "low",
-    balanceDemand: "low",
-    coordinationDemand: "medium",
-    avoidAdjacent: ["bicycle_crunch"],
+    avoidAdjacent: ["push_up"],
   },
   {
     id: "weighted_dead_bug",
@@ -3043,7 +2808,7 @@ const freeWeightExercises: Exercise[] = [
     mobilityDemand: "low",
     balanceDemand: "low",
     coordinationDemand: "low",
-    avoidAdjacent: ["one_arm_row_light", "bent_over_row"],
+    avoidAdjacent: ["one_arm_row_light"],
   },
   {
     id: "farmer_carry",
@@ -3124,32 +2889,6 @@ const freeWeightExercises: Exercise[] = [
     avoidAdjacent: [],
   },
   {
-    id: "heavy_floor_press",
-    name: "Tung floor press",
-    instruction: "Ligg på rygg med en tung vikt i vardera hand och armbågarna mot golvet. Pressa vikterna rakt upp. Sänk kontrollerat.",
-    primaryPattern: "horizontal_push",
-    secondaryPatterns: [],
-    intensity: "hard",
-    equipment: ["floor", "weights_heavy"],
-    muscleGroups: ["chest", "arms"],
-    bodyPosition: "floor",
-    movementType: "dynamic",
-    movementPlane: "sagittal",
-    impact: "low",
-    explosive: false,
-    unilateral: false,
-    jump: false,
-    rotation: false,
-    overhead: false,
-    locomotion: false,
-    strengthDemand: "high",
-    cardioDemand: "low",
-    mobilityDemand: "low",
-    balanceDemand: "low",
-    coordinationDemand: "low",
-    avoidAdjacent: ["floor_press_light", "push_up"],
-  },
-  {
     id: "heavy_split_squat",
     name: "Tung split squat",
     instruction: "Håll en tung vikt i vardera hand. Stå i utfallsposition med bakre foten på tå. Sänk bakre knäet mot golvet. Pressa upp. Byt ben efter halva tiden.",
@@ -3226,32 +2965,6 @@ const freeWeightExercises: Exercise[] = [
     balanceDemand: "low",
     coordinationDemand: "low",
     avoidAdjacent: ["heavy_goblet_squat", "goblet_squat"],
-  },
-  {
-    id: "bent_over_row",
-    name: "Bent-over row",
-    instruction: "Fäll överkroppen framåt med rak rygg och en tung vikt i vardera hand. Dra vikterna mot höften. Sänk kontrollerat.",
-    primaryPattern: "horizontal_pull",
-    secondaryPatterns: ["core"],
-    intensity: "hard",
-    equipment: ["weights_heavy"],
-    muscleGroups: ["back", "arms", "core"],
-    bodyPosition: "standing",
-    movementType: "dynamic",
-    movementPlane: "sagittal",
-    impact: "low",
-    explosive: false,
-    unilateral: false,
-    jump: false,
-    rotation: false,
-    overhead: false,
-    locomotion: false,
-    strengthDemand: "high",
-    cardioDemand: "low",
-    mobilityDemand: "low",
-    balanceDemand: "low",
-    coordinationDemand: "low",
-    avoidAdjacent: ["one_arm_row_heavy"],
   },
   {
     id: "loaded_step_up",
