@@ -34,7 +34,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           <li>14 minuter</li>
           <li>21 minuter</li>
         </ul>
-        <p>Korta pass med rätt intensitet, genomförda ofta, räcker långt för de flesta.</p>
+        <p>Korta pass med rätt intensitet, genomförda ofta, ger bättre resultat än långa pass – för de allra flesta.</p>
         <p>Ett sju minuter långt pass är bättre än ett trettio minuter långt pass som aldrig blir av.</p>
 
         <h3>Tre val – sedan inga fler beslut</h3>
@@ -117,9 +117,9 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         <h3>Feedback</h3>
         <p>
           Svinstark utvecklas löpande. Har du synpunkter, hittat en bugg eller vill du bara
-          säga vad du tycker? Mejla mig, utvecklaren, på{" "}
+          säga vad du tycker?{" "}
           <a className={styles.link} href="mailto:per.a.bjorkman@gmail.com">
-            per.a.bjorkman@gmail.com
+            Mejla mig
           </a>
           .
         </p>
