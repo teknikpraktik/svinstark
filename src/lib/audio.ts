@@ -58,12 +58,12 @@ export function unlockAudioContext(): void {
 }
 
 // Avslutar 3-2-1-nedräkningen (playCountdownBeep) precis som ett
-// skidskyttestarts sista, ljusare ton - högre än nedräkningens pip, inte
-// lägre, så det känns som en startsignal snarare än en nedtoning.
+// skidskyttestarts sista, ljusare ton - högre och längre än nedräkningens
+// korta pip, så det känns som en startsignal snarare än en nedtoning.
 export function playNewBlockSound(): void {
   const context = getAudioContext();
   if (!context) return;
-  playTone(context, 1567.98, 0.2);
+  playTone(context, 1320, 0.35);
 }
 
 export function playCountdownBeep(): void {
