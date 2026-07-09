@@ -117,9 +117,8 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         <p>
           Kroppen svarar på stimulans, inte på tid. Sju minuter idag slår trettio minuter någon
           annan gång. Välj dina inställningar. Tryck på Start.
-          <br />
-          Njut av dagens pass!
         </p>
+        <p>Njut av dagens pass!</p>
 
         <h3>Feedback</h3>
         <p>
