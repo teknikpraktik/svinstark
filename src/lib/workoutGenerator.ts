@@ -115,8 +115,18 @@ const MOVEMENT_FAMILIES: Partial<Record<PatternKey, string[]>> = {
 
 // Bredare reservkategori per kärnrörelse-familj, använd av buildMainExercises
 // när familjen inte har någon kandidat (t.ex. chinup kräver alltid
-// pullup_bar - saknas den utrustningen faller platsen tillbaka till valfri
-// pull-övning istället för att göra hela passet omöjligt att generera).
+// pullup_bar - saknas den utrustningen faller platsen tillbaka till en
+// bredare kategori istället för att göra hela passet omöjligt att generera).
+//
+// chinup faller till "wildcard", inte "pull": horizontal_pull_row faller
+// redan till "pull" i samma mallar, och utan stol/bord/chinsstång finns
+// bara EN kroppsviktsövning i hela "pull"-kategorin (prone_y_raise/
+// "Liggande Y-lyft"). Om båda platserna föll till "pull" skulle de
+// oundvikligen krocka på samma övning - och eftersom samma övning aldrig
+// får förekomma två gånger i samma pass (se isValidWorkout) skulle passet
+// bli omöjligt att generera helt utan utrustning. "pull"-täckningen i
+// passet garanteras redan av horizontal_pull_row-platsen, så chinup
+// behöver inte också vara en pull-övning när chins inte går att göra.
 const FAMILY_FALLBACK: Partial<Record<PatternKey, PatternKey>> = {
   squat: "knee",
   lunge_forward: "knee",
@@ -124,7 +134,7 @@ const FAMILY_FALLBACK: Partial<Record<PatternKey, PatternKey>> = {
   lunge_reverse: "knee",
   hip_hinge: "hip",
   pushup_rotation: "push",
-  chinup: "pull",
+  chinup: "wildcard",
   glute_bridge: "hip",
   overhead_press: "push",
   horizontal_pull_row: "pull",
@@ -218,12 +228,15 @@ function findCandidates(
   intensity: WorkoutIntensity,
   allowedEquipment: Set<Equipment>,
   equipmentRestricted: boolean,
+  usedIds: Set<string>,
   chosen: Exercise[],
   allowSecondary: boolean,
+  allowRepeat: boolean,
   allowIntensityFallback: boolean,
   relaxSimilarityRules: boolean
 ): Exercise[] {
   return exerciseData.filter((exercise) => {
+    if (!allowRepeat && usedIds.has(exercise.id)) return false;
     if (!isIntensityAllowed(exercise.intensity, intensity, allowIntensityFallback)) return false;
     if (!isEquipmentAllowed(exercise, allowedEquipment)) return false;
     if (violatesSequenceRules(exercise, chosen, equipmentRestricted, relaxSimilarityRules)) return false;
@@ -231,18 +244,22 @@ function findCandidates(
   });
 }
 
-// Fallback-ordning per plats: korrekt intensitet före nedgraderad, eftersom
-// ett fåtal mönster/intensitet/utrustnings-kombinationer (t.ex. drag på
-// Tufft utan stol/chinsstång) annars saknar övningar helt. Upprepning av en
-// redan vald övning är inte en sista utväg här - om poolen för en plats är
-// liten (t.ex. en tunn kärnrörelse-familj) är det önskvärt att samma bra
-// övning återkommer flera gånger i passet, hellre än att generatorn letar
-// upp en sämre passande övning bara för variationens skull.
-const CANDIDATE_TIERS: Array<{ allowSecondary: boolean; allowIntensityFallback: boolean }> = [
-  { allowSecondary: false, allowIntensityFallback: false },
-  { allowSecondary: true, allowIntensityFallback: false },
-  { allowSecondary: false, allowIntensityFallback: true },
-  { allowSecondary: true, allowIntensityFallback: true },
+// Fallback-ordning per plats: unikt före upprepning, korrekt intensitet före
+// nedgraderad. Samma övning ska aldrig förekomma två gånger i samma pass
+// (se docs/loggbok.md) - allowRepeat är därför en sista utväg, bara använd
+// om varken ett unikt primärt eller sekundärt mönster-match finns kvar för
+// platsen. isValidWorkout gör dessutom en hård kontroll mot dubbletter, så
+// ett pass som ändå fått en upprepning via denna sista utväg kasseras och
+// ett nytt försök görs istället för att visas för användaren.
+const CANDIDATE_TIERS: Array<{ allowSecondary: boolean; allowRepeat: boolean; allowIntensityFallback: boolean }> = [
+  { allowSecondary: false, allowRepeat: false, allowIntensityFallback: false },
+  { allowSecondary: true, allowRepeat: false, allowIntensityFallback: false },
+  { allowSecondary: false, allowRepeat: false, allowIntensityFallback: true },
+  { allowSecondary: true, allowRepeat: false, allowIntensityFallback: true },
+  { allowSecondary: false, allowRepeat: true, allowIntensityFallback: false },
+  { allowSecondary: true, allowRepeat: true, allowIntensityFallback: false },
+  { allowSecondary: false, allowRepeat: true, allowIntensityFallback: true },
+  { allowSecondary: true, allowRepeat: true, allowIntensityFallback: true },
 ];
 
 function candidatesForKey(
@@ -250,6 +267,7 @@ function candidatesForKey(
   intensity: WorkoutIntensity,
   allowedEquipment: Set<Equipment>,
   equipmentRestricted: boolean,
+  usedIds: Set<string>,
   chosen: Exercise[],
   relaxSimilarityRules: boolean
 ): Exercise[] {
@@ -259,8 +277,10 @@ function candidatesForKey(
       intensity,
       allowedEquipment,
       equipmentRestricted,
+      usedIds,
       chosen,
       tier.allowSecondary,
+      tier.allowRepeat,
       tier.allowIntensityFallback,
       relaxSimilarityRules
     );
@@ -277,6 +297,7 @@ function buildMainExercises(
   relaxSimilarityRules: boolean
 ): Exercise[] {
   const chosen: Exercise[] = [];
+  const usedIds = new Set<string>();
 
   for (const key of patterns) {
     let candidates = candidatesForKey(
@@ -284,6 +305,7 @@ function buildMainExercises(
       intensity,
       allowedEquipment,
       equipmentRestricted,
+      usedIds,
       chosen,
       relaxSimilarityRules
     );
@@ -300,6 +322,7 @@ function buildMainExercises(
           intensity,
           allowedEquipment,
           equipmentRestricted,
+          usedIds,
           chosen,
           relaxSimilarityRules
         );
@@ -312,6 +335,7 @@ function buildMainExercises(
 
     const picked = randomItem(candidates);
     chosen.push(picked);
+    usedIds.add(picked.id);
   }
 
   return chosen;
@@ -326,6 +350,12 @@ function isValidWorkout(
   relaxSimilarityRules: boolean
 ): boolean {
   if (exercises.some((exercise) => !isIntensityAllowed(exercise.intensity, intensity, true))) return false;
+
+  // Samma övning får aldrig förekomma två gånger i samma pass. buildMainExercises
+  // undviker redan detta i praktiken (allowRepeat är bara en sista utväg i
+  // CANDIDATE_TIERS), men den här kontrollen garanterar det oavsett hur passet
+  // byggdes - ett pass med en dubblett kasseras och ett nytt försök görs.
+  if (new Set(exercises.map((exercise) => exercise.id)).size !== exercises.length) return false;
 
   for (let i = 1; i < exercises.length; i++) {
     if (violatesSequenceRules(exercises[i], exercises.slice(0, i), equipmentRestricted, relaxSimilarityRules)) return false;

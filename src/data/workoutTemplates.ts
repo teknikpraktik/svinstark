@@ -35,6 +35,14 @@ export const workoutTemplates: WorkoutTemplate[] = [
     ],
   },
   {
+    // Extra volym (andra omgången) läggs bara på familjer med minst två
+    // kroppsviktstillgängliga medlemmar (squat, glute_bridge, side_plank) -
+    // aldrig på horizontal_pull_row/overhead_press/hip_hinge, som bara har
+    // EN utrustningsfri medlem var (prone_y_raise/pike_push_up/
+    // single_leg_deadlift). Eftersom samma övning aldrig får förekomma två
+    // gånger i samma pass (se workoutGenerator.ts isValidWorkout) skulle en
+    // andra omgång av en sådan tunn familj göra passet omöjligt att
+    // generera helt utan utrustning (se docs/loggbok.md, v1.6).
     duration: "long",
     patterns: [
       "hip_hinge",
@@ -55,9 +63,9 @@ export const workoutTemplates: WorkoutTemplate[] = [
       "calf",
       "squat",
       "core",
-      "horizontal_pull_row",
+      "glute_bridge",
       "wildcard",
-      "overhead_press",
+      "side_plank",
     ],
   },
 ];
