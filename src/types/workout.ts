@@ -4,6 +4,7 @@ export type Equipment =
   | "bodyweight"
   | "floor"
   | "chair"
+  | "table"
   | "pullup_bar"
   | "weights_light"
   | "weights_heavy";
@@ -92,7 +93,9 @@ export interface WorkoutSettings {
   duration: WorkoutDuration;
   intensity: WorkoutIntensity;
   soundEnabled: boolean;
-  // "bodyweight" och "floor" antas alltid finnas tillgängligt.
+  // "bodyweight" och "floor" antas alltid finnas tillgängligt. hasChair
+  // styr både "chair"- och "table"-utrustning (UI-etikett "Stol och bord") -
+  // en enda fråga, inte två separata inställningar.
   hasChair: boolean;
   hasPullupBar: boolean;
   freeWeights: FreeWeightsLevel;

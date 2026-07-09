@@ -111,7 +111,7 @@ export default function StartScreen({
             onChange={(value) => onHasPullupBarChange(value === "yes")}
           />
           <OptionSelector
-            label="Stol/pall"
+            label="Stol och bord"
             options={equipmentOptions}
             value={settings.hasChair ? "yes" : "no"}
             onChange={(value) => onHasChairChange(value === "yes")}

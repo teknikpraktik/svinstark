@@ -935,7 +935,7 @@ const horizontalPullExercises: Exercise[] = [
     primaryPattern: "horizontal_pull",
     secondaryPatterns: ["core"],
     intensity: "normal",
-    equipment: ["bodyweight"],
+    equipment: ["table"],
     muscleGroups: ["back", "arms", "core"],
     bodyPosition: "hanging",
     movementType: "dynamic",

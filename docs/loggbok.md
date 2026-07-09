@@ -32,6 +32,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | v1.3| PWA-installation, ny appikon, hoppa över övning | ✅ Klar |
 | v1.4| UI-förbättringar: renare startsida, tydligare passkärm | ✅ Klar |
 | v1.5| Kärnrörelse-mallar för Standard/Längre + vader | ✅ Klar |
+| v1.6| Bord-utrustning, tillåt upprepning i passet | ✅ Klar |
 
 ---
 
@@ -1033,6 +1034,25 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 **Begränsningar / öppna frågor:**
 - `lunge_forward`/`lunge_lateral`-familjerna har bara en medlem vardera (`forward_lunge`/`lateral_lunge`) - samma övning varje gång den platsen fylls. Medvetet val (kvalitet före kvantitet, enligt användaren), men värt att komma ihåg om fler utfallsvarianter känns önskvärt senare.
 - ~~Upptäckte i förbigående att `squat_hold` (knee) och `deep_squat_hold` (mobility) har identiskt visningsnamn~~ - åtgärdat samma dag: `deep_squat_hold` döpt om till "Djup knäböj" (se nedan).
+
+---
+
+### 2026-07-09 — v1.6: Bord-utrustning, tillåt upprepning i passet
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- **Ny utrustningstyp "table":** `inverted_row` ("Rodd i stång") krävde tidigare bara `["bodyweight"]`, trots att instruktionen alltid nämnt "en stång eller ett bord" - i praktiken går den inte att göra utan något att hänga under. Kräver nu `["table"]`. `hasChair`-inställningen (UI-etikett ändrad från "Stol/pall" till "Stol och bord", på både startsidan och infosidan) styr nu både `"chair"`- och `"table"`-utrustning tillsammans i `getAllowedEquipment` - en enda fråga, inte två separata inställningar, enligt användarens instruktion.
+- **Upprepning inom samma pass är nu tillåtet och inte längre en sista utväg:** `allowRepeat`/`usedIds` togs bort helt ur `workoutGenerator.ts` (både `findCandidates`, `candidatesForKey` och `buildMainExercises` förenklade). `CANDIDATE_TIERS` gick från åtta kombinationer (`allowSecondary` × `allowRepeat` × `allowIntensityFallback`) till fyra (`allowSecondary` × `allowIntensityFallback`) - en redan använd övning väljs nu med samma sannolikhet som en oanvänd, istället för att bara accepteras när inget oanvänt alternativ finns. Motivering från användaren: om övningspoolen för en plats är tunn (t.ex. en smal kärnrörelse-familj) är det önskvärt att samma bra övning återkommer, hellre än att generatorn letar upp en sämre passande övning bara för variationens skull.
+- **Infosidan:** "Kroppen svarar på stimulans, inte på hur länge du tränar." slogs ihop med meningen efter den till ett fetmarkerat stycke. Tog bort meningen "Pulsövningarna gör att även konditionen får sin signal – inte bara musklerna."
+
+**Filer ändrade:**
+- `src/types/workout.ts`, `src/lib/workoutGenerator.ts`, `src/data/exerciseData.ts`, `src/components/StartScreen.tsx`, `src/components/AboutModal.tsx`
+
+**Testat:**
+- `npx tsc --noEmit`, `npm run lint` - felfria
+- Stresstest (samma matris som v1.5: Standard/Längre × Lugnt/Normalt/Tufft × ingen/all utrustning, 48 genereringar) - alla lyckades, inga konsolfel
+- Bekräftat att "Rodd i stång" aldrig visas utan "Stol och bord" (ett helt Standard-pass genomklickat, `horizontal_pull_row`-platsen föll korrekt tillbaka till "Liggande Y-lyft" - som dessutom visade sig två gånger i samma pass, vilket bekräftar att upprepning nu faktiskt sker) och att den visas när utrustningen finns (två separata pass, båda träffade "Rodd i stång" på samma plats)
 
 ---
 

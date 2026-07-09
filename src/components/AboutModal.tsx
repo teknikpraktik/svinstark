@@ -13,8 +13,10 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
       <div className={styles.text}>
         <h2 className={styles.title}>Om Svinstark</h2>
 
-        <p className={styles.intro}>Kroppen svarar på stimulans, inte på hur länge du tränar.</p>
-        <p>Det är den enkla idén som Svinstark bygger på.</p>
+        <p className={styles.intro}>
+          Kroppen svarar på stimulans, inte på hur länge du tränar. Det är den enkla idén som
+          Svinstark bygger på.
+        </p>
         <p>
           För att bli starkare, förbättra konditionen och må bättre behöver de flesta inte träna
           längre. De behöver träna oftare. Därför är Svinstark utvecklad för att göra tröskeln
@@ -75,7 +77,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         <p>Du anger om du har:</p>
         <ul>
           <li>chinsstång</li>
-          <li>stol eller pall</li>
+          <li>stol och bord</li>
           <li>fria vikter</li>
         </ul>
         <p>Med fria vikter menas exempelvis hantlar eller kettlebells.</p>
@@ -97,7 +99,6 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           Varje träningspass sätts ihop automatiskt ur ett bibliotek av övningar och innehåller
           alltid hela kroppen: ben, press, drag, bål, balans och puls.
         </p>
-        <p>Pulsövningarna gör att även konditionen får sin signal – inte bara musklerna.</p>
         <p>
           Du behöver inte planera träningssplitar eller fundera på vilken muskelgrupp som står på
           schemat. Missar du ett pass fortsätter du bara där du är, nästa pass tränar hela kroppen

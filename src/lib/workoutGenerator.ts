@@ -17,13 +17,20 @@ const BLOCK_DURATION_SECONDS = 60;
 const MAX_GENERATION_ATTEMPTS = 50;
 
 // "bodyweight" och "floor" antas alltid finnas tillgängligt (07-generator-
-// specifikation.md §7). "chair"/"pullup_bar" beror på användarens val i
-// Inställningar (WorkoutSettings.hasChair/hasPullupBar). "Tunga" fria vikter
-// ger tillgång till både lätta och tunga viktövningar (Tunga är en
-// superset), eftersom en användare med tunga vikter också har lätta.
+// specifikation.md §7). "pullup_bar" beror på användarens val i
+// Inställningar (WorkoutSettings.hasPullupBar). hasChair styr både "chair"
+// och "table" tillsammans (UI-etiketten är "Stol och bord", en enda fråga -
+// se WorkoutSettings.hasChair) - övningar som kräver ett bord (t.ex. rodd
+// under bordet) blir alltså bara tillgängliga när användaren har både stol
+// och bord. "Tunga" fria vikter ger tillgång till både lätta och tunga
+// viktövningar (Tunga är en superset), eftersom en användare med tunga
+// vikter också har lätta.
 function getAllowedEquipment(settings: WorkoutSettings): Set<Equipment> {
   const allowed = new Set<Equipment>(["bodyweight", "floor"]);
-  if (settings.hasChair) allowed.add("chair");
+  if (settings.hasChair) {
+    allowed.add("chair");
+    allowed.add("table");
+  }
   if (settings.hasPullupBar) allowed.add("pullup_bar");
   if (settings.freeWeights === "light" || settings.freeWeights === "heavy") allowed.add("weights_light");
   if (settings.freeWeights === "heavy") allowed.add("weights_heavy");
@@ -211,15 +218,12 @@ function findCandidates(
   intensity: WorkoutIntensity,
   allowedEquipment: Set<Equipment>,
   equipmentRestricted: boolean,
-  usedIds: Set<string>,
   chosen: Exercise[],
   allowSecondary: boolean,
-  allowRepeat: boolean,
   allowIntensityFallback: boolean,
   relaxSimilarityRules: boolean
 ): Exercise[] {
   return exerciseData.filter((exercise) => {
-    if (!allowRepeat && usedIds.has(exercise.id)) return false;
     if (!isIntensityAllowed(exercise.intensity, intensity, allowIntensityFallback)) return false;
     if (!isEquipmentAllowed(exercise, allowedEquipment)) return false;
     if (violatesSequenceRules(exercise, chosen, equipmentRestricted, relaxSimilarityRules)) return false;
@@ -227,18 +231,18 @@ function findCandidates(
   });
 }
 
-// Fallback-ordning per plats: unikt före upprepning, korrekt intensitet före
-// nedgraderad, eftersom ett fåtal mönster/intensitet/utrustnings-kombinationer
-// (t.ex. drag på Tufft utan stol/chinsstång) annars saknar övningar helt.
-const CANDIDATE_TIERS: Array<{ allowSecondary: boolean; allowRepeat: boolean; allowIntensityFallback: boolean }> = [
-  { allowSecondary: false, allowRepeat: false, allowIntensityFallback: false },
-  { allowSecondary: true, allowRepeat: false, allowIntensityFallback: false },
-  { allowSecondary: false, allowRepeat: true, allowIntensityFallback: false },
-  { allowSecondary: true, allowRepeat: true, allowIntensityFallback: false },
-  { allowSecondary: false, allowRepeat: false, allowIntensityFallback: true },
-  { allowSecondary: true, allowRepeat: false, allowIntensityFallback: true },
-  { allowSecondary: false, allowRepeat: true, allowIntensityFallback: true },
-  { allowSecondary: true, allowRepeat: true, allowIntensityFallback: true },
+// Fallback-ordning per plats: korrekt intensitet före nedgraderad, eftersom
+// ett fåtal mönster/intensitet/utrustnings-kombinationer (t.ex. drag på
+// Tufft utan stol/chinsstång) annars saknar övningar helt. Upprepning av en
+// redan vald övning är inte en sista utväg här - om poolen för en plats är
+// liten (t.ex. en tunn kärnrörelse-familj) är det önskvärt att samma bra
+// övning återkommer flera gånger i passet, hellre än att generatorn letar
+// upp en sämre passande övning bara för variationens skull.
+const CANDIDATE_TIERS: Array<{ allowSecondary: boolean; allowIntensityFallback: boolean }> = [
+  { allowSecondary: false, allowIntensityFallback: false },
+  { allowSecondary: true, allowIntensityFallback: false },
+  { allowSecondary: false, allowIntensityFallback: true },
+  { allowSecondary: true, allowIntensityFallback: true },
 ];
 
 function candidatesForKey(
@@ -246,7 +250,6 @@ function candidatesForKey(
   intensity: WorkoutIntensity,
   allowedEquipment: Set<Equipment>,
   equipmentRestricted: boolean,
-  usedIds: Set<string>,
   chosen: Exercise[],
   relaxSimilarityRules: boolean
 ): Exercise[] {
@@ -256,10 +259,8 @@ function candidatesForKey(
       intensity,
       allowedEquipment,
       equipmentRestricted,
-      usedIds,
       chosen,
       tier.allowSecondary,
-      tier.allowRepeat,
       tier.allowIntensityFallback,
       relaxSimilarityRules
     );
@@ -276,7 +277,6 @@ function buildMainExercises(
   relaxSimilarityRules: boolean
 ): Exercise[] {
   const chosen: Exercise[] = [];
-  const usedIds = new Set<string>();
 
   for (const key of patterns) {
     let candidates = candidatesForKey(
@@ -284,7 +284,6 @@ function buildMainExercises(
       intensity,
       allowedEquipment,
       equipmentRestricted,
-      usedIds,
       chosen,
       relaxSimilarityRules
     );
@@ -301,7 +300,6 @@ function buildMainExercises(
           intensity,
           allowedEquipment,
           equipmentRestricted,
-          usedIds,
           chosen,
           relaxSimilarityRules
         );
@@ -314,7 +312,6 @@ function buildMainExercises(
 
     const picked = randomItem(candidates);
     chosen.push(picked);
-    usedIds.add(picked.id);
   }
 
   return chosen;
