@@ -11,6 +11,7 @@ interface OptionSelectorProps<T extends string> {
   options: OptionSelectorOption<T>[];
   value: T;
   onChange: (value: T) => void;
+  emphasizeLabel?: boolean;
 }
 
 export default function OptionSelector<T extends string>({
@@ -18,10 +19,11 @@ export default function OptionSelector<T extends string>({
   options,
   value,
   onChange,
+  emphasizeLabel,
 }: OptionSelectorProps<T>) {
   return (
     <div className={styles.group}>
-      <span className={styles.label}>{label}</span>
+      <span className={`${styles.label} ${emphasizeLabel ? styles.labelEmphasis : ""}`}>{label}</span>
       <div className={styles.row}>
         {options.map((option) => (
           <button

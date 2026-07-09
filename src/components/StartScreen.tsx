@@ -39,7 +39,7 @@ const equipmentOptions = [
   { value: "no" as const, label: "Nej" },
 ];
 
-const valueProps = ["Helkropp", "Tidseffektivt", "Regelstyrt"];
+const valueProps = ["Helkroppsträning", "Tidseffektivt", "Regelstyrt"];
 
 interface StartScreenProps {
   settings: WorkoutSettings;
@@ -92,12 +92,14 @@ export default function StartScreen({
           options={trainingTimes}
           value={settings.duration}
           onChange={onDurationChange}
+          emphasizeLabel
         />
         <OptionSelector
           label="Intensitet"
           options={intensities}
           value={settings.intensity}
           onChange={onIntensityChange}
+          emphasizeLabel
         />
 
         <div className={styles.equipment}>
