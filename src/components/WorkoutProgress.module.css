@@ -1,11 +1,10 @@
 .progress {
   /* Motsvarar ungefär två rader under övningsbeskrivningen. Samma
-     typsnittsstil som header-summeringen och "Hoppa över" (WorkoutScreen)
-     - all stödtext på övningssidan delar en enhetlig, diskret stil. */
+     storlek/vikt som övningsbeskrivningen (ExerciseCard .instruction) -
+     progress är lika viktig att kunna läsa på avstånd som beskrivningen. */
   margin-top: 2rem;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   font-weight: 500;
-  letter-spacing: 0.01em;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
