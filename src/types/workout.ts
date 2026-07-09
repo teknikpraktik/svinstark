@@ -18,7 +18,8 @@ export type ExercisePattern =
   | "core"
   | "conditioning"
   | "balance"
-  | "mobility";
+  | "mobility"
+  | "calf";
 
 export type ExerciseIntensity = "calm" | "normal" | "hard";
 
@@ -127,7 +128,26 @@ export type PatternKey =
   | "mobility"
   | "balance_or_mobility"
   | "knee_or_hip"
-  | "wildcard";
+  | "wildcard"
+  // Smalare "kärnrörelse"-familjer (se 99-loggbok, v1.5): matchas mot en
+  // uttrycklig lista av övnings-id:n i workoutGenerator.ts MOVEMENT_FAMILIES,
+  // inte mot ExercisePattern, eftersom de är en delmängd av en bredare
+  // kategori (t.ex. "squat" är bara knäböjsvarianter, inte alla knädominanta
+  // övningar). Standard/Längre-mallarna bygger passets stomme kring dessa;
+  // Kortare använder fortfarande bara de breda kategorierna ovan.
+  | "squat"
+  | "lunge_forward"
+  | "lunge_lateral"
+  | "lunge_reverse"
+  | "hip_hinge"
+  | "pushup_rotation"
+  | "chinup"
+  | "glute_bridge"
+  | "overhead_press"
+  | "horizontal_pull_row"
+  | "anti_rotation_core"
+  | "side_plank"
+  | "calf";
 
 export interface WorkoutTemplate {
   duration: WorkoutDuration;

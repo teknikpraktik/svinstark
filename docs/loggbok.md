@@ -31,6 +31,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | v1.2| Fria vikter + förenklat startflöde | ✅ Klar |
 | v1.3| PWA-installation, ny appikon, hoppa över övning | ✅ Klar |
 | v1.4| UI-förbättringar: renare startsida, tydligare passkärm | ✅ Klar |
+| v1.5| Kärnrörelse-mallar för Standard/Längre + vader | ✅ Klar |
 
 ---
 
@@ -1002,6 +1003,36 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 
 **Testat:**
 - Endast dokumentationsändringar, ingen kodpåverkan
+
+---
+
+### 2026-07-09 — v1.5: Kärnrörelse-mallar för Standard/Längre + vader
+
+**Status:** ✅ Klar
+
+**Bakgrund:** Användaren granskade övningsbanken (se separat post samma dag om borttagna/ändrade övningar) och beskrev sedan en tydlig vision: Standard- och Längre-passen ska byggas kring ett fast antal namngivna "kärnrörelser" (draken/hip-hinge, armhävning med rotation, utfall åt tre håll, dead bug/bird dog, knäböj, sidoplanka, glute bridge, axelpress, chins, horisontellt drag) istället för att bara slumpa fritt inom breda kategorier som "knee"/"push"/"pull". Vill även ha vadövningar (både rakt och böjt knä), främst i de längre passen. Kortare ska förbli oförändrat och helkroppsfokuserat.
+
+**Byggt:**
+- **Ny matchningsmekanism i `workoutGenerator.ts`:** `MOVEMENT_FAMILIES` mappar tolv nya, smalare `PatternKey`-värden (`squat`, `lunge_forward`, `lunge_lateral`, `lunge_reverse`, `hip_hinge`, `pushup_rotation`, `chinup`, `glute_bridge`, `overhead_press`, `horizontal_pull_row`, `anti_rotation_core`, `side_plank`) mot explicita listor av övnings-id:n, istället för `ExercisePattern`-matchning - varje familj är en delmängd av en bredare kategori (t.ex. är "squat" bara knäböjsvarianter, inte alla knädominanta övningar). `exerciseMatchesKey` kollar family-listan först.
+- **`FAMILY_FALLBACK`:** varje ny familj har en bredare reservkategori (t.ex. `chinup` → `pull`) som `buildMainExercises` faller tillbaka till om familjen saknar giltiga kandidater för given utrustning/intensitet/sekvens - annars hade t.ex. `chinup` gjort hela passet omöjligt att generera utan chinsstång. `isValidWorkout`s befintliga `hasAny()`-kontroller (knee/hip/push/pull/core/conditioning/balance_or_mobility) behövde inte ändras - de matchar mot övningarnas faktiska `primaryPattern`/`secondaryPatterns`, oavsett vilken plats-nyckel som valde dem.
+- **Ny `ExercisePattern`/kategori "calf":** tre nya övningar i `exerciseData.ts` (`calfExercises`): `calf_raise` ("Tåhävningar", rakt knä, lugnt), `bent_knee_calf_raise` ("Böjda tåhävningar", böjt knä genom hela rörelsen, normalt) och `squat_calf_raise` ("Knäböj med tåhävning", kombo-övning enligt användarens eget förslag, tufft).
+- **En ny övning:** `t_push_up` ("Armhävning med rotation", horizontal_push, tufft) - armhävning som avslutas i en sidoplanka med övre armen sträckt mot taket. Bildar tillsammans med det redan existerande `spiderman_push_up` (normalt) familjen `pushup_rotation` - ingen ny övning behövdes för normal-nivån.
+- **Standard (14 platser) och Längre (21 platser) omskrivna** i `workoutTemplates.ts` kring de tolv namngivna familjerna + kondition + vader (Standard) respektive samma + balans/rörlighet/wildcard/extra volym på knäböj, horisontellt drag och axelpress (Längre). Kortare är helt oförändrat.
+- **Ordningsfix:** `hip_hinge`s båda medlemmar (draken/enbens höftfällning) är alltid ensidiga, liksom båda `pushup_rotation`-medlemmarna - placerade de två platserna direkt efter varandra (som i det första utkastet) blockerade "aldrig två ensidiga övningar i rad"-regeln `pushup_rotation`-familjen deterministiskt, så platsen föll alltid tillbaka till en slumpad press-övning istället för att faktiskt visa rotationsvarianten. Löst genom att lägga en kondition-plats emellan.
+
+**Filer ändrade:**
+- `src/types/workout.ts`, `src/lib/workoutGenerator.ts`, `src/data/exerciseData.ts`, `src/data/workoutTemplates.ts`
+
+**Testat:**
+- `npx tsc --noEmit`, `npm run lint` - felfria
+- Stresstest via `.claude/skills/run-svinstark/driver.mjs`: Standard och Längre × Lugnt/Normalt/Tufft × ingen utrustning/all utrustning, fyra genereringar per kombination (48 st), kört två gånger om (96 genereringar totalt) - alla lyckades, inga konsolfel
+- Ett fullständigt Längre-pass (21 övningar, all utrustning, Normalt) genomklickat övning för övning - alla namn renderade korrekt (inklusive "Spiderman push-up", "Tåhävningar"), passet nådde "Klart!"
+- Bekräftat att `chinup`-platsen faller tillbaka till en giltig kroppsviktsövning ("Rodd i stång") när chinsstång saknas, utan fel
+- Bekräftat efter ordningsfixen att "Armhävning med rotation" faktiskt visas på Tufft (4/4 försök) - innan fixen visades den aldrig
+
+**Begränsningar / öppna frågor:**
+- `lunge_forward`/`lunge_lateral`-familjerna har bara en medlem vardera (`forward_lunge`/`lateral_lunge`) - samma övning varje gång den platsen fylls. Medvetet val (kvalitet före kvantitet, enligt användaren), men värt att komma ihåg om fler utfallsvarianter känns önskvärt senare.
+- Upptäckte i förbigående att `squat_hold` (knee) och `deep_squat_hold` (mobility) har identiskt visningsnamn ("Statisk knäböj") sedan tidigare - inte åtgärdat nu (utanför scope), men värt att döpa om en av dem vid tillfälle.
 
 ---
 

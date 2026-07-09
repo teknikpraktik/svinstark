@@ -67,6 +67,64 @@ function isEquipmentAllowed(exercise: Exercise, allowedEquipment: Set<Equipment>
   return exercise.equipment.every((item) => allowedEquipment.has(item));
 }
 
+// Smalare "kärnrörelse"-familjer som Standard/Längre-mallarna bygger passets
+// stomme kring (se PatternKey i types/workout.ts). Matchas mot en uttrycklig
+// lista av övnings-id:n istället för ExercisePattern, eftersom varje familj är
+// en delmängd av en bredare kategori (t.ex. "squat" är bara knäböjsvarianter,
+// inte alla knädominanta övningar - lunges ska inte kunna fylla den platsen).
+const MOVEMENT_FAMILIES: Partial<Record<PatternKey, string[]>> = {
+  squat: [
+    "squat",
+    "sumo_squat",
+    "jump_squat",
+    "squat_pulse",
+    "squat_hold",
+    "assisted_squat_chair",
+    "goblet_squat",
+    "heavy_goblet_squat",
+    "goblet_squat_hold",
+    "half_squat",
+    "pistol_squat_negative",
+    "deep_squat_hold",
+  ],
+  lunge_forward: ["forward_lunge"],
+  lunge_lateral: ["lateral_lunge"],
+  lunge_reverse: ["reverse_lunge", "weighted_reverse_lunge"],
+  hip_hinge: ["single_leg_deadlift", "single_leg_hip_hinge"],
+  pushup_rotation: ["spiderman_push_up", "t_push_up"],
+  chinup: ["pull_up", "chin_up", "negative_pull_up", "archer_pull_up"],
+  glute_bridge: [
+    "glute_bridge",
+    "single_leg_glute_bridge",
+    "glute_bridge_march",
+    "explosive_glute_bridge",
+    "supine_bridge_hold",
+  ],
+  overhead_press: ["pike_push_up", "overhead_press_light", "curl_to_press"],
+  horizontal_pull_row: ["inverted_row", "one_arm_row_light", "one_arm_row_heavy"],
+  anti_rotation_core: ["dead_bug", "bird_dog", "weighted_dead_bug"],
+  side_plank: ["side_plank", "side_plank_dip", "star_plank"],
+};
+
+// Bredare reservkategori per kärnrörelse-familj, använd av buildMainExercises
+// när familjen inte har någon kandidat (t.ex. chinup kräver alltid
+// pullup_bar - saknas den utrustningen faller platsen tillbaka till valfri
+// pull-övning istället för att göra hela passet omöjligt att generera).
+const FAMILY_FALLBACK: Partial<Record<PatternKey, PatternKey>> = {
+  squat: "knee",
+  lunge_forward: "knee",
+  lunge_lateral: "knee",
+  lunge_reverse: "knee",
+  hip_hinge: "hip",
+  pushup_rotation: "push",
+  chinup: "pull",
+  glute_bridge: "hip",
+  overhead_press: "push",
+  horizontal_pull_row: "pull",
+  anti_rotation_core: "core",
+  side_plank: "core",
+};
+
 function patternMatchesKey(pattern: ExercisePattern, key: PatternKey): boolean {
   switch (key) {
     case "push":
@@ -85,6 +143,8 @@ function patternMatchesKey(pattern: ExercisePattern, key: PatternKey): boolean {
 }
 
 function exerciseMatchesKey(exercise: Exercise, key: PatternKey, allowSecondary: boolean): boolean {
+  const family = MOVEMENT_FAMILIES[key];
+  if (family) return family.includes(exercise.id);
   if (patternMatchesKey(exercise.primaryPattern, key)) return true;
   if (!allowSecondary) return false;
   return exercise.secondaryPatterns.some((pattern) => patternMatchesKey(pattern, key));
@@ -181,6 +241,33 @@ const CANDIDATE_TIERS: Array<{ allowSecondary: boolean; allowRepeat: boolean; al
   { allowSecondary: true, allowRepeat: true, allowIntensityFallback: true },
 ];
 
+function candidatesForKey(
+  key: PatternKey,
+  intensity: WorkoutIntensity,
+  allowedEquipment: Set<Equipment>,
+  equipmentRestricted: boolean,
+  usedIds: Set<string>,
+  chosen: Exercise[],
+  relaxSimilarityRules: boolean
+): Exercise[] {
+  for (const tier of CANDIDATE_TIERS) {
+    const candidates = findCandidates(
+      key,
+      intensity,
+      allowedEquipment,
+      equipmentRestricted,
+      usedIds,
+      chosen,
+      tier.allowSecondary,
+      tier.allowRepeat,
+      tier.allowIntensityFallback,
+      relaxSimilarityRules
+    );
+    if (candidates.length > 0) return candidates;
+  }
+  return [];
+}
+
 function buildMainExercises(
   patterns: PatternKey[],
   intensity: WorkoutIntensity,
@@ -192,22 +279,35 @@ function buildMainExercises(
   const usedIds = new Set<string>();
 
   for (const key of patterns) {
-    let candidates: Exercise[] = [];
-    for (const tier of CANDIDATE_TIERS) {
-      candidates = findCandidates(
-        key,
-        intensity,
-        allowedEquipment,
-        equipmentRestricted,
-        usedIds,
-        chosen,
-        tier.allowSecondary,
-        tier.allowRepeat,
-        tier.allowIntensityFallback,
-        relaxSimilarityRules
-      );
-      if (candidates.length > 0) break;
+    let candidates = candidatesForKey(
+      key,
+      intensity,
+      allowedEquipment,
+      equipmentRestricted,
+      usedIds,
+      chosen,
+      relaxSimilarityRules
+    );
+
+    // En kärnrörelse-familj (t.ex. chinup, som alltid kräver pullup_bar) kan
+    // sakna kandidater helt beroende på utrustning. Platsen faller då
+    // tillbaka till familjens bredare kategori (se FAMILY_FALLBACK) istället
+    // för att göra passet omöjligt att generera.
+    if (candidates.length === 0) {
+      const fallbackKey = FAMILY_FALLBACK[key];
+      if (fallbackKey) {
+        candidates = candidatesForKey(
+          fallbackKey,
+          intensity,
+          allowedEquipment,
+          equipmentRestricted,
+          usedIds,
+          chosen,
+          relaxSimilarityRules
+        );
+      }
     }
+
     if (candidates.length === 0) {
       throw new NoExercisesFoundError(key);
     }
