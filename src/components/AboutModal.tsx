@@ -113,6 +113,10 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           <li>uppskattar enkla lösningar framför komplicerade träningsprogram</li>
           <li>vill bygga en hållbar träningsvana</li>
         </ul>
+        <p className={styles.tagline}>
+          Kroppen svarar på stimulans, inte på tid. Sju minuter idag slår trettio minuter någon
+          annan gång. Välj dina inställningar. Tryck på Start. Njut av dagens pass!
+        </p>
 
         <h3>Feedback</h3>
         <p>
@@ -122,12 +126,6 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
             Mejla mig
           </a>
           .
-        </p>
-
-        <h3>Det är allt</h3>
-        <p className={styles.tagline}>
-          Kroppen svarar på stimulans, inte på tid. Sju minuter idag slår trettio minuter någon
-          annan gång. Välj dina inställningar. Tryck på Start. Njut av dagens pass!
         </p>
       </div>
 
