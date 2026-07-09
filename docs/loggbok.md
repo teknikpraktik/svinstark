@@ -1032,7 +1032,7 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 
 **Begränsningar / öppna frågor:**
 - `lunge_forward`/`lunge_lateral`-familjerna har bara en medlem vardera (`forward_lunge`/`lateral_lunge`) - samma övning varje gång den platsen fylls. Medvetet val (kvalitet före kvantitet, enligt användaren), men värt att komma ihåg om fler utfallsvarianter känns önskvärt senare.
-- Upptäckte i förbigående att `squat_hold` (knee) och `deep_squat_hold` (mobility) har identiskt visningsnamn ("Statisk knäböj") sedan tidigare - inte åtgärdat nu (utanför scope), men värt att döpa om en av dem vid tillfälle.
+- ~~Upptäckte i förbigående att `squat_hold` (knee) och `deep_squat_hold` (mobility) har identiskt visningsnamn~~ - åtgärdat samma dag: `deep_squat_hold` döpt om till "Djup knäböj" (se nedan).
 
 ---
 

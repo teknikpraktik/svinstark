@@ -1990,7 +1990,7 @@ const mobilityExercises: Exercise[] = [
   },
   {
     id: "deep_squat_hold",
-    name: "Statisk knäböj",
+    name: "Djup knäböj",
     instruction: "Sänk ned i en djup knäböj med hälarna i golvet. Håll positionen och andas lugnt.",
     primaryPattern: "mobility",
     secondaryPatterns: ["knee"],
