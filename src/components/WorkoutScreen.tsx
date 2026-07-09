@@ -13,7 +13,9 @@ interface WorkoutScreenProps {
   settings: WorkoutSettings;
   timerState: TimerState;
   soundEnabled: boolean;
+  isPaused: boolean;
   onPause: () => void;
+  onResume: () => void;
   onStop: () => void;
   onSkip: () => void;
   onSoundEnabledChange: (soundEnabled: boolean) => void;
@@ -25,7 +27,9 @@ export default function WorkoutScreen({
   settings,
   timerState,
   soundEnabled,
+  isPaused,
   onPause,
+  onResume,
   onStop,
   onSkip,
   onSoundEnabledChange,
@@ -57,15 +61,23 @@ export default function WorkoutScreen({
       </div>
 
       <div className={styles.skipRow}>
-        <button className={styles.skipButton} onClick={onSkip}>
-          Hoppa över
-        </button>
+        {!isPaused && (
+          <button className={styles.skipButton} onClick={onSkip}>
+            Hoppa över
+          </button>
+        )}
       </div>
 
       <div className={styles.actions}>
-        <button className={styles.actionButton} onClick={onPause}>
-          Paus
-        </button>
+        {isPaused ? (
+          <button className={styles.actionButton} onClick={onResume}>
+            Fortsätt
+          </button>
+        ) : (
+          <button className={styles.actionButton} onClick={onPause}>
+            Paus
+          </button>
+        )}
         <button className={styles.actionButton} onClick={onStop}>
           Avsluta
         </button>

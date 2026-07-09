@@ -1,7 +1,6 @@
 "use client";
 
 import FinishedScreen from "@/components/FinishedScreen";
-import PauseDialog from "@/components/PauseDialog";
 import StartScreen from "@/components/StartScreen";
 import WarmupScreen from "@/components/WarmupScreen";
 import WorkoutScreen from "@/components/WorkoutScreen";
@@ -54,25 +53,25 @@ export default function Home() {
   }
 
   if (screen === "finished") {
-    return <FinishedScreen onGoToStart={goToStart} />;
+    if (!workout) return null;
+    return <FinishedScreen settings={workout.settings} onGoToStart={goToStart} />;
   }
 
   if (!currentBlock || !workout) return null;
 
   return (
-    <>
-      <WorkoutScreen
-        blocks={workout.blocks}
-        block={currentBlock}
-        settings={workout.settings}
-        timerState={timerState}
-        soundEnabled={settings.soundEnabled}
-        onPause={pause}
-        onStop={stop}
-        onSkip={skip}
-        onSoundEnabledChange={setSoundEnabled}
-      />
-      <PauseDialog isOpen={screen === "paused"} onResume={resume} onStop={stop} />
-    </>
+    <WorkoutScreen
+      blocks={workout.blocks}
+      block={currentBlock}
+      settings={workout.settings}
+      timerState={timerState}
+      soundEnabled={settings.soundEnabled}
+      isPaused={screen === "paused"}
+      onPause={pause}
+      onResume={resume}
+      onStop={stop}
+      onSkip={skip}
+      onSoundEnabledChange={setSoundEnabled}
+    />
   );
 }

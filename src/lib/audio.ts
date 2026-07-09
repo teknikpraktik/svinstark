@@ -63,7 +63,7 @@ export function unlockAudioContext(): void {
 export function playNewBlockSound(): void {
   const context = getAudioContext();
   if (!context) return;
-  playTone(context, 1174.66, 0.2);
+  playTone(context, 1567.98, 0.2);
 }
 
 export function playCountdownBeep(): void {
