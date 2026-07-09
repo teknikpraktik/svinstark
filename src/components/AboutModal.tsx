@@ -113,7 +113,8 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           <li>uppskattar enkla lösningar framför komplicerade träningsprogram</li>
           <li>vill bygga en hållbar träningsvana</li>
         </ul>
-        <p className={styles.tagline}>
+        <h3>Den goda kicken</h3>
+        <p>
           Kroppen svarar på stimulans, inte på tid. Sju minuter idag slår trettio minuter någon
           annan gång. Välj dina inställningar. Tryck på Start. Njut av dagens pass!
         </p>

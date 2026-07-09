@@ -37,10 +37,6 @@
   font-weight: 700;
 }
 
-.text p.tagline {
-  color: var(--foreground);
-}
-
 .text p.intro {
   color: var(--foreground);
   font-weight: 700;

@@ -17,6 +17,8 @@
 
 .instruction {
   font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.4;
   color: var(--muted);
   white-space: pre-line;
 }
