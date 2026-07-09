@@ -93,6 +93,8 @@ export class WorkoutTimer {
   // hålla wall-clock-schemat efter bakgrundsfördröjning). Ett skip är en
   // explicit, engångs-handling just nu - nästa block ska få hela sin tid
   // räknat från detta ögonblick, inte från när det "borde" ha startat.
+  // Anropar avsiktligt inte onBlockChange (som triggar skidstart-tonen) -
+  // ett skip ska vara tyst, bara nästa övning ska starta.
   skip(): void {
     if (!this.state.isRunning) return;
 
@@ -108,7 +110,6 @@ export class WorkoutTimer {
     const nextBlock = this.state.currentBlock + 1;
     this.blockDeadline = Date.now() + this.blockDurationsSeconds[nextBlock] * 1000;
     this.state = { ...this.state, currentBlock: nextBlock, remainingSeconds: this.blockDurationsSeconds[nextBlock] };
-    this.callbacks.onBlockChange?.(nextBlock);
     this.emit();
   }
 
@@ -148,13 +149,20 @@ export class WorkoutTimer {
     // block-/nedräkningsgränser), men det visade värdet är avrundat till hela
     // sekunder. Uppdatera state (och trigga en rendering) bara när det visade
     // värdet faktiskt ändras, för att undvika onödiga renderingar (A.10/C.29).
+    const previousSeconds = this.state.remainingSeconds;
     const remainingSeconds = Math.ceil(remainingMs / 1000);
-    if (remainingSeconds === this.state.remainingSeconds) return;
+    if (remainingSeconds === previousSeconds) return;
 
-    const isNewCountdownSecond = remainingSeconds >= 1 && remainingSeconds <= 3;
     this.state = { ...this.state, remainingSeconds };
-    if (isNewCountdownSecond) {
-      this.callbacks.onCountdown?.(remainingSeconds);
+
+    // Normalt minskar remainingSeconds med exakt 1 per tick (250 ms-
+    // intervallet är fyra gånger tätare än en sekund), men en bakgrundad
+    // flik eller en fördröjd tick (t.ex. vid tunga renderingar) kan hoppa
+    // över ett eller flera sekundvärden. Utan den här loopen kunde en sådan
+    // hopp tysta ett eller flera av 3-2-1-pipen helt - de spelas nu upp i
+    // snabb följd istället för att tappas bort.
+    for (let second = Math.min(previousSeconds - 1, 3); second >= Math.max(remainingSeconds, 1); second--) {
+      this.callbacks.onCountdown?.(second);
     }
     this.emit();
   }

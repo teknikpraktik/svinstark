@@ -26,14 +26,25 @@ export function useTimer(workout: Workout | null, callbacks: UseTimerCallbacks =
   }));
   const timerRef = useRef<WorkoutTimer | null>(null);
 
+  // callbacks hålls i en ref (uppdaterad varje render) istället för att stå
+  // med i effektens dependency-array. onCountdown/onBlockChange kommer från
+  // useAudio, vars identitet ändras varje gång soundEnabled togglas - stod
+  // callbacks-objektet i deps skulle det byta ut hela WorkoutTimer-instansen
+  // (och därmed nollställa passet till block 0) varje gång användaren
+  // tryckte på ljudikonen mitt i passet.
+  const callbacksRef = useRef(callbacks);
+  useEffect(() => {
+    callbacksRef.current = callbacks;
+  });
+
   useEffect(() => {
     if (!workout) return;
 
     const timer = new WorkoutTimer(workout, {
       onTick: setTimerState,
-      onBlockChange: callbacks.onBlockChange,
-      onCountdown: callbacks.onCountdown,
-      onFinish: callbacks.onFinish,
+      onBlockChange: (blockIndex) => callbacksRef.current.onBlockChange?.(blockIndex),
+      onCountdown: (remainingSeconds) => callbacksRef.current.onCountdown?.(remainingSeconds),
+      onFinish: () => callbacksRef.current.onFinish?.(),
     });
     timerRef.current = timer;
     timer.start();
@@ -42,7 +53,7 @@ export function useTimer(workout: Workout | null, callbacks: UseTimerCallbacks =
       timer.stop();
       timerRef.current = null;
     };
-  }, [workout, callbacks]);
+  }, [workout]);
 
   return {
     timerState,
