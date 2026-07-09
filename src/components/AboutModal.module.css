@@ -46,3 +46,7 @@
   font-weight: 700;
   font-size: 1rem;
 }
+
+.link {
+  color: var(--foreground);
+}

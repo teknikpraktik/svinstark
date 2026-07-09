@@ -114,6 +114,16 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           <li>vill bygga en hållbar träningsvana</li>
         </ul>
 
+        <h3>Feedback</h3>
+        <p>
+          Svinstark utvecklas löpande. Har du synpunkter, hittat en bugg eller vill du bara
+          säga vad du tycker? Mejla mig, utvecklaren, på{" "}
+          <a className={styles.link} href="mailto:per.a.bjorkman@gmail.com">
+            per.a.bjorkman@gmail.com
+          </a>
+          .
+        </p>
+
         <h3>Det är allt</h3>
         <p className={styles.tagline}>
           Kroppen svarar på stimulans, inte på tid. Sju minuter idag slår trettio minuter någon
