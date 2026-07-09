@@ -116,7 +116,9 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         <h3>Den goda kicken</h3>
         <p>
           Kroppen svarar på stimulans, inte på tid. Sju minuter idag slår trettio minuter någon
-          annan gång. Välj dina inställningar. Tryck på Start. Njut av dagens pass!
+          annan gång. Välj dina inställningar. Tryck på Start.
+          <br />
+          Njut av dagens pass!
         </p>
 
         <h3>Feedback</h3>
