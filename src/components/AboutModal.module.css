@@ -39,7 +39,6 @@
 
 .text p.tagline {
   color: var(--foreground);
-  font-weight: 600;
 }
 
 .text p.intro {
