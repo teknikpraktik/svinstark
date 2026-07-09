@@ -13,97 +13,112 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
       <div className={styles.text}>
         <h2 className={styles.title}>Om Svinstark</h2>
 
-        <p className={styles.intro}>Kroppen svarar på signaler, inte på träningstid.</p>
-
-        <h3>Träning ska vara enkel</h3>
+        <p className={styles.intro}>Kroppen svarar på stimulans, inte på hur länge du tränar.</p>
+        <p>Det är den enkla idén som Svinstark bygger på.</p>
         <p>
-          Svinstark bygger på en enkel idé: den bästa träningen är den som faktiskt blir av.
+          För att bli starkare, förbättra konditionen och må bättre behöver de flesta inte träna
+          längre. De behöver träna oftare. Därför är Svinstark utvecklad för att göra tröskeln
+          till träning så låg som möjligt. Ju enklare det är att komma igång, desto större är
+          chansen att träningen faktiskt blir av.
         </p>
-        <p>
-          Många träningsprogram misslyckas därför att de kräver för mycket planering. Man ska
-          välja övningar, räkna set och repetitioner, hålla reda på vilotider och fundera på
-          vilket pass som passar bäst idag.
-        </p>
-        <p>Svinstark gör tvärtom.</p>
-        <p>
-          Du väljer hur länge du vill träna, hur tufft passet ska vara och vilken utrustning du
-          har. Sedan skapar appen ett färdigt träningspass åt dig. Det enda du behöver göra är
-          att trycka på Start.
-        </p>
+        <p>Allt i appen bygger på den filosofin.</p>
 
         <h3>Den minsta effektiva dosen</h3>
         <p>
-          Du behöver inte träna i en timme för att bli starkare, må bättre eller förbättra din
-          kondition.
+          Svinstark bygger på principen om den minsta effektiva dosen – precis tillräckligt med
+          träning för att ge kroppen en tydlig signal att utvecklas.
         </p>
-        <p>
-          Även korta träningspass kan ge god effekt när de genomförs regelbundet och med
-          tillräcklig intensitet.
-        </p>
-        <p>Därför finns tre passlängder:</p>
+        <p>Du väljer mellan tre passlängder:</p>
         <ul>
           <li>7 minuter</li>
           <li>14 minuter</li>
           <li>21 minuter</li>
         </ul>
-        <p>Välj den längd som passar din dag. Ett kort pass är alltid bättre än inget pass alls.</p>
+        <p>Korta pass med rätt intensitet, genomförda ofta, räcker långt för de flesta.</p>
+        <p>Ett sju minuter långt pass är bättre än ett trettio minuter långt pass som aldrig blir av.</p>
 
-        <h3>Anpassat efter dig</h3>
-        <p>Svinstark tar hänsyn till vilken utrustning du har tillgänglig.</p>
-        <p>Du kan exempelvis ange om du har:</p>
+        <h3>Tre val – sedan inga fler beslut</h3>
+        <p>När du öppnar Svinstark väljer du tre saker:</p>
+        <ul>
+          <li>Hur länge vill du träna?</li>
+          <li>Hur tufft ska passet vara?</li>
+          <li>Vilken utrustning har du?</li>
+        </ul>
+        <p>Sedan skapar appen ett färdigt träningspass.</p>
+        <p>
+          Du behöver inte fundera på övningar, set, repetitioner eller vilotider. All energi kan
+          läggas på själva träningen.
+        </p>
+
+        <h3>En minut i taget</h3>
+        <p>Varje övning pågår i exakt en minut.</p>
+        <p>
+          Du arbetar i ditt eget tempo tills signalen ljuder och går sedan vidare till nästa
+          övning. Du slipper räkna repetitioner och hålla reda på tiden.
+        </p>
+        <p>
+          Progressionen sköter sig själv: när du blir starkare hinner du fler repetitioner på
+          samma minut. Din egen dagsform sätter belastningen, varje gång.
+        </p>
+
+        <h3>Hela kroppen – varje pass</h3>
+        <p>
+          Varje träningspass sätts ihop automatiskt ur ett bibliotek av övningar och innehåller
+          alltid hela kroppen: ben, press, drag, bål, balans och puls.
+        </p>
+        <p>Pulsövningarna gör att även konditionen får sin signal – inte bara musklerna.</p>
+        <p>
+          Du behöver inte planera träningssplitar eller fundera på vilken muskelgrupp som står på
+          schemat. Missar du ett pass fortsätter du bara där du är, nästa pass tränar hela kroppen
+          igen. Och eftersom övningarna varieras automatiskt blir inga pass exakt likadana.
+        </p>
+
+        <h3>Anpassad efter din utrustning</h3>
+        <p>Svinstark utgår från den utrustning du har tillgång till.</p>
+        <p>Du anger om du har:</p>
         <ul>
           <li>chinsstång</li>
           <li>stol eller pall</li>
           <li>fria vikter</li>
         </ul>
         <p>Med fria vikter menas exempelvis hantlar eller kettlebells.</p>
-        <p>Appen väljer då övningar som faktiskt går att genomföra hemma med den utrustning du har.</p>
+        <p>Appen väljer automatiskt övningar som fungerar med din utrustning.</p>
 
-        <h3>Variation utan krångel</h3>
-        <p>Varje pass sätts ihop automatiskt ur ett bibliotek av övningar.</p>
-        <p>
-          Målet är att ge variation samtidigt som hela kroppen tränas över tid. Du slipper
-          fundera på vad du ska göra och minskar risken att fastna i exakt samma träningspass
-          vecka efter vecka.
-        </p>
-
-        <h3>Intensitet efter dagsform</h3>
-        <p>Alla dagar är inte likadana.</p>
-        <p>Därför kan du välja mellan:</p>
+        <h3>Träna efter dagsformen</h3>
+        <p>Ingen känner sig lika stark varje dag. Därför finns tre intensitetsnivåer:</p>
         <ul>
-          <li>Lätt</li>
-          <li>Normal</li>
-          <li>Tuff</li>
+          <li>
+            <strong>Lätt</strong> – enklare övningsvarianter och lugnare tempo. För dagar när
+            kroppen behöver rörelse utan hög belastning.
+          </li>
+          <li>
+            <strong>Normal</strong> – standardnivån för de flesta pass.
+          </li>
+          <li>
+            <strong>Tuff</strong> – mer krävande övningsvarianter för dagar när du vill utmana dig
+            själv.
+          </li>
         </ul>
         <p>
-          Det viktigaste är inte att varje pass är maximalt jobbigt. Det viktigaste är att du
-          tränar regelbundet.
+          Det viktiga är inte att varje pass är maximalt ansträngande. Det viktiga är att du kan
+          träna ofta och hålla fast vid rutinen över tid.
         </p>
 
-        <h3>Du bestämmer tempot</h3>
-        <p>Svinstark innehåller ingen tvingande uppvärmning eller nedvarvning.</p>
-        <p>Om du vill värma upp först gör du det i din egen takt och startar passet när du är redo.</p>
-        <p>Samma sak gäller efter passet. Vill du promenera, stretcha eller bara gå vidare med dagen är det upp till dig.</p>
-
-        <h3>För vem är appen?</h3>
+        <h3>För vem är Svinstark?</h3>
         <p>Svinstark passar dig som:</p>
         <ul>
-          <li>vill träna hemma</li>
+          <li>vill träna hemma eller där du råkar vara</li>
           <li>har ont om tid</li>
-          <li>vill slippa planera träningspass</li>
-          <li>vill bli starkare och få bättre kondition</li>
-          <li>uppskattar enkelhet framför avancerade träningsprogram</li>
+          <li>vill bli starkare och förbättra konditionen</li>
+          <li>uppskattar enkla lösningar framför komplicerade träningsprogram</li>
+          <li>vill bygga en hållbar träningsvana</li>
         </ul>
 
-        <h3>Filosofin bakom Svinstark</h3>
-        <p>Svinstark försöker inte vara den mest avancerade träningsappen.</p>
-        <p>Den försöker vara den app som du faktiskt använder.</p>
-        <p>Om det tar tio minuter att planera ett träningspass innan träningen ens börjar har tröskeln redan blivit för hög.</p>
-        <p>Svinstark tar bort besluten.</p>
-        <p>Du väljer några få inställningar.</p>
-        <p>Sedan börjar du träna.</p>
-        <p>Så enkelt ska det vara.</p>
-        <p className={styles.tagline}>Mindre planering. Mer träning.</p>
+        <h3>Det är allt</h3>
+        <p className={styles.tagline}>
+          Kroppen svarar på stimulans, inte på tid. Sju minuter idag slår trettio minuter någon
+          annan gång. Välj dina inställningar. Tryck på Start. Njut av dagens pass!
+        </p>
       </div>
 
       <PrimaryButton onClick={onClose}>Stäng</PrimaryButton>

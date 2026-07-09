@@ -32,6 +32,11 @@
   gap: 0.25rem;
 }
 
+.text strong {
+  color: var(--foreground);
+  font-weight: 700;
+}
+
 .text p.tagline {
   color: var(--foreground);
   font-weight: 600;
