@@ -871,7 +871,9 @@ type PatternKey =
     | <kärnrörelse-familjer, se nedan>;
 ```
 
-Utöver de breda kategorierna finns smalare kärnrörelse-nycklar som Standard/Längre-mallarna bygger på (`squat`, `lunge_forward`, `lunge_lateral`, `lunge_reverse`, `hip_hinge`, `pushup_rotation`, `chinup`, `glute_bridge`, `overhead_press`, `horizontal_pull_row`, `anti_rotation_core`, `side_plank`). De matchas mot uttryckliga listor av övnings-id:n i `workoutGenerator.ts` (`MOVEMENT_FAMILIES`), inte mot `primaryPattern`. Den fullständiga typen finns i `src/types/workout.ts`.
+Utöver de breda kategorierna finns smalare kärnrörelse-nycklar som Standard/Längre-mallarna bygger på (`squat`, `lunge_forward`, `lunge_lateral`, `lunge_reverse`, `hip_dominant`, `pushup_rotation`, `chinup`, `glute_bridge`, `overhead_press`, `horizontal_pull_row`, `anti_rotation_core`, `side_plank`). De matchas mot uttryckliga listor av övnings-id:n i `workoutGenerator.ts` (`MOVEMENT_FAMILIES`), inte mot `primaryPattern`. Den fullständiga typen finns i `src/types/workout.ts`.
+
+`hip_dominant` (döpt om från `hip_hinge` i v1.8) täcker höftdominant träning brett - marklyftsvarianter, höftlyftsfamiljen och donkey kick - istället för att bara matcha renodlade höftfällningar. Se `03-exercise-library-specification.md` och `docs/loggbok.md`.
 
 ### Mappning mot `primaryPattern`
 
@@ -951,7 +953,7 @@ Generatorn bygger alltid pass utifrån mallar.
 
 Den skapar aldrig ett helt slumpmässigt pass.
 
-Det garanterar balans mellan:
+En mall (`WorkoutTemplate.patterns`) anger vilka rörelsegrupper passet ska innehålla - en omärkt lista, inte en fast ordning. Sedan v1.8 slumpar `generateWorkout` ordningen på rörelsegrupperna för varje genereringsförsök (se B.20), så ingen rörelsegrupp har en bestämd position i det färdiga passet. Det garanterar bara balans mellan:
 
 * knä
 * höft
@@ -960,7 +962,7 @@ Det garanterar balans mellan:
 * bål
 * puls
 
-Standard- och Längre-pass innehåller dessutom alltid minst en vadövning; på Kortare är vad valfritt (se `07-generator-specifikation.md` §10).
+- oberoende av i vilken ordning platserna hamnar. Standard- och Längre-pass innehåller dessutom alltid minst en vadövning; på Kortare är vad valfritt (se `07-generator-specifikation.md` §10).
 
 ---
 
@@ -1000,7 +1002,7 @@ Denna lista är synkroniserad med `03-exercise-library-specification.md` §14 oc
 
 **För hela passet:**
 
-1. Generera en fullständig sekvens med alla sekvensregler (B.19) aktiva. Validera. Vid fel, prova en ny slumpad sekvens. Max 50 försök.
+1. Slumpa en ny ordning på mallens rörelsegrupper (se B.17). Bygg en fullständig sekvens i den ordningen med alla sekvensregler (B.19) aktiva. Validera. Vid fel (ogiltig ordning eller sekvens), slumpa en ny ordning och prova igen. Max 50 försök.
 2. Lyckas inget av dessa: gör om samma sak med reglerna "två ensidiga i rad" och "tre benövningar i rad" avstängda. Max 50 nya försök.
 
 Steg 2 krävs på Tufft-intensitet eftersom hard-poolerna för bål och höft är så tunna att nästan alla kandidater delar muskelgrupp `"legs"` och/eller är ensidiga, vilket annars gör vissa passmallar olösliga (se `docs/loggbok.md`).

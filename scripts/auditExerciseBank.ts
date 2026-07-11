@@ -11,6 +11,7 @@ import { intensityLabels, intensityOrder } from "@/data/workoutLabels";
 import { sanitizeStoredSettings } from "@/hooks/useSettings";
 import { generateWorkout } from "@/lib/workoutGenerator";
 import type {
+  Exercise,
   FreeWeightsLevel,
   WorkoutDuration,
   WorkoutIntensity,
@@ -45,7 +46,8 @@ for (const exercise of exerciseData) {
 }
 
 // Borttagna övningar (rörlighet/stretch/rena balansställningar, borttagna
-// tillsammans med intensiteten Lugnt) får inte återinföras i banken
+// tillsammans med intensiteten Lugnt; Good morning, borttagen i v1.8) får
+// inte återinföras i banken
 const removedIds = [
   "cat_cow",
   "thoracic_rotation",
@@ -56,12 +58,17 @@ const removedIds = [
   "childs_pose",
   "tree_pose_hold",
   "single_leg_stand",
+  "good_morning",
 ];
 for (const removedId of removedIds) {
   if (ids.has(removedId)) {
     console.log(`PROBLEM: borttagen övning "${removedId}" finns kvar i banken`);
     problems++;
   }
+}
+if (exerciseData.some((exercise) => exercise.name === "Good morning")) {
+  console.log(`PROBLEM: en övning med namnet "Good morning" finns kvar i banken`);
+  problems++;
 }
 
 // Döda avoidAdjacent-referenser
@@ -151,6 +158,56 @@ if (
 
 console.log(`\nStatiska kontroller klara (${problems} problem).\n`);
 
+// Återverifiering av de sekvensregler som ALDRIG relaxas (violatesSequenceRules
+// i workoutGenerator.ts) - oberoende av intern implementation, direkt mot det
+// pass generatorn faktiskt returnerade. "Två ensidiga i rad" och "tre
+// benövningar i rad" är MEDVETET uteslutna här: de får kopplas bort som sista
+// utväg (se generateWorkout/relaxSimilarityRules), så ett test som kräver dem
+// strikt skulle bli skört och kunna slå fel på ett giltigt, avsett pass.
+function findSequenceViolation(blocks: Exercise[]): string | null {
+  for (let i = 1; i < blocks.length; i++) {
+    const prev = blocks[i - 1];
+    const curr = blocks[i];
+    if (prev.avoidAdjacent.includes(curr.id) || curr.avoidAdjacent.includes(prev.id)) {
+      return `avoidAdjacent-brott mellan ${prev.id} och ${curr.id}`;
+    }
+    if (prev.jump && curr.jump) return `två hoppövningar i rad: ${prev.id} -> ${curr.id}`;
+    if (prev.explosive && curr.explosive) return `två explosiva övningar i rad: ${prev.id} -> ${curr.id}`;
+    if (prev.movementType === "isometric" && curr.movementType === "isometric") {
+      return `två isometriska övningar i rad: ${prev.id} -> ${curr.id}`;
+    }
+    if (prev.primaryPattern === curr.primaryPattern) {
+      return `samma primaryPattern i rad: ${prev.id} -> ${curr.id}`;
+    }
+    if (prev.bodyPosition === "hanging" && curr.bodyPosition === "hanging") {
+      return `två hängande övningar i rad: ${prev.id} -> ${curr.id}`;
+    }
+  }
+  return null;
+}
+
+// Extern, oberoende kontroll av helkroppstäckning - mirrorar isValidWorkouts
+// hasAny-logik men direkt mot primaryPattern/secondaryPatterns, utan att gå
+// via workoutGenerator.ts interna hjälpfunktioner.
+function findMissingCoverage(blocks: Exercise[]): string | null {
+  const matchesAny = (patterns: string[]) =>
+    blocks.some(
+      (block) => patterns.includes(block.primaryPattern) || block.secondaryPatterns.some((p) => patterns.includes(p))
+    );
+  const required: Array<[string, string[]]> = [
+    ["knee", ["knee"]],
+    ["hip", ["hip"]],
+    ["push", ["horizontal_push", "vertical_push"]],
+    ["pull", ["horizontal_pull", "vertical_pull"]],
+    ["core", ["core"]],
+    ["conditioning", ["conditioning"]],
+  ];
+  for (const [label, patterns] of required) {
+    if (!matchesAny(patterns)) return `saknar täckning för "${label}"`;
+  }
+  return null;
+}
+
 // Provkörning: alla kombinationer, många körningar per kombination.
 // Utöver att genereringen lyckas kontrolleras att passet aldrig innehåller
 // fel intensitet (Normal: endast normal-övningar; Tufft: hard-övningar med
@@ -198,6 +255,14 @@ for (const duration of durations) {
                   throw new Error("Standard/Längre-pass saknar vadövning");
                 }
               }
+
+              const exercises = workout.blocks.map((block) => block.exercise);
+              const sequenceViolation = findSequenceViolation(exercises);
+              if (sequenceViolation) throw new Error(`sekvensregel bruten: ${sequenceViolation}`);
+
+              const missingCoverage = findMissingCoverage(exercises);
+              if (missingCoverage) throw new Error(`helkroppstäckning: ${missingCoverage}`);
+
               for (const block of workout.blocks) {
                 const exerciseIntensity = block.exercise.intensity;
                 if (intensity === "normal" && exerciseIntensity !== "normal") {
@@ -229,6 +294,71 @@ console.log(
     ? `\nAlla ${comboCount} kombinationer OK (${RUNS} körningar per kombination).`
     : `\n${failedCombos} kombinationer misslyckades.`
 );
+
+// Ordningsslumpning (v1.8): upprepade genereringar med IDENTISKA inställningar
+// ska kunna ge olika ordning på rörelsegrupperna, inte bara olika övningsval
+// inom en fast ordning. Testet är medvetet inte skört - det kräver bara att
+// FLERA olika utfall förekommer över många körningar, inte en exakt
+// fördelning, så det slår inte fel på ett giltigt men "otursamt" utfall.
+const VARIETY_RUNS = 40;
+function checkOrderVariety(
+  label: string,
+  settings: { duration: WorkoutDuration; intensity: WorkoutIntensity; hasChair: boolean; hasPullupBar: boolean; freeWeights: FreeWeightsLevel }
+) {
+  const firstNames = new Set<string>();
+  const fullSequences = new Set<string>();
+  const workoutIds = new Set<string>();
+  for (let i = 0; i < VARIETY_RUNS; i++) {
+    const workout = generateWorkout({ ...settings, soundEnabled: false });
+    firstNames.add(workout.blocks[0].exercise.name);
+    fullSequences.add(workout.blocks.map((block) => block.exercise.id).join(","));
+    workoutIds.add(workout.id);
+  }
+  if (workoutIds.size !== VARIETY_RUNS) {
+    console.log(`PROBLEM: ${label} - workout.id återanvändes mellan genereringar (endast ${workoutIds.size}/${VARIETY_RUNS} unika)`);
+    problems++;
+  }
+  if (firstNames.size <= 1) {
+    console.log(`PROBLEM: ${label} - första övningen var alltid "${[...firstNames][0]}" över ${VARIETY_RUNS} genereringar (ordningen slumpas inte)`);
+    problems++;
+  }
+  if (fullSequences.size <= 1) {
+    console.log(`PROBLEM: ${label} - exakt samma passordning returnerades varje gång över ${VARIETY_RUNS} genereringar`);
+    problems++;
+  }
+}
+
+checkOrderVariety("Standard/Normal, all utrustning", {
+  duration: "standard",
+  intensity: "normal",
+  hasChair: true,
+  hasPullupBar: true,
+  freeWeights: "heavy",
+});
+checkOrderVariety("Standard/Tufft, all utrustning", {
+  duration: "standard",
+  intensity: "hard",
+  hasChair: true,
+  hasPullupBar: true,
+  freeWeights: "heavy",
+});
+checkOrderVariety("Standard/Normal, ingen utrustning", {
+  duration: "standard",
+  intensity: "normal",
+  hasChair: false,
+  hasPullupBar: false,
+  freeWeights: "none",
+});
+checkOrderVariety("Längre/Tufft, all utrustning", {
+  duration: "long",
+  intensity: "hard",
+  hasChair: true,
+  hasPullupBar: true,
+  freeWeights: "heavy",
+});
+
+console.log(`\nOrdningsslumpning kontrollerad (${VARIETY_RUNS} körningar per scenario).`);
+
 if (problems > 0 || failedCombos > 0) {
   process.exitCode = 1;
 }

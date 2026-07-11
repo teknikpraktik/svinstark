@@ -34,6 +34,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | v1.5| Kärnrörelse-mallar för Standard/Längre + vader | ✅ Klar |
 | v1.6| Bord-utrustning, förbjud upprepning i passet | ✅ Klar |
 | v1.7| Två intensiteter (Lugnt borttaget), styrkefokuserad övningsbank, uppvärmningsskärm borttagen | ✅ Klar |
+| v1.8| Good morning borttagen, bredare höftdominant logik, slumpad gruppordning | ✅ Klar |
 
 ---
 
@@ -1124,6 +1125,35 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 **Testat:**
 - `npx tsc --noEmit`, `npm run lint`, `npm run build` - felfria
 - `npx tsx scripts/auditExerciseBank.ts` - 0 statiska problem, alla 72 kombinationer OK (50 körningar per kombination)
+
+---
+
+### 2026-07-11 — v1.8: Good morning borttagen, bredare höftdominant logik, slumpad gruppordning
+
+**Status:** ✅ Klar
+
+**Bakgrund:** Användaren observerade att Good morning nästan alltid blev första övningen i Standard/Längre-pass, på både Normal och Tufft. Rotorsak: (1) `hip_hinge`-familjen hade bara EN kroppsviktskandidat på Normal (Good morning - övriga tre var hard), och (2) `workoutTemplates.patterns` användes som en FAST ordning, så samma rörelsegrupp (`hip_hinge`) alltid var passets första plats. Slumpningen av vilken ÖVNING som valdes fungerade korrekt (verifierat: `Math.random()` utan seedning/cache, `generateWorkout` anropas fräscht i `useWorkout.start()` varje gång) - men när poolen har en kandidat blir "slumpad" övning deterministisk, och fast gruppordning gjorde det extra synligt eftersom det alltid var SAMMA tunna plats som stod först.
+
+**Byggt:**
+- **Good morning borttagen helt** ur `exerciseData.ts` (id, alla fält) och dess enda `avoidAdjacent`-referens (i `kettlebell_deadlift`).
+- **`hip_hinge` → `hip_dominant`, breddad**: PatternKey döpt om (types/workout.ts, MOVEMENT_FAMILIES/FAMILY_FALLBACK i workoutGenerator.ts, workoutTemplates.ts, docs). Familjen innehåller nu `single_leg_deadlift`, `romanian_deadlift`, `kettlebell_deadlift`, `glute_bridge`, `single_leg_glute_bridge`, `glute_bridge_march`, `donkey_kick` (7 övningar, exakt användarens föreslagna lista) - istället för bara de fyra marklyftsvarianterna. Ger 4 kroppsviktskandidater på Normal (mot 1 tidigare). Uteslutet medvetet: superman/bird_dog (funktionellt bål-/stabilitetsövningar, bird_dog fyller redan anti_rotation_core). Ingen ny övning skapades - alla sju fanns redan i banken.
+- **Ordningen på rörelsegrupperna slumpas per genereringsförsök**, den viktigaste ändringen: `generateWorkout` anropar nu `shuffle(template.patterns)` (Fisher-Yates, ny `src/utils/shuffle.ts`) inför varje försök i retry-loopen, istället för att bygga passet i mallens fasta arrayordning. `workoutTemplates.patterns` är sedan v1.8 en omärkt lista (multiset av rörelsegrupper), inte en ordning. Sekvensreglerna (`violatesSequenceRules`) prövas som förut mot vilken ordning som än slumpats fram - en olycklig ordning ger helt enkelt inga giltiga kandidater för en plats, försöket kastas och görs om med ny ordning (samma självkorrigerande mekanism som redan fanns för övningsval, se `07-generator-specifikation.md` §13).
+- **`MAX_GENERATION_ATTEMPTS` höjd 50 → 120:** med slumpad ordning behövde enstaka tighta kombinationer (Längre/Normal, stol men ingen chinsstång/vikter) fler försök för att träffa en ordning där sekvensregler och passets två `glute_bridge`-platser (som nu delvis konkurrerar med den breddade `hip_dominant`-poolen om samma tre höftlyftsövningar) går ihop. Upptäckt via 1 miss av 3600 provkörningar i den stora testmatrisen; 0/1000 på den specifika kombinationen efter höjningen, 0/3600 i tre efterföljande fulla körningar av testmatrisen.
+- **Full-body-täckning och vadkrav är oförändrade i sak** men valideras nu helt oberoende av position (redan sant sedan v1.7, ingen kodändring krävdes - dokumenterat tydligare).
+- **Valideringsskriptet** (`scripts/auditExerciseBank.ts`) utökat med: Good morning-kontroll (id + namn), extern (icke-skör) återverifiering av de sekvensregler som ALDRIG relaxas, extern helkroppstäckningskontroll, och ett nytt ordningsslumpnings-test (`checkOrderVariety`) som över 40 genereringar per scenario kontrollerar att första övningens namn varierar, att hela passordningen varierar, och att `workout.id` aldrig återanvänds.
+- **Dokumentation:** 02 (B.13, B.17, B.20) och 07 (§6, §9, §13, ny not i §7 om accepterat tunna pooler) uppdaterade till `hip_dominant` och slumpad ordning.
+
+**Filer ändrade:**
+- `src/data/exerciseData.ts`, `src/types/workout.ts`, `src/lib/workoutGenerator.ts`, `src/data/workoutTemplates.ts`, `src/utils/shuffle.ts` (ny), `scripts/auditExerciseBank.ts`, `docs/02-teknisk-specifikation.md`, `docs/07-generator-specifikation.md`, `docs/loggbok.md`
+
+**Testat:**
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` - felfria
+- `npx tsx scripts/auditExerciseBank.ts` körd tre gånger i följd - 0 statiska problem, alla 72 kombinationer OK (50 körningar/kombination), ordningsslumpning bekräftad i alla fyra scenarier, samtliga tre körningar
+- Riktad kontroll: första övningen i Standard/Normal (standardutrustning) fördelad över 19 olika övningar på 40 pass (tidigare: alltid Good morning); höftdominant plats helt utan utrustning gav 6 olika övningar (Höftlyft, Donkey kick, Höftlyft med marsch, Enbenshöftlyft, plus Superman/Bird dog via bredare "hip"-matchning) över 60 pass
+
+**Begränsningar / öppna frågor:**
+- Kvarvarande smala pooler (accepterade per uttrycklig instruktion, inga fyllnadsövningar tillagda): `lunge_forward` och `lunge_lateral` har fortfarande bara en övning vardera i hela banken; `hip_dominant` på Tufft utan fria vikter har bara `single_leg_deadlift`; `horizontal_pull_row` utan bord/vikter faller till `prone_y_raise` som enda kandidat. Variation för dessa platser skapas nu genom att de inte längre alltid hamnar på samma position i passet, snarare än genom fler övningsval.
+- `glute_bridge`-mallplatsen (särskilt dubblerad i Längre) delar numera pool med `hip_dominant` - fungerar felfritt i all testning men är den tightaste punkten i systemet; skulle fler platser konkurrera om samma tunna pooler i framtiden är det första stället att titta på.
 
 ---
 

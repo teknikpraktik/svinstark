@@ -12,9 +12,16 @@ import type {
 } from "@/types/workout";
 import { createId } from "@/utils/createId";
 import { randomItem } from "@/utils/randomItem";
+import { shuffle } from "@/utils/shuffle";
 
 const BLOCK_DURATION_SECONDS = 60;
-const MAX_GENERATION_ATTEMPTS = 50;
+// Höjd från 50 (v1.8): sedan ordningen på rörelsegrupperna slumpas per
+// försök (se generateWorkout) behöver enstaka tighta utrustningskombinationer
+// (t.ex. Längre/Normal med stol men utan chinsstång/vikter) fler försök för
+// att träffa en ordning där både sekvensregler och tunna familjepooler går
+// ihop. 120 gav noll misslyckanden över flera tusen provkörningar, se
+// docs/loggbok.md.
+const MAX_GENERATION_ATTEMPTS = 120;
 
 // "bodyweight" och "floor" antas alltid finnas tillgängligt (07-generator-
 // specifikation.md §7). "pullup_bar" beror på användarens val i
@@ -99,14 +106,21 @@ const MOVEMENT_FAMILIES: Partial<Record<PatternKey, string[]>> = {
   lunge_forward: ["forward_lunge"],
   lunge_lateral: ["lateral_lunge"],
   lunge_reverse: ["reverse_lunge", "weighted_reverse_lunge"],
-  // hip_hinge omfattar alla höftfällningar i banken (inte bara enbensvarianten)
-  // så att platsen kan fyllas med en riktig hinge även på Normal, där
-  // single_leg_deadlift (hard) inte är tillåten.
-  hip_hinge: [
+  // hip_dominant täcker höftdominant träning brett (inte bara marklyfts-
+  // varianter) - höftlyftsfamiljen och donkey kick togs in här i v1.8 sedan
+  // Good morning togs bort (se docs/loggbok.md), eftersom marklyftsvarianterna
+  // ensamma bara gav EN kroppsviktskandidat på Normal (single_leg_deadlift är
+  // hard). Utesluter medvetet superman/bird_dog: bird_dog fyller redan
+  // anti_rotation_core, och båda är funktionellt bål-/stabilitetsövningar
+  // snarare än renodlat höftdominanta.
+  hip_dominant: [
     "single_leg_deadlift",
-    "good_morning",
     "romanian_deadlift",
     "kettlebell_deadlift",
+    "glute_bridge",
+    "single_leg_glute_bridge",
+    "glute_bridge_march",
+    "donkey_kick",
   ],
   pushup_rotation: ["spiderman_push_up", "t_push_up"],
   chinup: ["pull_up", "chin_up", "negative_pull_up", "archer_pull_up"],
@@ -147,7 +161,7 @@ const FAMILY_FALLBACK: Partial<Record<PatternKey, PatternKey>> = {
   lunge_forward: "knee",
   lunge_lateral: "knee",
   lunge_reverse: "knee",
-  hip_hinge: "hip",
+  hip_dominant: "hip",
   pushup_rotation: "push",
   chinup: "wildcard",
   glute_bridge: "hip",
@@ -430,15 +444,23 @@ export function generateWorkout(settings: WorkoutSettings): Workout {
   const requireCalf = settings.duration !== "short";
   let mainExercises: Exercise[] | null = null;
 
-  // Separation av liknande övningar (undvik två ensidiga eller tre
-  // benövningar i rad) försöks alltid först. Bara om det är omöjligt att
-  // fylla passmallen med separation (t.ex. Tufft där core/höft/rörlighet
-  // alla delar "ben") körs en andra omgång med undantaget aktiverat.
+  // template.patterns är en omärkt lista av rörelsegrupper, inte en fast
+  // ordning (se workoutTemplates.ts) - varje försök slumpar en ny ordning
+  // innan passet byggs, så att samma typ av övning inte alltid hamnar på
+  // samma plats (t.ex. alltid först). Sekvensreglerna (violatesSequenceRules)
+  // appliceras sedan i den slumpade ordningen precis som förut: en ordning
+  // som råkar ställa två svåra/liknande övningar intill varandra ger helt
+  // enkelt inga giltiga kandidater för den platsen, försöket kastas och ett
+  // nytt försök (med ny slumpad ordning) görs - se catch nedan. Separation
+  // av liknande övningar (undvik två ensidiga eller tre benövningar i rad)
+  // försöks alltid först. Bara om det är omöjligt att fylla passmallen med
+  // separation (t.ex. Tufft där core/höft alla delar "ben") körs en andra
+  // omgång med undantaget aktiverat.
   for (const relaxSimilarityRules of [false, true]) {
     for (let attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
       try {
         const candidate = buildMainExercises(
-          template.patterns,
+          shuffle(template.patterns),
           settings.intensity,
           allowedEquipment,
           equipmentRestricted,
@@ -449,7 +471,8 @@ export function generateWorkout(settings: WorkoutSettings): Workout {
           break;
         }
       } catch {
-        // Försöket misslyckades, prova igen med en ny slumpad sekvens.
+        // Försöket misslyckades (ogiltig ordning eller sekvens), prova igen
+        // med en ny slumpad ordning och sekvens.
       }
     }
     if (mainExercises) break;

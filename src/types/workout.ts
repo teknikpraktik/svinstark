@@ -138,7 +138,7 @@ export type PatternKey =
   | "lunge_forward"
   | "lunge_lateral"
   | "lunge_reverse"
-  | "hip_hinge"
+  | "hip_dominant"
   | "pushup_rotation"
   | "chinup"
   | "glute_bridge"

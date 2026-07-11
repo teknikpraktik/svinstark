@@ -102,6 +102,8 @@ Generatorn skapar aldrig ett helt slumpmässigt pass.
 
 Den arbetar alltid utifrån en mall.
 
+En mall anger VILKA rörelsegrupper ett pass ska innehålla - som en omärkt lista, inte en fast ordning. Generatorn slumpar ordningen på rörelsegrupperna för varje genereringsförsök (se §9 och §13), så listorna nedan visar mallens innehåll, inte den ordning övningarna kommer i.
+
 Mall för 7 huvudövningar (Kortare):
 
 ```text
@@ -119,7 +121,7 @@ På sju minuter ligger fokus på de stora rörelsemönstren - vadövning är mö
 Mall för 14 huvudövningar (Standard) bygger på namngivna kärnrörelse-familjer (se `02-teknisk-specifikation.md` B.13):
 
 ```text
-hip_hinge
+hip_dominant
 conditioning
 pushup_rotation
 horizontal_pull_row
@@ -164,6 +166,8 @@ Den första nivån som ger minst en kandidat används. Ordningen (unikt före up
 
 Bland återstående kandidater på den nivå som används slumpas en övning fram (alla med samma sannolikhet, se §12).
 
+Vissa rörelsefamiljer (se `02-teknisk-specifikation.md` B.13) har bara en enda giltig kandidat för en given intensitet och utrustning (t.ex. utfall framåt/sido, som bara har en övning vardera i hela banken). Det är avsiktligt accepterat - övningsbanken ska inte fyllas med konstgjorda dubletter eller halvbra övningar bara för att ge en tunn plats fler alternativ. Variation skapas i stället genom andra delar av passet: övningsvalet på platser med flera kandidater och, sedan v1.8, ordningen på rörelsegrupperna (se §6, §9, §13).
+
 ---
 
 # 8. Sekvensregler
@@ -194,6 +198,7 @@ Generatorn ska eftersträva variation mellan:
 * höger/vänster belastning
 * dynamiska och statiska övningar
 * över- och underkropp
+* ordningen på rörelsegrupperna mellan olika pass (se §13) - ingen rörelsegrupp har en bestämd position, så samma typ av övning ska inte behöva hamna först (eller sist) varje gång
 
 Variation är ett mål, men får aldrig bryta passmallen.
 
@@ -244,9 +249,11 @@ Ingen viktning används i MVP.
 
 Per plats i passmallen hanteras brist på kandidater av de åtta fallback-nivåerna i §7 (upprepning, sekundärt mönster, nedgraderad intensitet). Om ingen övning hittas ens på den sista nivån avbryts försöket.
 
+Varje försök slumpar dessutom en ny ordning på mallens rörelsegrupper innan passet byggs (se §6, §9). Övningarna väljs sedan i den slumpade ordningen, och sekvensreglerna (§8) prövas mot just den ordningen. En ordning som råkar ställa två svåra eller sinsemellan lika övningar intill varandra ger då helt enkelt inga giltiga kandidater för den platsen - försöket avbryts och ett nytt görs, med både ny ordning och nytt övningsval. Det gör ordningsslumpningen självkorrigerande: en olämplig ordning sorteras bort av samma mekanism som redan sorterar bort olämpliga övningsval.
+
 För hela passet:
 
-1. Generera en fullständig sekvens med samtliga sekvensregler (§8) aktiva. Validera resultatet (§17). Vid fel, prova igen med en ny slumpad sekvens — maximalt 50 försök.
+1. Generera en fullständig sekvens (ny slumpad ordning + övningsval) med samtliga sekvensregler (§8) aktiva. Validera resultatet (§17). Vid fel, prova igen — maximalt 50 försök.
 2. Om inget av dessa 50 försök gav ett giltigt pass: gör om samma sak, men med reglerna "två ensidiga övningar i rad" och "tre benövningar i rad" avstängda — återigen maximalt 50 försök.
 
 Detta andra steg krävs för Tufft-intensitet: hard-poolerna för bål och höft är så tunna att nästan alla kandidater delar `muscleGroups: "legs"` och/eller är ensidiga, vilket annars gör vissa passmallar olösliga (se `docs/loggbok.md`).
