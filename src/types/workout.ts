@@ -136,7 +136,6 @@ export type PatternKey =
   // Kortare använder fortfarande bara de breda kategorierna ovan.
   | "squat"
   | "lunge_forward"
-  | "lunge_lateral"
   | "lunge_reverse"
   | "hip_dominant"
   | "pushup_rotation"

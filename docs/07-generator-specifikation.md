@@ -116,7 +116,7 @@ hip
 wildcard
 ```
 
-På sju minuter ligger fokus på de stora rörelsemönstren - vadövning är möjlig via wildcard-platsen men inget krav.
+På sju minuter ligger fokus på de stora rörelsemönstren - vadövning är möjlig via wildcard-platsen men inget krav. `pull`-platsen föredrar bardrag (chins/pull-ups/dead hang) när chinsstång finns - se §7.
 
 Mall för 14 huvudövningar (Standard) bygger på namngivna kärnrörelse-familjer (se `02-teknisk-specifikation.md` B.13):
 
@@ -130,14 +130,16 @@ squat
 side_plank
 lunge_forward
 glute_bridge
-lunge_lateral
+chinup
 overhead_press
 lunge_reverse
 chinup
 calf
 ```
 
-Mallen för 21 huvudövningar (Längre) utökar Standard-mallen med en andra omgång av utvalda familjer samt extra press-, konditions-, bål- och wildcard-platser. Passmallarna definieras i `workoutTemplates.ts`.
+`chinup` förekommer två gånger (sedan v1.9, ersätter den tidigare `lunge_lateral`-platsen) - bardrag är en garanterad kärnövning, se §7.
+
+Mallen för 21 huvudövningar (Längre) utökar Standard-mallen med en andra omgång av utvalda familjer samt extra bål- och wildcard-platser. `chinup` förekommer tre gånger (den tidigare `lunge_lateral`-platsen och den tidigare extra press-platsen från v1.7 är sedan v1.9 två ytterligare `chinup`-platser). Passmallarna definieras i `workoutTemplates.ts`.
 
 ---
 
@@ -165,6 +167,8 @@ Om ingen kandidat hittas med strikta villkor (unik övning, endast primärt mön
 Den första nivån som ger minst en kandidat används. Ordningen (unikt före upprepning, korrekt intensitet före nedgraderad) valdes eftersom vissa kombinationer av mönster/intensitet/utrustning (t.ex. drag på Tufft utan stol/chinsstång) annars saknar övningar helt. Se `docs/loggbok.md`.
 
 Bland återstående kandidater på den nivå som används slumpas en övning fram (alla med samma sannolikhet, se §12).
+
+**Undantag - bardrag (v1.9):** när den breda `pull`-platsen (Kortare, se §6) löses som den PRIMÄRA mallplatsen filtreras kandidaterna på varje nivå ytterligare: finns det minst en `vertical_pull`-kandidat (chins/pull-ups/dead hang) används bara sådana. Det gör bardrag till en garanterad kärnövning istället för att konkurrera på lika villkor med rodd/liggande Y-lyft om samma plats. Undantaget gäller uttryckligen INTE när `pull` används som `FAMILY_FALLBACK`-reserv (t.ex. för `horizontal_pull_row` utan bord) - annars skulle den reserven konkurrera med Standard/Längres flera dedikerade `chinup`-platser om samma tunna Normal-pool och enstaka utrustningskombinationer sluta gå att generera (se docs/loggbok.md).
 
 Vissa rörelsefamiljer (se `02-teknisk-specifikation.md` B.13) har bara en enda giltig kandidat för en given intensitet och utrustning (t.ex. utfall framåt/sido, som bara har en övning vardera i hela banken). Det är avsiktligt accepterat - övningsbanken ska inte fyllas med konstgjorda dubletter eller halvbra övningar bara för att ge en tunn plats fler alternativ. Variation skapas i stället genom andra delar av passet: övningsvalet på platser med flera kandidater och, sedan v1.8, ordningen på rörelsegrupperna (se §6, §9, §13).
 

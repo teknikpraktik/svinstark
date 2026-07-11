@@ -871,9 +871,13 @@ type PatternKey =
     | <kärnrörelse-familjer, se nedan>;
 ```
 
-Utöver de breda kategorierna finns smalare kärnrörelse-nycklar som Standard/Längre-mallarna bygger på (`squat`, `lunge_forward`, `lunge_lateral`, `lunge_reverse`, `hip_dominant`, `pushup_rotation`, `chinup`, `glute_bridge`, `overhead_press`, `horizontal_pull_row`, `anti_rotation_core`, `side_plank`). De matchas mot uttryckliga listor av övnings-id:n i `workoutGenerator.ts` (`MOVEMENT_FAMILIES`), inte mot `primaryPattern`. Den fullständiga typen finns i `src/types/workout.ts`.
+Utöver de breda kategorierna finns smalare kärnrörelse-nycklar som Standard/Längre-mallarna bygger på (`squat`, `lunge_forward`, `lunge_reverse`, `hip_dominant`, `pushup_rotation`, `chinup`, `glute_bridge`, `overhead_press`, `horizontal_pull_row`, `anti_rotation_core`, `side_plank`). De matchas mot uttryckliga listor av övnings-id:n i `workoutGenerator.ts` (`MOVEMENT_FAMILIES`), inte mot `primaryPattern`. Den fullständiga typen finns i `src/types/workout.ts`.
 
 `hip_dominant` (döpt om från `hip_hinge` i v1.8) täcker höftdominant träning brett - marklyftsvarianter, höftlyftsfamiljen och donkey kick - istället för att bara matcha renodlade höftfällningar. Se `03-exercise-library-specification.md` och `docs/loggbok.md`.
+
+`lunge_lateral` (Sidoutfall) togs bort som egen namngiven plats i v1.9 för att ge rum åt `chinup`s tre garanterade platser (se B.17 nedan). `lateral_lunge` finns kvar i övningsbanken och nås fortfarande via Kortares breda `knee`-kategori.
+
+`chinup` är sedan v1.9 en garanterad kärnövning - 1x på Kortare (via den breda `pull`-platsen, se nedan), 2x på Standard, 3x på Längre - istället för en enda plats. Familjen utökades med `dead_hang` (statiskt håll), och `negative_pull_up` omklassades tillbaka till `normal`: utan detta hade `chinup`-platsen haft noll Normal-kandidater (samtliga fyra ursprungliga medlemmar var hard) och chins/pull-ups visades aldrig på Normal-pass.
 
 ### Mappning mot `primaryPattern`
 
@@ -963,6 +967,8 @@ En mall (`WorkoutTemplate.patterns`) anger vilka rörelsegrupper passet ska inne
 * puls
 
 - oberoende av i vilken ordning platserna hamnar. Standard- och Längre-pass innehåller dessutom alltid minst en vadövning; på Kortare är vad valfritt (se `07-generator-specifikation.md` §10).
+
+Bardrag (chins/pull-ups, `primaryPattern: "vertical_pull"`) är sedan v1.9 en garanterad kärnövning: minst 1x på Kortare, 2x på Standard, 3x på Längre, när chinsstång finns. På Kortare sker det inte via en egen namngiven plats utan genom att den breda `pull`-platsen föredrar bardrag när chinsstång finns; på Standard/Längre via flera explicita `chinup`-platser (se `07-generator-specifikation.md` §6).
 
 ---
 

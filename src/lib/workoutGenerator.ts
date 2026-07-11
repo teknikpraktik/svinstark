@@ -15,13 +15,17 @@ import { randomItem } from "@/utils/randomItem";
 import { shuffle } from "@/utils/shuffle";
 
 const BLOCK_DURATION_SECONDS = 60;
-// Höjd från 50 (v1.8): sedan ordningen på rörelsegrupperna slumpas per
-// försök (se generateWorkout) behöver enstaka tighta utrustningskombinationer
-// (t.ex. Längre/Normal med stol men utan chinsstång/vikter) fler försök för
-// att träffa en ordning där både sekvensregler och tunna familjepooler går
-// ihop. 120 gav noll misslyckanden över flera tusen provkörningar, se
-// docs/loggbok.md.
-const MAX_GENERATION_ATTEMPTS = 120;
+// Höjd från 50 (v1.8) till 120, sedan till 300 (v1.9): sedan ordningen på
+// rörelsegrupperna slumpas per försök (se generateWorkout) behöver enstaka
+// tighta utrustningskombinationer fler försök för att träffa en ordning där
+// sekvensregler, chinups tre garanterade platser och redan tunna familje-
+// pooler (t.ex. hip_dominant/glute_bridge) går ihop samtidigt - värst är
+// Längre/Normal med chinsstång men utan stol/bord/vikter. 300 gav noll
+// misslyckanden över 1000 riktade provkörningar av just det scenariot och
+// över flera fulla körningar av hela testmatrisen (se docs/loggbok.md).
+// Generering tar i praktiken enstaka millisekunder (~10 ms i normalfallet,
+// uppemot ~30 ms i det tightaste scenariot) - omärkbart för användaren.
+const MAX_GENERATION_ATTEMPTS = 300;
 
 // "bodyweight" och "floor" antas alltid finnas tillgängligt (07-generator-
 // specifikation.md §7). "pullup_bar" beror på användarens val i
@@ -103,8 +107,11 @@ const MOVEMENT_FAMILIES: Partial<Record<PatternKey, string[]>> = {
     "goblet_squat_hold",
     "pistol_squat_negative",
   ],
+  // lunge_lateral (Sidoutfall) togs bort som egen namngiven plats i v1.9 för
+  // att ge rum åt chinups tre garanterade platser (se workoutTemplates.ts).
+  // lateral_lunge finns kvar i övningsbanken och nås fortfarande via
+  // Kortares breda "knee"-kategori.
   lunge_forward: ["forward_lunge"],
-  lunge_lateral: ["lateral_lunge"],
   lunge_reverse: ["reverse_lunge", "weighted_reverse_lunge"],
   // hip_dominant täcker höftdominant träning brett (inte bara marklyfts-
   // varianter) - höftlyftsfamiljen och donkey kick togs in här i v1.8 sedan
@@ -123,7 +130,16 @@ const MOVEMENT_FAMILIES: Partial<Record<PatternKey, string[]>> = {
     "donkey_kick",
   ],
   pushup_rotation: ["spiderman_push_up", "t_push_up"],
-  chinup: ["pull_up", "chin_up", "negative_pull_up", "archer_pull_up"],
+  // chinup är sedan v1.9 en garanterad kärnövning (se workoutTemplates.ts:
+  // 1x/2x/3x per passlängd) istället för bara en enda plats. Familjen har nu
+  // två Normal-nivåer (dead_hang, statiskt håll - och negative_pull_up,
+  // omklassad tillbaka från hard) och tre Hard-nivåer (pull_up, chin_up,
+  // archer_pull_up), en exakt matchning mot Längre-passets tre garanterade
+  // platser på Tufft. Tidigare var alla fyra ursprungliga medlemmar hard,
+  // så chinup-platsen hade noll Normal-kandidater och föll alltid tillbaka
+  // till "wildcard" - chins/pull-ups visades då aldrig alls på Normal.
+  // Ingen ny övning skapades, bara omklassning av befintligt innehåll.
+  chinup: ["pull_up", "chin_up", "negative_pull_up", "archer_pull_up", "dead_hang"],
   glute_bridge: [
     "glute_bridge",
     "single_leg_glute_bridge",
@@ -159,7 +175,6 @@ const MOVEMENT_FAMILIES: Partial<Record<PatternKey, string[]>> = {
 const FAMILY_FALLBACK: Partial<Record<PatternKey, PatternKey>> = {
   squat: "knee",
   lunge_forward: "knee",
-  lunge_lateral: "knee",
   lunge_reverse: "knee",
   hip_dominant: "hip",
   pushup_rotation: "push",
@@ -302,7 +317,8 @@ function candidatesForKey(
   equipmentRestricted: boolean,
   usedIds: Set<string>,
   chosen: Exercise[],
-  relaxSimilarityRules: boolean
+  relaxSimilarityRules: boolean,
+  preferBarWork = false
 ): Exercise[] {
   for (const tier of CANDIDATE_TIERS) {
     const candidates = findCandidates(
@@ -329,6 +345,22 @@ function candidatesForKey(
         const demanding = candidates.filter((candidate) => candidate.strengthDemand !== "low");
         if (demanding.length > 0) return demanding;
       }
+      // Bardrag (chins/pull-ups/dead hang) är en kärnövning som ska synas
+      // på Kortares enda dragplats när chinsstång finns, istället för att
+      // konkurrera på lika villkor mot rodd/liggande Y-lyft (v1.9). Gäller
+      // uttryckligen BARA när "pull" är den primära mallplatsen (preferBarWork,
+      // satt av buildMainExercises enbart för det första candidatesForKey-
+      // anropet) - INTE när "pull" används som FAMILY_FALLBACK-reserv för
+      // horizontal_pull_row/chinup. Standard/Längre har flera dragplatser
+      // (upp till tre chinup-platser plus horizontal_pull_row) som redan
+      // konkurrerar om samma tunna Normal-pool (dead_hang/negative_pull_up);
+      // om även horizontal_pull_row-reservens sökning föredrog bardrag
+      // skulle den konkurrensen bli för hård och enstaka utrustnings-
+      // kombinationer sluta gå att generera (se docs/loggbok.md v1.9).
+      if (preferBarWork && key === "pull") {
+        const barWork = candidates.filter((candidate) => candidate.primaryPattern === "vertical_pull");
+        if (barWork.length > 0) return barWork;
+      }
       return candidates;
     }
   }
@@ -346,6 +378,8 @@ function buildMainExercises(
   const usedIds = new Set<string>();
 
   for (const key of patterns) {
+    // preferBarWork=true bara här: "pull" som PRIMÄR mallplats (Kortares enda
+    // dragplats) ska föredra bardrag när chinsstång finns. Se candidatesForKey.
     let candidates = candidatesForKey(
       key,
       intensity,
@@ -353,13 +387,17 @@ function buildMainExercises(
       equipmentRestricted,
       usedIds,
       chosen,
-      relaxSimilarityRules
+      relaxSimilarityRules,
+      true
     );
 
     // En kärnrörelse-familj (t.ex. chinup, som alltid kräver pullup_bar) kan
     // sakna kandidater helt beroende på utrustning. Platsen faller då
     // tillbaka till familjens bredare kategori (se FAMILY_FALLBACK) istället
-    // för att göra passet omöjligt att generera.
+    // för att göra passet omöjligt att generera. preferBarWork=false här
+    // (standard): en FALLBACK-sökning (t.ex. horizontal_pull_row utan bord)
+    // ska ta vilken "pull"-kandidat som helst, inte konkurrera med de
+    // dedikerade chinup-platserna om samma tunna bardragspool.
     const fallbackKey = FAMILY_FALLBACK[key];
     if (candidates.length === 0 && fallbackKey) {
       candidates = candidatesForKey(

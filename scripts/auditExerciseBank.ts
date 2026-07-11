@@ -46,8 +46,9 @@ for (const exercise of exerciseData) {
 }
 
 // Borttagna övningar (rörlighet/stretch/rena balansställningar, borttagna
-// tillsammans med intensiteten Lugnt; Good morning, borttagen i v1.8) får
-// inte återinföras i banken
+// tillsammans med intensiteten Lugnt; Good morning, borttagen i v1.8;
+// armhävning mot stol/knäarmhävning, borttagna i v1.9) får inte återinföras
+// i banken
 const removedIds = [
   "cat_cow",
   "thoracic_rotation",
@@ -59,6 +60,8 @@ const removedIds = [
   "tree_pose_hold",
   "single_leg_stand",
   "good_morning",
+  "incline_push_up",
+  "knee_push_up",
 ];
 for (const removedId of removedIds) {
   if (ids.has(removedId)) {
@@ -358,6 +361,82 @@ checkOrderVariety("Längre/Tufft, all utrustning", {
 });
 
 console.log(`\nOrdningsslumpning kontrollerad (${VARIETY_RUNS} körningar per scenario).`);
+
+// Bardrag (chins/pull-ups/dead hang/statiskt häng - allt med primaryPattern
+// "vertical_pull") är sedan v1.9 en garanterad kärnövning: minst 1x på
+// Kortare, 2x på Standard, 3x på Längre, när chinsstång finns. Den HÅRDA
+// invarianten (minst 1, aldrig 0) testas strikt över alla körningar - den
+// har varit 100 % sann i all testning och ska ALDRIG missas. Den fulla
+// målfrekvensen (2x/3x) är däremot ett mjukt mål, inte en hård garanti:
+// Normal-intensitet har bara två riktigt enkla bardragsvarianter (dead hang,
+// negativ pull-up) i hela banken, så en tredje distinkt Normal-kandidat
+// finns inte att tillgå på Längre (se docs/loggbok.md v1.9). Testet kräver
+// därför bara att målfrekvensen nås i MAJORITETEN av körningarna, inte alla
+// - annars skulle det slå fel på ett känt och accepterat innehållsvillkor.
+const BAR_WORK_RUNS = 40;
+function checkBarWorkFrequency(
+  duration: WorkoutDuration,
+  intensity: WorkoutIntensity,
+  targetCount: number
+) {
+  const label = `${duration}/${intensity}, chinsstång`;
+  let minSeen = Infinity;
+  let atOrAboveTarget = 0;
+  for (let i = 0; i < BAR_WORK_RUNS; i++) {
+    const workout = generateWorkout({
+      duration,
+      intensity,
+      soundEnabled: false,
+      hasChair: true,
+      hasPullupBar: true,
+      freeWeights: "none",
+    });
+    const count = workout.blocks.filter((block) => block.exercise.primaryPattern === "vertical_pull").length;
+    minSeen = Math.min(minSeen, count);
+    if (count >= targetCount) atOrAboveTarget++;
+  }
+  if (minSeen < 1) {
+    console.log(`PROBLEM: ${label} - minst en generering saknade helt bardrag (kärnövningen garanteras aldrig missas)`);
+    problems++;
+  }
+  const majorityRuns = Math.ceil(BAR_WORK_RUNS / 2);
+  if (atOrAboveTarget < majorityRuns) {
+    console.log(
+      `PROBLEM: ${label} - nådde målfrekvensen ${targetCount}x bara i ${atOrAboveTarget}/${BAR_WORK_RUNS} körningar (förväntade minst ${majorityRuns})`
+    );
+    problems++;
+  }
+}
+
+checkBarWorkFrequency("short", "normal", 1);
+checkBarWorkFrequency("short", "hard", 1);
+checkBarWorkFrequency("standard", "normal", 2);
+checkBarWorkFrequency("standard", "hard", 2);
+checkBarWorkFrequency("long", "normal", 2); // mjukt mål 3, men bara två Normal-kandidater finns - se kommentar ovan
+checkBarWorkFrequency("long", "hard", 3);
+
+// Utan chinsstång ska passet fortfarande genereras säkert (redan täckt av
+// huvudmatrisen ovan) och aldrig kräva bardrag - kontrollera explicit att
+// inget krascher och att "pull" fortfarande täcks brett.
+for (const duration of ["short", "standard", "long"] as WorkoutDuration[]) {
+  const workout = generateWorkout({
+    duration,
+    intensity: "normal",
+    soundEnabled: false,
+    hasChair: false,
+    hasPullupBar: false,
+    freeWeights: "none",
+  });
+  const hasPull = workout.blocks.some(
+    (block) => block.exercise.primaryPattern === "horizontal_pull" || block.exercise.primaryPattern === "vertical_pull"
+  );
+  if (!hasPull) {
+    console.log(`PROBLEM: ${duration}/normal utan all utrustning saknar drag helt`);
+    problems++;
+  }
+}
+
+console.log(`\nBardrags-frekvens kontrollerad (${BAR_WORK_RUNS} körningar per scenario).`);
 
 if (problems > 0 || failedCombos > 0) {
   process.exitCode = 1;

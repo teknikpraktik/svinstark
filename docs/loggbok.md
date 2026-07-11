@@ -35,6 +35,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | v1.6| Bord-utrustning, förbjud upprepning i passet | ✅ Klar |
 | v1.7| Två intensiteter (Lugnt borttaget), styrkefokuserad övningsbank, uppvärmningsskärm borttagen | ✅ Klar |
 | v1.8| Good morning borttagen, bredare höftdominant logik, slumpad gruppordning | ✅ Klar |
+| v1.9| Armhävning mot stol/knäarmhävning borttagna, chins/pull-ups garanterad kärnövning | ✅ Klar |
 
 ---
 
@@ -1154,6 +1155,43 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 **Begränsningar / öppna frågor:**
 - Kvarvarande smala pooler (accepterade per uttrycklig instruktion, inga fyllnadsövningar tillagda): `lunge_forward` och `lunge_lateral` har fortfarande bara en övning vardera i hela banken; `hip_dominant` på Tufft utan fria vikter har bara `single_leg_deadlift`; `horizontal_pull_row` utan bord/vikter faller till `prone_y_raise` som enda kandidat. Variation för dessa platser skapas nu genom att de inte längre alltid hamnar på samma position i passet, snarare än genom fler övningsval.
 - `glute_bridge`-mallplatsen (särskilt dubblerad i Längre) delar numera pool med `hip_dominant` - fungerar felfritt i all testning men är den tightaste punkten i systemet; skulle fler platser konkurrera om samma tunna pooler i framtiden är det första stället att titta på.
+
+---
+
+### 2026-07-11 — v1.9: Armhävning mot stol/knäarmhävning borttagna, chins/pull-ups garanterad kärnövning
+
+**Status:** ✅ Klar
+
+**Bakgrund:** Två separata önskemål. (1) Ta bort Armhävning mot stol och Knäarmhävning ur banken. (2) Chins/pull-ups visades aldrig på Normal-pass (rotorsak: chinup-familjens fyra medlemmar var samtliga hard efter v1.7:s omklassning av negative_pull_up), och användaren ville dessutom göra bardrag till en garanterad kärnövning: 1x på Kortare, 2x på Standard, 3x på Längre, på båda intensiteterna.
+
+**Byggt:**
+- **Armhävning mot stol (`incline_push_up`) och Knäarmhävning (`knee_push_up`) borttagna** helt ur `exerciseData.ts`, inklusive `decline_push_up`s enda `avoidAdjacent`-referens till den förra. Banken har nu 85 övningar (från 87).
+- **`dead_hang` tillagd i chinup-familjen** (statiskt håll i stång - exakt den "enklare variant" användaren själv föreslog). Löser ensam huvuddelen av "aldrig på Normal"-problemet.
+- **`negative_pull_up` omklassad hard → normal** (efter användarens eget förslag), vilket ger chinup-familjen två Normal-kandidater (dead_hang, negative_pull_up) och tre Hard-kandidater (pull_up, chin_up, archer_pull_up) - en exakt matchning mot Längre-passets tre garanterade platser på Tufft.
+- **Frekvensgaranti implementerad efter en avvägningsfråga till användaren** (arkitekturbeslut: vilken plats i Standard/Längre-mallarna som skulle offras för att få plats med fler chins-platser utan att passen blev längre än 14/21 min). Användaren valde att ta bort `lunge_lateral` (Sidoutfall) som egen namngiven plats. Konkret:
+  - **Kortare:** ingen malländring. Istället föredrar den befintliga breda `pull`-platsen bardrag när chinsstång finns (ny `preferBarWork`-parameter i `candidatesForKey`, `workoutGenerator.ts`) - garanterar 1x utan att riskera passets `hasAny("pull")`-krav om chinsstång saknas (utan bar finns inga `vertical_pull`-kandidater, så preferensen blir ett no-op).
+  - **Standard:** `lunge_lateral`-platsen ersatt med en andra `chinup`-plats (1x → 2x).
+  - **Längre:** `lunge_lateral`-platsen OCH den extra press-platsen (tillagd i v1.7) ersatta med `chinup` (1x → 3x).
+  - `lunge_lateral` som `PatternKey` tog bort helt som död kod (typ, `MOVEMENT_FAMILIES`, `FAMILY_FALLBACK`) eftersom ingen mall längre refererar den. Övningen `lateral_lunge` finns kvar i banken och nås fortfarande via Kortares breda `knee`-kategori.
+- **Regression hittad och fixad under testning:** `preferBarWork` applicerades först även när `horizontal_pull_row` föll tillbaka till den breda `pull`-kategorin (t.ex. utan bord) - det fick reserven konkurrera med Standard/Längres nu flera `chinup`-platser om samma tunna Normal-pool (bara två kandidater: dead_hang, negative_pull_up), vilket orsakade sporadiska genereringsfel (upp till ~4 % på den tightaste kombinationen: Längre/Normal, chinsstång men inget bord/vikter). Löst genom att bara sätta `preferBarWork=true` för `pull` som PRIMÄR mallplats (Kortare), aldrig som `FAMILY_FALLBACK`-reserv.
+- **`MAX_GENERATION_ATTEMPTS` höjd 120 → 300:** även efter fixen ovan krävde den tightaste kombinationen (Längre/Normal, chinsstång men inget bord/vikter - hip_dominant/glute_bridge(x2)/chinup(x3) konkurrerar delvis om överlappande pooler) fler försök än 120 för att alltid lyckas. 300 gav 0/1000 fel på just den kombinationen och 0 fel över fyra fulla körningar av hela 72-kombinationersmatrisen. Generering tar i praktiken ~10 ms i normalfallet, ~30 ms i det tightaste scenariot - omärkbart för användaren.
+- **Valideringsskriptet** (`scripts/auditExerciseBank.ts`) utökat med: de två borttagna övningarna i `removedIds`, samt en ny bardragsfrekvens-kontroll (`checkBarWorkFrequency`) som dels hårt kräver minst 1 bardragsövning i **alla** körningar (aldrig 0, aldrig skört), dels mjukt kräver att målfrekvensen (1x/2x/3x) nås i **majoriteten** av körningarna (inte skört mot det kända innehållsvillkoret på Normal, se gränsfall nedan) - samt en explicit kontroll att pass utan chinsstång fortfarande har bred dragtäckning.
+- **Dokumentation:** 02 (B.13, B.17) och 07 (§6, §7) uppdaterade med `chinup`s nya garanti, `lunge_lateral`s borttagning och bardragspreferensens undantag.
+
+**Filer ändrade:**
+- `src/data/exerciseData.ts`, `src/types/workout.ts`, `src/lib/workoutGenerator.ts`, `src/data/workoutTemplates.ts`, `scripts/auditExerciseBank.ts`, `docs/02-teknisk-specifikation.md`, `docs/07-generator-specifikation.md`, `docs/loggbok.md`
+
+**Testat:**
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` - felfria
+- `npx tsx scripts/auditExerciseBank.ts` körd fyra gånger i följd - 0 statiska problem, alla 72 kombinationer OK, ordningsslumpning och bardragsfrekvens bekräftade i alla scenarier, samtliga fyra körningar
+- Riktad kontroll: 1000 genereringar av den tidigare instabila kombinationen (Längre/Normal, chinsstång, inget bord/vikter) - 0 fel efter fixen (mot 21/1000 innan)
+- Empirisk frekvenskontroll (40-60 körningar per scenario, `primaryPattern: "vertical_pull"` inklusive Statiskt häng): Kortare alltid ≥1 på både Normal och Tufft; Standard/Normal och Längre/Normal träffar 2x i cirka 83-98 % av fallen (alltid ≥1); Längre/Tufft träffar 3x eller mer i så gott som alla fall (tre riktiga Hard-kandidater finns)
+- Utan chinsstång: 0 bardragsövningar som väntat i alla körningar, ingen krasch, bred dragtäckning (`hasAny("pull")`) fortsatt garanterad
+
+**Begränsningar / öppna frågor:**
+- **Normal-intensitetens 3:e chinup-plats på Längre når sällan bardrag:** bara två genuint enkla Normal-bardragsvarianter finns i hela banken (dead_hang, negative_pull_up) - en tredje distinkt kandidat finns inte utan att skapa en konstgjord duplett, vilket uttryckligen skulle undvikas. Den tredje platsen faller då tillbaka till `wildcard` (vilken övning som helst). Detta är ett känt och accepterat innehållsvillkor, inte en bugg - flaggat tydligt för användaren under arbetet.
+- `lunge_forward` har fortfarande bara en övning i hela banken (`forward_lunge`); samma gäller nu även den tidigare `lunge_lateral`-platsens enda medlem (`lateral_lunge`), som inte längre är en egen mallplats. Accepterat per tidigare instruktion (kvalitet före kvantitet, inga fyllnadsövningar).
+- Horisontellt drag (`horizontal_pull_row` - Kroppsrodd/Enarmsrodd) har fortsatt bara en dedikerad plats i Standard/Längre (oförändrat sedan tidigare versioner); den konkurrerar inte längre om bardragskandidater tack vare `preferBarWork`-fixen.
 
 ---
 
