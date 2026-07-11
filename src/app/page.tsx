@@ -5,6 +5,7 @@ import StartScreen from "@/components/StartScreen";
 import WorkoutScreen from "@/components/WorkoutScreen";
 import { useSettings } from "@/hooks/useSettings";
 import { useWorkout } from "@/hooks/useWorkout";
+import { unlockAudioContext } from "@/lib/audio";
 
 export default function Home() {
   const {
@@ -64,7 +65,17 @@ export default function Home() {
       onResume={resume}
       onStop={stop}
       onSkip={skip}
-      onSoundEnabledChange={setSoundEnabled}
+      onSoundEnabledChange={(soundEnabled) => {
+        // Måste låsas upp här också (inte bara vid passets start i
+        // useWorkout.start()): om ljudet var avstängt när passet startade
+        // och användaren slår på det med ikonen mitt i passet är detta den
+        // enda riktiga knapptryckning webbläsaren har att låsa upp
+        // AudioContext med (se lib/audio.ts). Utan detta anrop förblir
+        // ljudet tyst resten av passet på mobila webbläsare, trots att
+        // inställningen visar "på".
+        if (soundEnabled) unlockAudioContext();
+        setSoundEnabled(soundEnabled);
+      }}
     />
   );
 }
