@@ -58,16 +58,28 @@ export class SequenceGenerationFailedError extends Error {
   }
 }
 
+// Intensitetsfallback i tre nivåer: "none" kräver exakt matchning mot
+// passintensiteten, "adjacent" tillåter ett stegs avvikelse (normal-övningar
+// på Lugnt/Tufft), "distant" tillåter dessutom calm-övningar på Tufft som
+// absolut sista utväg. "distant" behövs för att Tufft ska gå att generera
+// helt utan utrustning: den enda utrustningsfria drag-övningen i banken är
+// prone_y_raise ("Liggande Y-lyft"), som är calm - utan denna nivå går
+// pull-platsen inte att fylla alls. Lugnt eskalerar aldrig till hard,
+// oavsett nivå.
+type IntensityFallback = "none" | "adjacent" | "distant";
+
 function isIntensityAllowed(
   exerciseIntensity: string,
   workoutIntensity: WorkoutIntensity,
-  allowIntensityFallback = false
+  fallback: IntensityFallback = "none"
 ): boolean {
   if (workoutIntensity === "calm") {
-    return exerciseIntensity === "calm" || (allowIntensityFallback && exerciseIntensity === "normal");
+    return exerciseIntensity === "calm" || (fallback !== "none" && exerciseIntensity === "normal");
   }
   if (workoutIntensity === "normal") return exerciseIntensity === "calm" || exerciseIntensity === "normal";
-  return exerciseIntensity === "hard" || (allowIntensityFallback && exerciseIntensity === "normal");
+  if (exerciseIntensity === "hard") return true;
+  if (exerciseIntensity === "normal") return fallback !== "none";
+  return fallback === "distant";
 }
 
 function isEquipmentAllowed(exercise: Exercise, allowedEquipment: Set<Equipment>): boolean {
@@ -86,30 +98,37 @@ const MOVEMENT_FAMILIES: Partial<Record<PatternKey, string[]>> = {
     "jump_squat",
     "squat_pulse",
     "squat_hold",
-    "assisted_squat_chair",
     "goblet_squat",
     "heavy_goblet_squat",
     "goblet_squat_hold",
-    "half_squat",
     "pistol_squat_negative",
     "deep_squat_hold",
   ],
   lunge_forward: ["forward_lunge"],
   lunge_lateral: ["lateral_lunge"],
   lunge_reverse: ["reverse_lunge", "weighted_reverse_lunge"],
-  hip_hinge: ["single_leg_deadlift", "single_leg_hip_hinge"],
+  // hip_hinge omfattar alla höftfällningar i banken (inte bara enbensvarianten)
+  // så att platsen kan fyllas med en riktig hinge även på Lugnt/Medel, där
+  // single_leg_deadlift (hard) inte är tillåten.
+  hip_hinge: [
+    "single_leg_deadlift",
+    "good_morning",
+    "romanian_deadlift",
+    "kettlebell_deadlift",
+  ],
   pushup_rotation: ["spiderman_push_up", "t_push_up"],
   chinup: ["pull_up", "chin_up", "negative_pull_up", "archer_pull_up"],
   glute_bridge: [
     "glute_bridge",
     "single_leg_glute_bridge",
     "glute_bridge_march",
-    "explosive_glute_bridge",
-    "supine_bridge_hold",
   ],
   overhead_press: ["pike_push_up", "overhead_press_light", "curl_to_press"],
-  horizontal_pull_row: ["inverted_row", "one_arm_row_light", "one_arm_row_heavy"],
-  anti_rotation_core: ["dead_bug", "bird_dog", "weighted_dead_bug"],
+  horizontal_pull_row: ["inverted_row", "one_arm_row_light"],
+  // plank_shoulder_tap och suitcase_carry räknas hit: båda tränar att stå
+  // emot rotation/sidoböjning, och ger familjen normal- respektive
+  // hard-kandidater (dead_bug/bird_dog är båda calm).
+  anti_rotation_core: ["dead_bug", "bird_dog", "plank_shoulder_tap", "suitcase_carry"],
   side_plank: ["side_plank", "side_plank_dip", "star_plank"],
 };
 
@@ -232,12 +251,12 @@ function findCandidates(
   chosen: Exercise[],
   allowSecondary: boolean,
   allowRepeat: boolean,
-  allowIntensityFallback: boolean,
+  intensityFallback: IntensityFallback,
   relaxSimilarityRules: boolean
 ): Exercise[] {
   return exerciseData.filter((exercise) => {
     if (!allowRepeat && usedIds.has(exercise.id)) return false;
-    if (!isIntensityAllowed(exercise.intensity, intensity, allowIntensityFallback)) return false;
+    if (!isIntensityAllowed(exercise.intensity, intensity, intensityFallback)) return false;
     if (!isEquipmentAllowed(exercise, allowedEquipment)) return false;
     if (violatesSequenceRules(exercise, chosen, equipmentRestricted, relaxSimilarityRules)) return false;
     return exerciseMatchesKey(exercise, key, allowSecondary);
@@ -251,15 +270,33 @@ function findCandidates(
 // platsen. isValidWorkout gör dessutom en hård kontroll mot dubbletter, så
 // ett pass som ändå fått en upprepning via denna sista utväg kasseras och
 // ett nytt försök görs istället för att visas för användaren.
-const CANDIDATE_TIERS: Array<{ allowSecondary: boolean; allowRepeat: boolean; allowIntensityFallback: boolean }> = [
-  { allowSecondary: false, allowRepeat: false, allowIntensityFallback: false },
-  { allowSecondary: true, allowRepeat: false, allowIntensityFallback: false },
-  { allowSecondary: false, allowRepeat: false, allowIntensityFallback: true },
-  { allowSecondary: true, allowRepeat: false, allowIntensityFallback: true },
-  { allowSecondary: false, allowRepeat: true, allowIntensityFallback: false },
-  { allowSecondary: true, allowRepeat: true, allowIntensityFallback: false },
-  { allowSecondary: false, allowRepeat: true, allowIntensityFallback: true },
-  { allowSecondary: true, allowRepeat: true, allowIntensityFallback: true },
+interface CandidateTier {
+  allowSecondary: boolean;
+  allowRepeat: boolean;
+  intensityFallback: IntensityFallback;
+}
+
+const CANDIDATE_TIERS: CandidateTier[] = [
+  { allowSecondary: false, allowRepeat: false, intensityFallback: "none" },
+  { allowSecondary: true, allowRepeat: false, intensityFallback: "none" },
+  { allowSecondary: false, allowRepeat: false, intensityFallback: "adjacent" },
+  { allowSecondary: true, allowRepeat: false, intensityFallback: "adjacent" },
+  { allowSecondary: false, allowRepeat: true, intensityFallback: "none" },
+  { allowSecondary: true, allowRepeat: true, intensityFallback: "none" },
+  { allowSecondary: false, allowRepeat: true, intensityFallback: "adjacent" },
+  { allowSecondary: true, allowRepeat: true, intensityFallback: "adjacent" },
+];
+
+// Nivån "distant" (calm-övningar på Tufft) prövas allra sist, EFTER att både
+// platsens egen nyckel och dess FAMILY_FALLBACK-kategori uttömts med
+// "none"/"adjacent" - se buildMainExercises. Den får alltså aldrig konkurrera
+// ut en hård/normal övning; den räddar bara platser som annars är omöjliga
+// (i praktiken pull-platsen på Tufft helt utan utrustning).
+const DISTANT_CANDIDATE_TIERS: CandidateTier[] = [
+  { allowSecondary: false, allowRepeat: false, intensityFallback: "distant" },
+  { allowSecondary: true, allowRepeat: false, intensityFallback: "distant" },
+  { allowSecondary: false, allowRepeat: true, intensityFallback: "distant" },
+  { allowSecondary: true, allowRepeat: true, intensityFallback: "distant" },
 ];
 
 function candidatesForKey(
@@ -269,9 +306,10 @@ function candidatesForKey(
   equipmentRestricted: boolean,
   usedIds: Set<string>,
   chosen: Exercise[],
-  relaxSimilarityRules: boolean
+  relaxSimilarityRules: boolean,
+  tiers: CandidateTier[] = CANDIDATE_TIERS
 ): Exercise[] {
-  for (const tier of CANDIDATE_TIERS) {
+  for (const tier of tiers) {
     const candidates = findCandidates(
       key,
       intensity,
@@ -281,7 +319,7 @@ function candidatesForKey(
       chosen,
       tier.allowSecondary,
       tier.allowRepeat,
-      tier.allowIntensityFallback,
+      tier.intensityFallback,
       relaxSimilarityRules
     );
     if (candidates.length > 0) return candidates;
@@ -314,19 +352,46 @@ function buildMainExercises(
     // sakna kandidater helt beroende på utrustning. Platsen faller då
     // tillbaka till familjens bredare kategori (se FAMILY_FALLBACK) istället
     // för att göra passet omöjligt att generera.
+    const fallbackKey = FAMILY_FALLBACK[key];
+    if (candidates.length === 0 && fallbackKey) {
+      candidates = candidatesForKey(
+        fallbackKey,
+        intensity,
+        allowedEquipment,
+        equipmentRestricted,
+        usedIds,
+        chosen,
+        relaxSimilarityRules
+      );
+    }
+
+    // Absolut sista utväg: tillåt calm-övningar på Tufft (se
+    // DISTANT_CANDIDATE_TIERS). Utan denna nivå är Tufft omöjligt att
+    // generera helt utan utrustning, eftersom den enda utrustningsfria
+    // drag-övningen i banken (prone_y_raise) är calm.
     if (candidates.length === 0) {
-      const fallbackKey = FAMILY_FALLBACK[key];
-      if (fallbackKey) {
-        candidates = candidatesForKey(
-          fallbackKey,
-          intensity,
-          allowedEquipment,
-          equipmentRestricted,
-          usedIds,
-          chosen,
-          relaxSimilarityRules
-        );
-      }
+      candidates = candidatesForKey(
+        key,
+        intensity,
+        allowedEquipment,
+        equipmentRestricted,
+        usedIds,
+        chosen,
+        relaxSimilarityRules,
+        DISTANT_CANDIDATE_TIERS
+      );
+    }
+    if (candidates.length === 0 && fallbackKey) {
+      candidates = candidatesForKey(
+        fallbackKey,
+        intensity,
+        allowedEquipment,
+        equipmentRestricted,
+        usedIds,
+        chosen,
+        relaxSimilarityRules,
+        DISTANT_CANDIDATE_TIERS
+      );
     }
 
     if (candidates.length === 0) {
@@ -349,7 +414,7 @@ function isValidWorkout(
   equipmentRestricted: boolean,
   relaxSimilarityRules: boolean
 ): boolean {
-  if (exercises.some((exercise) => !isIntensityAllowed(exercise.intensity, intensity, true))) return false;
+  if (exercises.some((exercise) => !isIntensityAllowed(exercise.intensity, intensity, "distant"))) return false;
 
   // Samma övning får aldrig förekomma två gånger i samma pass. buildMainExercises
   // undviker redan detta i praktiken (allowRepeat är bara en sista utväg i

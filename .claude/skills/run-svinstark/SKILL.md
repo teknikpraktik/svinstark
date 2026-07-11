@@ -32,11 +32,10 @@ npm install   # playwright is already a devDependency
 ```bash
 node .claude/skills/run-svinstark/driver.mjs <<'EOF'
 launch
-click button[aria-label="Inställningar"]
-wait-text Stol/pall
-click-in Stol/pall | Nej
+wait-text Träningstid
 click-in Chinsstång | Nej
-click-text Stäng
+click-in Stol och bord | Nej
+click-in Fria vikter | Nej
 click-text Längre
 click-text Tufft
 click-text STARTA PASS
@@ -50,10 +49,15 @@ EOF
 ```
 
 This starts `npm run dev` itself (killing it again on `quit`), opens the
-StartScreen, sets both equipment toggles to "Nej", picks Längre/Tufft, starts
-the workout, dismisses the warmup screen, and screenshots the resulting
+StartScreen, sets all three equipment selectors to "Nej", picks Längre/Tufft,
+starts the workout, dismisses the warmup screen, and screenshots the resulting
 workout screen. Every command echoes its own result line, so you don't need
 `capture-pane`-style polling - just read the driver's stdout top to bottom.
+
+All settings live inline on the StartScreen (there is no settings dialog or
+"Inställningar" button). The `OptionSelector` groups and their buttons:
+Träningstid (Kortare/Standard/Längre), Intensitet (Lugnt/Normalt/Tufft),
+Chinsstång (Ja/Nej), Stol och bord (Ja/Nej), Fria vikter (Nej/Lätta/Tunga).
 
 Screenshots and the dev server log land in `%TEMP%\svinstark-shots\` (override
 with `SCREENSHOT_DIR`). `BASE_URL` overrides the default `http://localhost:3000`.
@@ -108,11 +112,12 @@ above.
 
 ## Gotchas
 
-- **`click-text "Ja"` / `click-text "Nej"` is ambiguous.** The Settings
-  dialog renders two independent Ja/Nej toggle rows (Stol/pall, Chinsstång)
-  with identical button text. Use `click-in <label> | <button-text>` instead,
-  which scopes the click to the `OptionSelector` group whose label matches
-  `<label>` (it walks up one parent from the label text node).
+- **`click-text "Ja"` / `click-text "Nej"` is ambiguous.** The StartScreen
+  renders three equipment groups whose buttons share text (Chinsstång and
+  Stol och bord are both Ja/Nej; Fria vikter also has a Nej). Use
+  `click-in <label> | <button-text>` instead, which scopes the click to the
+  `OptionSelector` group whose label matches `<label>` (it walks up one
+  parent from the label text node).
 - **`waitUntil: "networkidle"` never resolves.** Next's dev server keeps an
   HMR websocket open indefinitely, so Playwright's networkidle condition
   never triggers (30s timeout every time) even though the page finishes
