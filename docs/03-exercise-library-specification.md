@@ -72,8 +72,10 @@ export type ExercisePattern =
   | "core"
   | "conditioning"
   | "balance"
-  | "mobility";
+  | "calf";
 ```
+
+Mönstret `mobility` är borttaget: banken innehåller inte längre rena rörlighets- eller stretchövningar. `balance` används endast för tekniskt krävande styrkeövningar där balansmomentet är själva utmaningen (t.ex. hip airplane), inte för passiva balansställningar.
 
 Sekundära rörelsemönster får användas.
 
@@ -85,7 +87,6 @@ Varje övning klassificeras som:
 
 ```ts
 export type ExerciseIntensity =
-  | "calm"
   | "normal"
   | "hard";
 ```
@@ -93,10 +94,11 @@ export type ExerciseIntensity =
 Mappning i användargränssnittet:
 
 ```text
-calm   = Lugnt
-normal = Normalt
-hard   = Tufft
+normal = Normal
+hard   = Tuff
 ```
+
+`normal` omfattar lättbegripliga grundövningar som en vanlig motionär kan utföra kontrollerat. `hard` omfattar övningar som kräver hög relativ styrka, är explosiva, innehåller hopp, ger hög puls eller kräver avancerad balans/koordination. Den tidigare intensiteten `calm` (Lugnt) är borttagen.
 
 ---
 
@@ -247,7 +249,7 @@ export interface Exercise {
 | `instruction`        | Kort textinstruktion                              |
 | `primaryPattern`     | Passmallar och rörelsemönster                     |
 | `secondaryPatterns`  | Variation och sekundär belastning                 |
-| `intensity`          | Filtrering utifrån Lugnt/Normalt/Tufft            |
+| `intensity`          | Filtrering utifrån Normal/Tuff                    |
 | `equipment`          | Säkerställer att bara tillåten utrustning används |
 | `muscleGroups`       | Analys och framtida progression                   |
 | `bodyPosition`       | Växling mellan stående/golv/hängande              |
@@ -334,22 +336,9 @@ Enbenshöftlyft
 
 # 16. Övningsbank – omfattning
 
-MVP innehåller 124 övningar fördelade på:
+Banken är indelad i kategorierna knädominanta, höftdominanta, horisontell press, vertikal press, horisontellt drag, vertikalt drag, bål, kondition, balans, vader och fria vikter. Det exakta antalet övningar underhålls inte i detta dokument - källan är `src/data/exerciseData.ts`, och `scripts/auditExerciseBank.ts` validerar bankens konsistens.
 
-| Kategori          | Antal |
-| ----------------- | ----: |
-| Knädominanta      |    25 |
-| Höftdominanta     |    15 |
-| Horisontell press |    14 |
-| Vertikal press    |     4 |
-| Horisontellt drag |     6 |
-| Vertikalt drag    |     7 |
-| Bål               |    19 |
-| Kondition         |    13 |
-| Balans            |     9 |
-| Rörlighet         |    12 |
-
-Biblioteket ska hellre vara konsekvent och kvalitetssäkrat än stort. Antalet minskade från 121 till 100 efter en manuell genomgång 2026-07-06 där otydliga eller ej önskvärda övningar togs bort, och ökade sedan till 124 efter att 24 övningar för fria vikter lades till (se `docs/loggbok.md`).
+Biblioteket ska hellre vara konsekvent och kvalitetssäkrat än stort, med tydligt fokus på styrketräning. Rena rörlighets-, stretch- och yogaövningar samt passiva balansställningar hör inte hemma i banken (se `docs/loggbok.md`).
 
 ---
 

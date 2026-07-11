@@ -49,7 +49,7 @@ Målet är att bygga en stabil första version.
 
 * Slumpgenererade helkroppspass
 * 7, 14 och 21 minuter
-* Lugnt, Normalt och Tufft
+* Normal och Tuff
 * Timer
 * Ljud
 * Offline-stöd

@@ -8,7 +8,7 @@ export interface ExerciseProgress {
 }
 
 // Vilken övning det aktuella blocket är, av det totala antalet övningar i
-// passet (alla block är övningar sedan uppvärmning/nedvarvning togs bort).
+// passet (varje block i ett pass är en övning).
 export function getExerciseProgress(
   blocks: WorkoutBlock[],
   currentBlockIndex: number

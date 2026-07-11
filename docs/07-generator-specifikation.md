@@ -43,7 +43,7 @@ WorkoutSettings {
 
     duration: short | standard | long
 
-    intensity: calm | normal | hard
+    intensity: normal | hard
 
     hasChair: boolean
 
@@ -72,24 +72,15 @@ Alla block är exakt 60 sekunder.
 
 # 5. Intensitetsfiltrering
 
-## Lugnt
+## Normal
 
 Tillåtna övningar:
 
 ```text
-calm
-```
-
----
-
-## Normalt
-
-Tillåtna övningar:
-
-```text
-calm
 normal
 ```
+
+Ett Normal-pass innehåller aldrig hårda övningar.
 
 ---
 
@@ -101,7 +92,7 @@ Tillåtna övningar:
 hard
 ```
 
-Ingen övning utanför vald intensitet får användas.
+Om en plats saknar hård kandidat får platsen som reserv fyllas med en `normal`-övning via fallback-nivåerna i §7 (i praktiken drag-platsen helt utan utrustning). Bland dessa reserver föredras kandidater med minst medelhögt styrkekrav (`strengthDemand`) - hellre att en krävande övning som kroppsrodd återkommer oftare än att en lätt övning tas in för variationens skull. Fallback åt andra hållet finns inte.
 
 ---
 
@@ -111,7 +102,7 @@ Generatorn skapar aldrig ett helt slumpmässigt pass.
 
 Den arbetar alltid utifrån en mall.
 
-Exempel på mall för 7 huvudövningar:
+Mall för 7 huvudövningar (Kortare):
 
 ```text
 knee
@@ -120,29 +111,31 @@ conditioning
 pull
 core
 hip
-balance_or_mobility
-```
-
-Exempel på mall för 14 huvudövningar:
-
-```text
-knee
-push
-conditioning
-pull
-core
-hip
-mobility
-conditioning
-push
-balance
-hip
-pull
-core
 wildcard
 ```
 
-Passmallarna definieras i `workoutTemplates.ts`.
+På sju minuter ligger fokus på de stora rörelsemönstren - vadövning är möjlig via wildcard-platsen men inget krav.
+
+Mall för 14 huvudövningar (Standard) bygger på namngivna kärnrörelse-familjer (se `02-teknisk-specifikation.md` B.13):
+
+```text
+hip_hinge
+conditioning
+pushup_rotation
+horizontal_pull_row
+anti_rotation_core
+squat
+side_plank
+lunge_forward
+glute_bridge
+lunge_lateral
+overhead_press
+lunge_reverse
+chinup
+calf
+```
+
+Mallen för 21 huvudövningar (Längre) utökar Standard-mallen med en andra omgång av utvalda familjer samt extra press-, konditions-, bål- och wildcard-platser. Passmallarna definieras i `workoutTemplates.ts`.
 
 ---
 
@@ -217,10 +210,7 @@ Varje pass ska innehålla minst en övning inom:
 * bål
 * kondition
 
-Dessutom ska minst en av följande förekomma:
-
-* balans
-* rörlighet
+Standard- och Längre-pass ska dessutom innehålla minst en vadövning. På Kortare (7 minuter) är vad valfritt - fokus ligger på de stora rörelsemönstren.
 
 ---
 
@@ -259,7 +249,7 @@ För hela passet:
 1. Generera en fullständig sekvens med samtliga sekvensregler (§8) aktiva. Validera resultatet (§17). Vid fel, prova igen med en ny slumpad sekvens — maximalt 50 försök.
 2. Om inget av dessa 50 försök gav ett giltigt pass: gör om samma sak, men med reglerna "två ensidiga övningar i rad" och "tre benövningar i rad" avstängda — återigen maximalt 50 försök.
 
-Detta andra steg krävs för Tufft-intensitet: hard-poolerna för bål, höft och rörlighet är så tunna att nästan alla kandidater delar `muscleGroups: "legs"` och/eller är ensidiga, vilket annars gör vissa passmallar olösliga (se `docs/loggbok.md`).
+Detta andra steg krävs för Tufft-intensitet: hard-poolerna för bål och höft är så tunna att nästan alla kandidater delar `muscleGroups: "legs"` och/eller är ensidiga, vilket annars gör vissa passmallar olösliga (se `docs/loggbok.md`).
 
 Om generatorn fortfarande misslyckas efter båda stegen returneras ett fel.
 

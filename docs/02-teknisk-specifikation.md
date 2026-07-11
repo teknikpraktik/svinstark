@@ -627,7 +627,7 @@ De fält som är mest relevanta för affärslogiken i detta dokument är:
 
 * `id`, `name`, `instruction`
 * `primaryPattern`, `secondaryPatterns`
-* `intensity` (`ExerciseIntensity`: `calm` / `normal` / `hard`)
+* `intensity` (`ExerciseIntensity`: `normal` / `hard`)
 * `equipment`
 * `muscleGroups`
 * `explosive`, `unilateral`, `jump`
@@ -653,7 +653,7 @@ type ExercisePattern =
     | "core"
     | "conditioning"
     | "balance"
-    | "mobility";
+    | "calf";
 ```
 
 ---
@@ -662,16 +662,16 @@ type ExercisePattern =
 
 ```typescript
 type WorkoutIntensity =
-    | "calm"
     | "normal"
     | "hard";
 ```
 
 Visas i gränssnittet som:
 
-* Lugnt
-* Normalt
-* Tufft
+* Normal
+* Tuff
+
+Ett tidigare sparat `"calm"`-värde (intensiteten Lugnt, borttagen) migreras vid inläsning till `"normal"`.
 
 ---
 
@@ -862,16 +862,16 @@ type PatternKey =
 
     | "core"
 
-    | "balance"
-
-    | "mobility"
-
-    | "balance_or_mobility"
-
     | "knee_or_hip"
 
-    | "wildcard";
+    | "wildcard"
+
+    | "calf"
+
+    | <kärnrörelse-familjer, se nedan>;
 ```
+
+Utöver de breda kategorierna finns smalare kärnrörelse-nycklar som Standard/Längre-mallarna bygger på (`squat`, `lunge_forward`, `lunge_lateral`, `lunge_reverse`, `hip_hinge`, `pushup_rotation`, `chinup`, `glute_bridge`, `overhead_press`, `horizontal_pull_row`, `anti_rotation_core`, `side_plank`). De matchas mot uttryckliga listor av övnings-id:n i `workoutGenerator.ts` (`MOVEMENT_FAMILIES`), inte mot `primaryPattern`. Den fullständiga typen finns i `src/types/workout.ts`.
 
 ### Mappning mot `primaryPattern`
 
@@ -882,7 +882,6 @@ Passmallar refererar ibland till generiska nycklar som inte finns direkt som `pr
 | `push`                | `horizontal_push` eller `vertical_push` |
 | `pull`                | `horizontal_pull` eller `vertical_pull` |
 | `knee_or_hip`         | `knee` eller `hip`                    |
-| `balance_or_mobility` | `balance` eller `mobility`            |
 | `wildcard`            | valfritt (se 07-generator-specifikation.md §11) |
 | övriga värden         | exakt samma värde som `primaryPattern` |
 
@@ -922,24 +921,15 @@ Generatorn arbetar enligt följande:
 
 ## B.16 Intensitetsregler
 
-### Lugnt
+### Normal
 
 Tillåtna övningar:
 
 ```
-calm
-```
-
----
-
-### Normalt
-
-Tillåtna övningar:
-
-```
-calm
 normal
 ```
+
+Ett Normal-pass innehåller aldrig hårda övningar. Generatorn får aldrig bryta mot denna regel.
 
 ---
 
@@ -951,7 +941,7 @@ Tillåtna övningar:
 hard
 ```
 
-Generatorn får aldrig bryta mot denna regel.
+Om en plats saknar hård kandidat (t.ex. drag-platsen helt utan utrustning) får platsen som reserv fyllas med en `normal`-övning (se B.20).
 
 ---
 
@@ -963,14 +953,14 @@ Den skapar aldrig ett helt slumpmässigt pass.
 
 Det garanterar balans mellan:
 
-* ben
+* knä
 * höft
 * press
 * drag
 * bål
 * puls
-* balans
-* rörlighet
+
+Standard- och Längre-pass innehåller dessutom alltid minst en vadövning; på Kortare är vad valfritt (se `07-generator-specifikation.md` §10).
 
 ---
 
@@ -1013,7 +1003,7 @@ Denna lista är synkroniserad med `03-exercise-library-specification.md` §14 oc
 1. Generera en fullständig sekvens med alla sekvensregler (B.19) aktiva. Validera. Vid fel, prova en ny slumpad sekvens. Max 50 försök.
 2. Lyckas inget av dessa: gör om samma sak med reglerna "två ensidiga i rad" och "tre benövningar i rad" avstängda. Max 50 nya försök.
 
-Steg 2 krävs på Tufft-intensitet eftersom hard-poolerna för bål/höft/rörlighet är så tunna att nästan alla kandidater delar muskelgrupp `"legs"` och/eller är ensidiga, vilket annars gör vissa passmallar olösliga (se `docs/loggbok.md`).
+Steg 2 krävs på Tufft-intensitet eftersom hard-poolerna för bål och höft är så tunna att nästan alla kandidater delar muskelgrupp `"legs"` och/eller är ensidiga, vilket annars gör vissa passmallar olösliga (se `docs/loggbok.md`).
 
 Om generatorn fortfarande misslyckas efter båda stegen returneras ett fel som fångas av appen.
 
@@ -1068,8 +1058,6 @@ type Screen =
 
     | "start"
 
-    | "warmup"
-
     | "workout"
 
     | "paused"
@@ -1083,10 +1071,6 @@ type Screen =
 
 ```text
 START
-
-↓
-
-Uppvärmning (valfri, ingen timer igång)
 
 ↓
 
@@ -1117,7 +1101,7 @@ Finished
 Back to Start
 ```
 
-Från Uppvärmning kan användaren välja Tillbaka och återgå direkt till Start utan att ett pass skapas.
+Passet genereras och startar direkt när användaren trycker på STARTA PASS - det finns ingen mellanliggande skärm, och hela den valda tiden används till själva träningspasset.
 
 Paus kan ske från:
 
@@ -1126,7 +1110,6 @@ Paus kan ske från:
 Inte från:
 
 * Start
-* Uppvärmning
 * Finished
 
 ---
@@ -1232,10 +1215,6 @@ Start
 
 ↓
 
-Uppvärmning
-
-↓
-
 Workout
 
 ↓
@@ -1255,7 +1234,7 @@ Finished
 Start
 ```
 
-Från Uppvärmning finns en väg tillbaka till Start (utan att ett pass skapas). Ingen annan navigering behövs i MVP.
+Passet genereras och startar direkt från Start. Ingen annan navigering behövs i MVP.
 
 ---
 
@@ -1270,12 +1249,6 @@ App
 │   ├── IntensitySelector
 │   ├── SoundToggle
 │   └── StartButton
-│
-├── WarmupScreen
-│   ├── Rubrik
-│   ├── Uppmaningstext
-│   ├── ReadyButton
-│   └── CancelButton
 │
 ├── WorkoutScreen
 │   ├── TimerDisplay
@@ -1313,30 +1286,15 @@ Visar inte längre en ljudikon - flyttad till WorkoutScreen (se C.7/C.19), efter
 Standardval:
 
 * Standard (14 min)
-* Normalt
+* Normal
 * Chinsstång: Ja, Stol/pall: Ja, Fria vikter: Nej
 * Ljud på
 
 ---
 
-## C.6 WarmupScreen
+## C.6 (utgått)
 
-Visas efter att träningstid och intensitet valts, innan passet skapas och startas.
-
-Visar:
-
-* Rubrik: "Valfri uppvärmning"
-* Uppmaningstext om att värma upp på det sätt som passar användaren
-* Knapp: "Jag är uppvärmd" — genererar passet och startar det
-* Knapp: "Tillbaka" — återgår till Start utan att ett pass skapas
-
-Visar inte:
-
-* timer
-* övning
-* framstegsindikator
-
-Ingen timer är igång på denna skärm. Passet genereras och timern startar först när användaren trycker "Jag är uppvärmd".
+Skärmen mellan Start och Workout (tidigare en valfri uppvärmningsskärm) är borttagen. Passet genereras och startar direkt när användaren trycker STARTA PASS - hela den valda tiden används till själva träningspasset.
 
 ---
 

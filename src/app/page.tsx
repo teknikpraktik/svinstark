@@ -2,7 +2,6 @@
 
 import FinishedScreen from "@/components/FinishedScreen";
 import StartScreen from "@/components/StartScreen";
-import WarmupScreen from "@/components/WarmupScreen";
 import WorkoutScreen from "@/components/WorkoutScreen";
 import { useSettings } from "@/hooks/useSettings";
 import { useWorkout } from "@/hooks/useWorkout";
@@ -24,8 +23,6 @@ export default function Home() {
     timerState,
     error,
     start,
-    beginWorkout,
-    cancelWarmup,
     pause,
     resume,
     stop,
@@ -46,10 +43,6 @@ export default function Home() {
         onStart={() => start(settings)}
       />
     );
-  }
-
-  if (screen === "warmup") {
-    return <WarmupScreen onReady={beginWorkout} onCancel={cancelWarmup} />;
   }
 
   if (screen === "finished") {

@@ -16,7 +16,6 @@ import type { Screen, Workout, WorkoutSettings } from "@/types/workout";
 // WorkoutScreen medan passet pågår (se docs/loggbok.md v1.4).
 export function useWorkout(soundEnabled: boolean) {
   const [screen, setScreen] = useState<Screen>("start");
-  const [pendingSettings, setPendingSettings] = useState<WorkoutSettings | null>(null);
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,43 +39,31 @@ export function useWorkout(soundEnabled: boolean) {
   // Skärmen ska inte dimmas/släckas så länge ett pass pågår, även vid paus.
   useWakeLock(workout !== null);
 
+  // Passet genereras och startar direkt vid knapptryckningen - hela den
+  // valda tiden går till själva träningspasset.
   function start(settings: WorkoutSettings) {
     // Måste ske synkront här, i själva knapptryckningen, annars förblir
     // ljudet permanent avstängt på mobila webbläsare (se lib/audio.ts).
-    // Låset gäller för resten av sessionen, så det behöver inte upprepas
-    // när passet faktiskt startar efter uppvärmningsskärmen.
+    // Låset gäller för resten av sessionen.
     if (settings.soundEnabled) {
       unlockAudioContext();
     }
 
     setError(null);
-    setPendingSettings(settings);
-    setScreen("warmup");
-  }
-
-  function beginWorkout() {
-    if (screen !== "warmup" || !pendingSettings) return;
 
     try {
-      setWorkout(generateWorkout(pendingSettings));
+      setWorkout(generateWorkout(settings));
       setScreen("workout");
     } catch {
       // Appen ska försöka återhämta sig innan ett felmeddelande visas (D.7).
       try {
-        setWorkout(generateWorkout(pendingSettings));
+        setWorkout(generateWorkout(settings));
         setScreen("workout");
       } catch {
         setError("Kunde inte skapa ett pass just nu. Försök igen.");
-        setPendingSettings(null);
         setScreen("start");
       }
     }
-  }
-
-  function cancelWarmup() {
-    if (screen !== "warmup") return;
-    setPendingSettings(null);
-    setScreen("start");
   }
 
   // Paus är endast giltigt från "workout" och återuppta endast från "paused"
@@ -124,8 +111,6 @@ export function useWorkout(soundEnabled: boolean) {
     timerState,
     error,
     start,
-    beginWorkout,
-    cancelWarmup,
     pause,
     resume,
     stop,

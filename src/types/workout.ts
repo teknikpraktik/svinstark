@@ -19,10 +19,9 @@ export type ExercisePattern =
   | "core"
   | "conditioning"
   | "balance"
-  | "mobility"
   | "calf";
 
-export type ExerciseIntensity = "calm" | "normal" | "hard";
+export type ExerciseIntensity = "normal" | "hard";
 
 export type DemandLevel = "low" | "medium" | "high";
 
@@ -85,7 +84,7 @@ export interface Exercise {
 
 export type WorkoutDuration = "short" | "standard" | "long";
 
-export type WorkoutIntensity = "calm" | "normal" | "hard";
+export type WorkoutIntensity = "normal" | "hard";
 
 export type FreeWeightsLevel = "none" | "light" | "heavy";
 
@@ -127,9 +126,6 @@ export type PatternKey =
   | "vertical_pull"
   | "conditioning"
   | "core"
-  | "balance"
-  | "mobility"
-  | "balance_or_mobility"
   | "knee_or_hip"
   | "wildcard"
   // Smalare "kärnrörelse"-familjer (se 99-loggbok, v1.5): matchas mot en
@@ -166,7 +162,7 @@ export interface TimerState {
   isPaused: boolean;
 }
 
-export type Screen = "start" | "warmup" | "workout" | "paused" | "finished";
+export type Screen = "start" | "workout" | "paused" | "finished";
 
 export interface AppState {
   screen: Screen;

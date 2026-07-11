@@ -33,11 +33,11 @@ svinstark ska hjälpa användaren att bygga och bibehålla:
 
 * styrka
 * kondition
-* rörlighet
-* balans
 * funktion
 
 …med så liten tidsinsats och så liten mental ansträngning som möjligt.
+
+Träningen är kort, effektiv och enkel helkroppsstyrketräning: tydliga styrkeövningar med kroppsvikt och enkla redskap, över flera centrala rörelsemönster. svinstark utvecklas inte mot fysioterapi, rehabilitering, yoga, återhämtningsträning eller allmän rörlighetsträning.
 
 ---
 
@@ -190,49 +190,33 @@ Detta är det rekommenderade valet.
 
 # 11. Intensitet
 
-Intensiteten påverkar vilken träningsupplevelse användaren får.
+Intensiteten påverkar vilken träningsupplevelse användaren får. Två nivåer erbjuds.
 
-## Lugnt
+## Normal
 
-Fokus på:
+Ett tydligt styrkebaserat helkroppspass för en vanlig motionär.
 
-* kontroll
-* rörelsekvalitet
-* balans
-* rörlighet
-* funktion
+Innehåller:
 
-Passet ska kännas återhämtande och energigivande.
+* lättbegripliga grundövningar
+* kontrollerat tempo
+* en naturlig blandning av styrka, bål och puls
 
----
-
-## Normalt
-
-Ett balanserat helkroppspass.
-
-Innehåller en naturlig blandning av:
-
-* styrka
-* puls
-* bål
-* balans
-* rörlighet
-
-Detta är standardvalet.
+Passet kan höja pulsen utan att bli högintensivt, och undviker hopp, hög explosivitet och tekniskt svåra övningar. Detta är standardvalet.
 
 ---
 
-## Tufft
+## Tuff
 
-Ett högintensivt pass.
+Ett mer krävande helkroppsstyrkepass.
 
 Fokus på:
 
-* hög arbetsbelastning
-* hög puls
-* utmanande kroppsviktsövningar
+* högre styrkekrav
+* högre puls
+* hopp, explosiva moment och tekniskt mer krävande övningar
 
-Passet ska vara fysiskt krävande utan att kompromissa med rörelsekvalitet.
+Passet är fortfarande ett helkroppsstyrkepass - inte ett rent konditionspass - och ska vara fysiskt krävande utan att kompromissa med rörelsekvalitet.
 
 ---
 
@@ -271,7 +255,7 @@ Version 1.0 ska innehålla:
 
 * automatiskt genererade pass
 * tre passlängder
-* tre intensitetsnivåer
+* två intensitetsnivåer
 * enkel timer
 * textinstruktioner
 * valbara ljudsignaler

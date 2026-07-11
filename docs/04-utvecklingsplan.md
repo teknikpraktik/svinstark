@@ -344,15 +344,12 @@ Alla kombinationer:
 
 | Träningstid | Intensitet |
 | ----------- | ---------- |
-| Kortare     | Lugnt      |
-| Kortare     | Normalt    |
-| Kortare     | Tufft      |
-| Standard    | Lugnt      |
-| Standard    | Normalt    |
-| Standard    | Tufft      |
-| Längre      | Lugnt      |
-| Längre      | Normalt    |
-| Längre      | Tufft      |
+| Kortare     | Normal     |
+| Kortare     | Tuff       |
+| Standard    | Normal     |
+| Standard    | Tuff       |
+| Längre      | Normal     |
+| Längre      | Tuff       |
 
 Kontrollera:
 

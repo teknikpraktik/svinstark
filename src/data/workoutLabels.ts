@@ -18,12 +18,11 @@ export const durationMinutes: Record<WorkoutDuration, number> = {
   long: 21,
 };
 
-export const intensityOrder: WorkoutIntensity[] = ["calm", "normal", "hard"];
+export const intensityOrder: WorkoutIntensity[] = ["normal", "hard"];
 
 export const intensityLabels: Record<WorkoutIntensity, string> = {
-  calm: "Lugnt",
-  normal: "Normalt",
-  hard: "Tufft",
+  normal: "Normal",
+  hard: "Tuff",
 };
 
 export const freeWeightsOrder: FreeWeightsLevel[] = ["none", "light", "heavy"];

@@ -18,12 +18,11 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           Svinstark bygger på.
         </p>
         <p>
-          För att bli starkare, förbättra konditionen och må bättre behöver de flesta inte träna
-          längre. De behöver träna oftare. Därför är Svinstark utvecklad för att göra tröskeln
-          till träning så låg som möjligt. Ju enklare det är att komma igång, desto större är
-          chansen att träningen faktiskt blir av.
+          Svinstark är en app för kort, effektiv helkroppsstyrketräning. Passen består av tydliga
+          styrkeövningar med kroppsvikt och enkla redskap, och målet är styrketräning som är så
+          enkel att komma igång med att den faktiskt blir av – regelbundet. Regelbundet betyder
+          ofta, inte nödvändigtvis varje dag.
         </p>
-        <p>Allt i appen bygger på den filosofin.</p>
 
         <h3>Tre val – sedan inga fler beslut</h3>
         <p>När du öppnar Svinstark väljer du tre saker:</p>
@@ -49,22 +48,26 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           <li>14 minuter</li>
           <li>21 minuter</li>
         </ul>
-        <p>Korta pass med rätt intensitet, genomförda ofta, ger bättre resultat än långa pass – för de allra flesta.</p>
-        <p>Ett sju minuter långt pass är bättre än ett trettio minuter långt pass som aldrig blir av.</p>
+        <p>
+          Passen har ingen separat uppvärmning eller nedvarvning. Hela den valda tiden används
+          till själva träningspasset, så även sju minuter blir träning på riktigt.
+        </p>
+        <p>
+          Korta pass, genomförda ofta, ger bättre resultat än långa pass för de allra flesta.
+          Ett sju minuter långt pass är bättre än ett trettio minuter långt pass som aldrig blir
+          av.
+        </p>
 
         <h3>Träna efter dagsformen</h3>
-        <p>Ingen känner sig lika stark varje dag. Därför finns tre intensitetsnivåer:</p>
+        <p>Ingen känner sig lika stark varje dag. Därför finns två intensitetsnivåer:</p>
         <ul>
           <li>
-            <strong>Lätt</strong> – enklare övningsvarianter och lugnare tempo. För dagar när
-            kroppen behöver rörelse utan hög belastning.
+            <strong>Normal</strong> – lättbegripliga grundövningar i kontrollerat tempo. Passar
+            de flesta, de flesta dagar.
           </li>
           <li>
-            <strong>Normal</strong> – standardnivån för de flesta pass.
-          </li>
-          <li>
-            <strong>Tuff</strong> – mer krävande övningsvarianter för dagar när du vill utmana dig
-            själv.
+            <strong>Tuff</strong> – mer krävande, explosiva och pulshöjande övningar för dagar
+            när du vill utmana dig själv.
           </li>
         </ul>
         <p>
@@ -96,8 +99,9 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
 
         <h3>Hela kroppen – varje pass</h3>
         <p>
-          Varje träningspass sätts ihop automatiskt ur ett bibliotek av övningar och innehåller
-          alltid hela kroppen: ben, press, drag, bål, balans och puls.
+          Varje träningspass sätts ihop automatiskt ur ett bibliotek av styrkeövningar och täcker
+          flera centrala rörelsemönster: knäböj, höftfällning, press, drag, bål, vader och en
+          pulshöjande helkroppsövning.
         </p>
         <p>
           Du behöver inte planera träningssplitar eller fundera på vilken muskelgrupp som står på
@@ -114,12 +118,6 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
           <li>uppskattar enkla lösningar framför komplicerade träningsprogram</li>
           <li>vill bygga en hållbar träningsvana</li>
         </ul>
-        <h3>Den goda kicken</h3>
-        <p>
-          Kroppen svarar på stimulans, inte på tid. Sju minuter idag slår trettio minuter någon
-          annan gång. Välj dina inställningar. Tryck på Start.
-        </p>
-        <p>Njut av dagens pass!</p>
 
         <h3>Feedback</h3>
         <p>

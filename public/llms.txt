@@ -4,7 +4,7 @@
 
 ## Vad det är
 
-Svinstark genererar ett komplett träningspass utifrån hur mycket tid du har och hur tufft du vill köra. Passet består av en serie kroppsviktsövningar med inbyggd timer, ljudsignaler och en valfri uppvärmning innan start.
+Svinstark genererar ett komplett helkroppsstyrkepass utifrån hur mycket tid du har och hur tufft du vill köra. Passet består av en serie styrkeövningar med kroppsvikt och enkla redskap, med inbyggd timer och ljudsignaler. Hela den valda tiden går till själva träningspasset.
 
 ## Vem det är för
 
@@ -12,7 +12,7 @@ Personer som vill träna hemma utan gym, utrustning eller planering – man öpp
 
 ## Huvudfunktioner
 
-- Välj träningstid (kortare/standard/längre) och intensitet (lugnt/normalt/tufft)
+- Välj träningstid (7/14/21 minuter) och intensitet (Normal/Tuff)
 - Ange vilken utrustning som finns tillgänglig (chinsstång, stol/pall, fria vikter) – passet anpassas efter det
 - Automatiskt genererat övningspass med nedräkningstimer per övning
 - Ljudsignaler för nytt block, sista sekunderna och pass klart (kan stängas av)

@@ -33,6 +33,7 @@ Se `04-utvecklingsplan.md` för fasernas innehåll och `99-ai-instructions.md` f
 | v1.4| UI-förbättringar: renare startsida, tydligare passkärm | ✅ Klar |
 | v1.5| Kärnrörelse-mallar för Standard/Längre + vader | ✅ Klar |
 | v1.6| Bord-utrustning, förbjud upprepning i passet | ✅ Klar |
+| v1.7| Två intensiteter (Lugnt borttaget), styrkefokuserad övningsbank, uppvärmningsskärm borttagen | ✅ Klar |
 
 ---
 
@@ -1072,6 +1073,57 @@ På uttrycklig begäran av användaren: signaturuppvärmningen och signaturavslu
 - Samma stresstest (48 genereringar) körd om efter fixen - alla lyckades
 - Riktade dubblettkontroller: två fulla Standard-pass och ett fullt Längre-pass, alla utan utrustning (det tidigare trasiga scenariot), genomklickade övning för övning och kontrollerade programmatiskt - noll dubbletter i alla tre passen
 - Innan fixen (bara den hårda kontrollen, gamla mallen): Längre + ingen utrustning gav konsekvent "Kunde inte skapa ett pass" - reproducerat och verifierat löst
+
+---
+
+### 2026-07-11 — v1.7: Två intensiteter, styrkefokuserad övningsbank, uppvärmningsskärmen borttagen
+
+**Status:** ✅ Klar
+
+**Bakgrund:** Ny produktprincip: Svinstark är kort, effektiv och enkel helkroppsstyrketräning - inte fysioterapi, rehab, yoga eller allmän rörlighetsträning. Intensiteten Lugnt togs bort helt (kvar: Normal/`"normal"` och Tuff/`"hard"`), efter analysen som visade att Lugnt i praktiken var nästan identiskt med Normal (9 av 14 platser i Standard-mallen hade exakt samma kandidatpool).
+
+**Byggt:**
+- **Intensitetsmodellen:** `ExerciseIntensity`/`WorkoutIntensity` är nu `"normal" | "hard"`. UI-etiketter: Normal, Tuff. All `calm`-logik borttagen ur generatorn (`IntensityFallback`-nivån `"distant"` och `DISTANT_CANDIDATE_TIERS` behövdes inte längre - `adjacent` räcker för att fylla drag-platsen på Tufft utan utrustning med `prone_y_raise`, som nu är normal). Normal-pass innehåller aldrig hårda övningar; Tufft fyller i första hand med hårda och använder normal endast som reserv där hård kandidat saknas.
+- **Övningsbanken omklassificerad övning för övning** (97 → 88 övningar): 14 tidigare calm-övningar blev normal (knäböj, sumoknäböj, statisk knäböj, höftlyft, superman, bird dog, armhävning mot stol, knäarmhävning, liggande Y-lyft, planka, dead bug, marsch på stället, lätt jogg på stället, tåhävning). 2 övningar flyttades normal → hard: negativ pull-up (kräver hög relativ styrka) och plank jack (hopp, i nivå med mountain climbers).
+- **9 övningar borttagna** (rörlighet/stretch/yoga/passiv balans): katt-ko, bröstryggsrotation, armcirklar, bensvingningar, statisk djup knäböj, stående framåtfällning, barnets pose, trädpose, enbensstående. Hela `mobility`-kategorin och `ExercisePattern`-värdet `"mobility"` togs bort; `PatternKey` förlorade `"balance"`, `"mobility"` och `"balance_or_mobility"`. `balance` finns kvar som `ExercisePattern` för hip airplane och enbenshopp med landning (hårda styrkeövningar, nåbara via wildcard/sekundärmönster).
+- **Passmallarna:** Kortare-mallens `balance_or_mobility`-plats ersattes med `calf` (alla tre mallar täcker nu knä, höft, press, drag, bål, kondition och vad - `isValidWorkout` kräver `hasAny("calf")` istället för `hasAny("balance_or_mobility")`). Längre-mallens `balance`- och `mobility`-platser ersattes med en extra bred `push`- respektive `conditioning`-plats.
+- **Uppvärmningsskärmen borttagen:** `WarmupScreen.tsx` + CSS raderade, `Screen`-typen utan `"warmup"`, `useWorkout.start()` genererar och startar passet direkt (ingen `pendingSettings`/`beginWorkout`/`cancelWarmup`). Hela den valda tiden går till själva passet.
+- **Migrering av sparade inställningar:** `useSettings` validerar nu allt som läses från localStorage fält för fält (`sanitizeStoredSettings`, exporterad för valideringsskriptet). Ett gammalt sparat `"calm"` (eller annat ogiltigt värde) blir `"normal"`; ogiltiga duration/freeWeights-värden faller tillbaka till standard.
+- **Infotexten** (AboutModal) omskriven: kort helkroppsstyrketräning, två intensiteter, ingen separat uppvärmning/nedvarvning, hela tiden används till passet. Träningsfilosofin (stimulans före tid, 7 min som blir av slår 30 som inte blir av, regelbundet = ofta) behållen.
+- **Valideringsskriptet** (`scripts/auditExerciseBank.ts`) utökat: giltiga intensiteter i banken, borttagna övningar får inte återinföras, UI-etiketter utan Lugnt, migreringstester, och generering av alla 72 kombinationer med kontroll att Normal-pass aldrig innehåller hårda övningar och att inga dubbletter förekommer. Sätter exit-kod ≠ 0 vid problem.
+- **Dokumentation:** 01 (produktlöfte + intensitetsavsnitt), 02 (typer, B.16, state machine, komponentträd, C.6 utgått), 03 (typer, kategoriöversikt utan manuella antal), 04 (testmatris), 06 (MVP-innehåll), 07 (intensitetsfiltrering, mallexempel, rörelsebalans) uppdaterade till två intensiteter och utan uppvärmning. Manuellt underhållna övningsantal i kommentarer/dokument togs bort.
+
+**Filer skapade/ändrade:**
+- `src/types/workout.ts`, `src/data/exerciseData.ts`, `src/data/workoutTemplates.ts`, `src/data/workoutLabels.ts`, `src/lib/workoutGenerator.ts`, `src/lib/timer.ts`, `src/hooks/useSettings.ts`, `src/hooks/useWorkout.ts`, `src/app/page.tsx`, `src/components/AboutModal.tsx`, `scripts/auditExerciseBank.ts`, `public/llms.txt`, `docs/01/02/03/04/06/07`, `docs/loggbok.md`
+- Raderade: `src/components/WarmupScreen.tsx`, `src/components/WarmupScreen.module.css`
+
+**Testat:**
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` - felfria
+- `npx tsx scripts/auditExerciseBank.ts` - 0 statiska problem, alla 72 kombinationer (längd × intensitet × utrustning) OK med 50 körningar per kombination
+
+**Begränsningar / öppna frågor:**
+- På Tufft helt utan utrustning fylls drag-platsen med `prone_y_raise` (normal) - bankens enda utrustningsfria dragövning. Enda sättet att undvika det är en hård utrustningsfri dragövning, vilket knappast finns.
+- Gränsfall som bedömdes men behölls: spiderman push-up, pike push-up, cossack squat, bear crawl, hälkickar (normal); flutter kicks, knäböj med tåhävning, enbens tåhävning (hard).
+
+---
+
+### 2026-07-11 — v1.7-justeringar: vad valfritt på Kortare, tuffare drag-fallback, metadata
+
+**Status:** ✅ Klar
+
+**Byggt:**
+- **Vadkrav per passlängd:** Kortare-mallens `calf`-plats ersattes med `wildcard`, och `isValidWorkout` tar nu `requireCalf` (`duration !== "short"`). På 7 minuter går tiden till de stora rörelsemönstren (knä, höft, press, drag, bål, puls) - vadövning kan förekomma via wildcard-platsen men är inget krav. Standard/Längre kräver fortsatt minst en vadövning (mallplats + validering).
+- **Tuffare fallback på Tufft:** när en plats på Tufft fallit tillbaka till normal-övningar (`adjacent`-nivån) föredras nu kandidater med `strengthDemand` medium/high. I praktiken: med bord/vikter väljs kroppsrodd/enarmsrodd på drag-platsen istället för att liggande Y-lyft kan slumpas in; Y-lyft används bara helt utan utrustning, där den är bankens enda dragövning. Ger även bättre val i andra tunna familjer (t.ex. enbenshöftlyft/höftlyft med marsch före vanligt höftlyft på Tufft).
+- **Metadata:** Cossack squat fick `secondaryPatterns: ["hip"]` (tidigare `["mobility"]`, tömd vid v1.7) - konsekvent med sidoutfall, som är samma typ av rörelse. Hip airplane var redan korrekt (`["hip"]`). Kvarvarande `balance`-sekundärmönster behölls som beskrivande metadata.
+- **Valideringsskriptet** kontrollerar nu även att Standard/Längre-pass innehåller en vadövning.
+- Dokument uppdaterade: 02 (B.17), 07 (§5, §6, §10).
+
+**Filer ändrade:**
+- `src/lib/workoutGenerator.ts`, `src/data/workoutTemplates.ts`, `src/data/exerciseData.ts`, `scripts/auditExerciseBank.ts`, `docs/02-teknisk-specifikation.md`, `docs/07-generator-specifikation.md`
+
+**Testat:**
+- `npx tsc --noEmit`, `npm run lint`, `npm run build` - felfria
+- `npx tsx scripts/auditExerciseBank.ts` - 0 statiska problem, alla 72 kombinationer OK (50 körningar per kombination)
 
 ---
 
