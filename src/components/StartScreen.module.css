@@ -35,11 +35,11 @@
 }
 
 .wordmark {
-  font-size: 0.9rem;
+  font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--foreground);
 }
 
 .explanation {
@@ -59,7 +59,7 @@
   margin-top: 0.15rem;
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--foreground);
+  color: var(--muted);
 }
 
 .valueProps li + li::before {
