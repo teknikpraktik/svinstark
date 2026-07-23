@@ -2,10 +2,11 @@ import type { TimerState, Workout, WorkoutBlock } from "@/types/workout";
 
 const TICK_INTERVAL_MS = 250;
 
-// Sekunderna som ska signaleras under ett block: en halvtidsmarkering och
-// sedan hela den sista tiosekundersnedräkningen (C.19). Timern avgör bara
-// *när* en signal ska ges - hur den låter (röst eller pip) ägs av useAudio.
-const COUNTDOWN_CUE_SECONDS = [30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+// Sekunderna som ska signaleras under ett block: två förvarningar (halvtid
+// och tio sekunder kvar) och sedan den avslutande 3-2-1-nedräkningen (C.19).
+// Timern avgör bara *när* en signal ska ges - hur den låter (röst eller pip)
+// ägs av useAudio.
+const COUNTDOWN_CUE_SECONDS = [30, 10, 3, 2, 1];
 const FIRST_CUE_SECOND = Math.max(...COUNTDOWN_CUE_SECONDS);
 
 export interface ExerciseProgress {

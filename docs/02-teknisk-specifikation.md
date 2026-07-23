@@ -1521,11 +1521,12 @@ Ljud används endast som stöd.
 Signaler:
 
 * halvtid i övningen (30 sekunder kvar)
-* sista tio sekunderna
+* tio sekunder kvar
+* sista tre sekunderna
 * ny övning
 * pass klart
 
-Nedräkningen och övningsbytet läses upp med röst (`lib/voice.ts`, kvinnoröst): "thirty" vid halvtid, sedan "ten" ... "one" och "go" när nästa övning börjar. Rösten genereras med webbläsarens inbyggda Web Speech API, av samma skäl som tonerna genereras med Web Audio API - MVP ska inte bero på externa tillgångar (00-principer.md §6) och appen ska fungera offline.
+Nedräkningen och övningsbytet läses upp med röst (`lib/voice.ts`, kvinnoröst): "thirty" vid halvtid, "ten" som sista förvarning, sedan "three", "two", "one" och "go" när nästa övning börjar. Sekunderna däremellan är tysta - en röst som räknar varje sekund från tio och ned blir stressande snarare än stödjande (05-designprinciper.md §14). Rösten genereras med webbläsarens inbyggda Web Speech API, av samma skäl som tonerna genereras med Web Audio API - MVP ska inte bero på externa tillgångar (00-principer.md §6) och appen ska fungera offline.
 
 Rösten är engelsk trots att appen i övrigt är svensk: siffrorna är korta och entydiga, och engelska röster finns installerade på i praktiken alla plattformar. Web Speech API exponerar inget kön på rösterna, så kvinnorösten väljs genom namnmatchning mot de vanligaste kvinnorösterna på macOS/iOS, Windows och Android, med företräde för lokalt installerade röster (de svarar direkt, vilket krävs för att ordet ska hamna på rätt sekund).
 

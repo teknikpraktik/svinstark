@@ -8,15 +8,11 @@
 // entydiga på engelska, och engelska röster finns installerade på i praktiken
 // alla plattformar (svenska röster saknas ofta på icke-svenska enheter).
 
+// Bara de sekunder timern faktiskt signalerar (COUNTDOWN_CUE_SECONDS i
+// lib/timer.ts) - en sekund utan ord faller tillbaka på pipljudet.
 const NUMBER_WORDS: Record<number, string> = {
   30: "thirty",
   10: "ten",
-  9: "nine",
-  8: "eight",
-  7: "seven",
-  6: "six",
-  5: "five",
-  4: "four",
   3: "three",
   2: "two",
   1: "one",
