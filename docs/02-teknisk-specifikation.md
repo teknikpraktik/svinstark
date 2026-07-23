@@ -1520,9 +1520,18 @@ Ljud används endast som stöd.
 
 Signaler:
 
+* halvtid i övningen (30 sekunder kvar)
+* sista tio sekunderna
 * ny övning
-* sista tre sekunderna
 * pass klart
+
+Nedräkningen och övningsbytet läses upp med röst (`lib/voice.ts`, kvinnoröst): "thirty" vid halvtid, sedan "ten" ... "one" och "go" när nästa övning börjar. Rösten genereras med webbläsarens inbyggda Web Speech API, av samma skäl som tonerna genereras med Web Audio API - MVP ska inte bero på externa tillgångar (00-principer.md §6) och appen ska fungera offline.
+
+Rösten är engelsk trots att appen i övrigt är svensk: siffrorna är korta och entydiga, och engelska röster finns installerade på i praktiken alla plattformar. Web Speech API exponerar inget kön på rösterna, så kvinnorösten väljs genom namnmatchning mot de vanligaste kvinnorösterna på macOS/iOS, Windows och Android, med företräde för lokalt installerade röster (de svarar direkt, vilket krävs för att ordet ska hamna på rätt sekund).
+
+Saknar webbläsaren Web Speech API faller nedräkningen tillbaka på tonerna i `lib/audio.ts`: pip de sista tre sekunderna och en ljusare ton vid ny övning. Passet klart signaleras alltid med ton, aldrig röst.
+
+Rösten kräver samma upplåsning från en riktig användarinteraktion som `AudioContext` (se `lib/audio.ts`), därför anropas `unlockVoice()` bredvid `unlockAudioContext()` både när passet startar och när ljudikonen slås på mitt i passet.
 
 Ljud ska kunna stängas av. Detta görs via en ljudikon (🔊/🔇) uppe till höger på WorkoutScreen, inte via en separat inställningsskärm (se B.9). Placerad på träningsskärmen snarare än startsidan eftersom ljud är mest relevant medan passet faktiskt pågår - en tryckning gäller omedelbart för det pågående passet, inte bara framtida pass.
 

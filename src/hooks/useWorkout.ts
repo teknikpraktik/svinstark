@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { unlockAudioContext } from "@/lib/audio";
+import { cancelVoice, unlockVoice } from "@/lib/voice";
 import { generateWorkout } from "@/lib/workoutGenerator";
 import { useAudio } from "@/hooks/useAudio";
 import { useTimer } from "@/hooks/useTimer";
@@ -47,6 +48,7 @@ export function useWorkout(soundEnabled: boolean) {
     // Låset gäller för resten av sessionen.
     if (settings.soundEnabled) {
       unlockAudioContext();
+      unlockVoice();
     }
 
     setError(null);
@@ -83,6 +85,9 @@ export function useWorkout(soundEnabled: boolean) {
 
   function stop() {
     if (screen !== "workout" && screen !== "paused") return;
+    // En påbörjad nedräkningssiffra ska inte läsas upp efter att passet
+    // avbrutits - rösten lever vidare i webbläsaren, inte i timern.
+    cancelVoice();
     stopTimer();
     setWorkout(null);
     setScreen("start");

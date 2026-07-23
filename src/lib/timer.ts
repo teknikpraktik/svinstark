@@ -2,6 +2,12 @@ import type { TimerState, Workout, WorkoutBlock } from "@/types/workout";
 
 const TICK_INTERVAL_MS = 250;
 
+// Sekunderna som ska signaleras under ett block: en halvtidsmarkering och
+// sedan hela den sista tiosekundersnedräkningen (C.19). Timern avgör bara
+// *när* en signal ska ges - hur den låter (röst eller pip) ägs av useAudio.
+const COUNTDOWN_CUE_SECONDS = [30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+const FIRST_CUE_SECOND = Math.max(...COUNTDOWN_CUE_SECONDS);
+
 export interface ExerciseProgress {
   current: number;
   total: number;
@@ -158,11 +164,11 @@ export class WorkoutTimer {
     // Normalt minskar remainingSeconds med exakt 1 per tick (250 ms-
     // intervallet är fyra gånger tätare än en sekund), men en bakgrundad
     // flik eller en fördröjd tick (t.ex. vid tunga renderingar) kan hoppa
-    // över ett eller flera sekundvärden. Utan den här loopen kunde en sådan
-    // hopp tysta ett eller flera av 3-2-1-pipen helt - de spelas nu upp i
+    // över ett eller flera sekundvärden. Utan den här loopen kunde ett sådant
+    // hopp tysta en eller flera av nedräkningens signaler helt - de ges nu i
     // snabb följd istället för att tappas bort.
-    for (let second = Math.min(previousSeconds - 1, 3); second >= Math.max(remainingSeconds, 1); second--) {
-      this.callbacks.onCountdown?.(second);
+    for (let second = Math.min(previousSeconds - 1, FIRST_CUE_SECOND); second >= Math.max(remainingSeconds, 1); second--) {
+      if (COUNTDOWN_CUE_SECONDS.includes(second)) this.callbacks.onCountdown?.(second);
     }
     this.emit();
   }
