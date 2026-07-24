@@ -4,7 +4,7 @@ import type { Exercise } from "@/types/workout";
 const kneeExercises: Exercise[] = [
   {
     id: "squat",
-    name: "Knäböj",
+    name: "Squat",
     instruction:
       "Böj på knän och höfter och sänk dig kontrollerat. Håll bröstet uppe och pressa dig tillbaka till stående.",
     primaryPattern: "knee",
@@ -31,7 +31,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "sumo_squat",
-    name: "Sumoknäböj",
+    name: "Sumo Squat",
     instruction:
       "Stå brett med tårna utåt. Sänk rakt ned. Pressa upp genom hälarna.",
     primaryPattern: "knee",
@@ -58,7 +58,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "split_squat",
-    name: "Split squat",
+    name: "Split Squat",
     instruction:
       "Stå i utfallsposition med bakre foten på tå. Sänk kroppen rakt ned och pressa upp igen. Byt ben efter halva tiden.",
     primaryPattern: "knee",
@@ -85,7 +85,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "reverse_lunge",
-    name: "Utfall bakåt",
+    name: "Reverse Lunge",
     instruction:
       "Kliv bakåt med ett ben. Sänk bakre knäet mot golvet. Pressa tillbaka till start. Byt ben varje gång.",
     primaryPattern: "knee",
@@ -112,7 +112,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "forward_lunge",
-    name: "Utfall framåt",
+    name: "Forward Lunge",
     instruction:
       "Kliv framåt med ett ben. Sänk bakre knäet mot golvet. Pressa tillbaka till start. Byt ben varje gång.",
     primaryPattern: "knee",
@@ -139,7 +139,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "lateral_lunge",
-    name: "Sidoutfall",
+    name: "Lateral Lunge",
     instruction:
       "Kliv brett åt sidan med ett ben. Sänk höften mot det böjda benet, andra benet rakt. Pressa tillbaka till start. Byt sida varje gång.",
     primaryPattern: "knee",
@@ -166,7 +166,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "jump_squat",
-    name: "Knäböj med hopp",
+    name: "Jump Squat",
     instruction:
       "Sänk ned i en knäböj. Hoppa rakt upp. Landa mjukt och sänk direkt igen.",
     primaryPattern: "knee",
@@ -199,7 +199,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "squat_pulse",
-    name: "Pulsande knäböj",
+    name: "Squat Pulse",
     instruction:
       "Sänk ned i en knäböj. Pulsera i nedre läget med små rörelser. Håll spänningen.",
     primaryPattern: "knee",
@@ -226,7 +226,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "wall_sit",
-    name: "Jägarvila",
+    name: "Wall Sit",
     instruction:
       "Luta ryggen mot en vägg och sätt dig i jägarvila. Håll positionen.",
     primaryPattern: "knee",
@@ -253,7 +253,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "chair_step_up",
-    name: "Step-up på stol",
+    name: "Chair Step-Up",
     instruction:
       "Stig upp på en stabil stol med ett ben. Pressa upp till stående. Sänk kontrollerat. Byt ben efter halva tiden.",
     primaryPattern: "knee",
@@ -280,7 +280,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "bulgarian_split_squat",
-    name: "Bulgarisk split squat",
+    name: "Bulgarian Split Squat",
     instruction:
       "Placera bakre foten på en upphöjning bakom dig. Sänk det främre knäet. Pressa upp. Byt ben efter halva tiden.",
     primaryPattern: "knee",
@@ -307,7 +307,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "cossack_squat",
-    name: "Cossack squat",
+    name: "Cossack Squat",
     instruction:
       "Stå brett. Skifta tyngden till ena sidan och böj det benet djupt. Håll andra benet rakt. Pressa upp. Byt ben.",
     primaryPattern: "knee",
@@ -334,7 +334,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "squat_hold",
-    name: "Statisk knäböj",
+    name: "Squat Hold",
     instruction: "Sänk ned i en knäböj. Håll positionen och andas lugnt.",
     primaryPattern: "knee",
     secondaryPatterns: [],
@@ -360,7 +360,7 @@ const kneeExercises: Exercise[] = [
   },
   {
     id: "single_leg_squat_to_chair",
-    name: "Enbensböj mot stol",
+    name: "Single-Leg Squat to Chair",
     instruction:
       "Stå på ett ben med en stol bakom dig. Sänk kontrollerat tills du precis nuddar stolen. Pressa upp. Byt ben efter halva tiden.",
     primaryPattern: "knee",
@@ -391,7 +391,7 @@ const kneeExercises: Exercise[] = [
 const hipExercises: Exercise[] = [
   {
     id: "glute_bridge",
-    name: "Höftlyft",
+    name: "Glute Bridge",
     instruction:
       "Ligg på rygg med böjda ben. Pressa höfterna rakt upp. Sänk kontrollerat.",
     primaryPattern: "hip",
@@ -418,7 +418,7 @@ const hipExercises: Exercise[] = [
   },
   {
     id: "single_leg_glute_bridge",
-    name: "Enbenshöftlyft",
+    name: "Single-Leg Glute Bridge",
     instruction:
       "Ligg på rygg med ett ben rakt i luften. Pressa höfterna upp med det böjda benet. Sänk kontrollerat. Byt ben efter halva tiden.",
     primaryPattern: "hip",
@@ -445,7 +445,7 @@ const hipExercises: Exercise[] = [
   },
   {
     id: "single_leg_deadlift",
-    name: "Enbens marklyft (draken)",
+    name: "Single-Leg Deadlift",
     instruction:
       "Stå på ett ben. Fäll överkroppen framåt och sträck det fria benet rakt bakåt. Res dig upp igen. Byt ben efter halva tiden.",
     primaryPattern: "hip",
@@ -472,7 +472,7 @@ const hipExercises: Exercise[] = [
   },
   {
     id: "donkey_kick",
-    name: "Donkey kick",
+    name: "Donkey Kick",
     instruction:
       "Stå på alla fyra med spänd bål. Pressa ett böjt ben bakåt och upp utan att svanka. Byt ben efter halva tiden.",
     primaryPattern: "hip",
@@ -499,7 +499,7 @@ const hipExercises: Exercise[] = [
   },
   {
     id: "glute_bridge_march",
-    name: "Höftlyft med marsch",
+    name: "Glute Bridge March",
     instruction:
       "Ligg på rygg. Håll höften lyft i höftlyftsposition. Lyft ett knä i taget mot bröstet växelvis.",
     primaryPattern: "hip",
@@ -553,7 +553,7 @@ const hipExercises: Exercise[] = [
   },
   {
     id: "bird_dog",
-    name: "Bird dog",
+    name: "Bird Dog",
     instruction:
       "Stå på alla fyra. Sträck ut motsatt arm och ben utan att vrida höfterna. Återgå kontrollerat och byt sida.",
     primaryPattern: "hip",
@@ -584,7 +584,7 @@ const hipExercises: Exercise[] = [
 const horizontalPushExercises: Exercise[] = [
   {
     id: "push_up",
-    name: "Armhävning",
+    name: "Push-Up",
     instruction:
       "Håll kroppen rak från huvud till häl. Sänk bröstet mot golvet och pressa upp igen.",
     primaryPattern: "horizontal_push",
@@ -611,7 +611,7 @@ const horizontalPushExercises: Exercise[] = [
   },
   {
     id: "wide_push_up",
-    name: "Bred armhävning",
+    name: "Wide Push-Up",
     instruction:
       "Placera händerna brett utanför axlarna. Sänk kontrollerat. Pressa upp.",
     primaryPattern: "horizontal_push",
@@ -638,7 +638,7 @@ const horizontalPushExercises: Exercise[] = [
   },
   {
     id: "diamond_push_up",
-    name: "Diamantarmhävning",
+    name: "Diamond Push-Up",
     instruction:
       "Placera händerna ihop under bröstet i en diamantform. Sänk kontrollerat. Pressa upp.",
     primaryPattern: "horizontal_push",
@@ -665,7 +665,7 @@ const horizontalPushExercises: Exercise[] = [
   },
   {
     id: "archer_push_up",
-    name: "Archer push-up",
+    name: "Archer Push-Up",
     instruction:
       "Ställ dig i armhävningsposition med händerna brett isär. Sänk mot ena sidan med andra armen rak. Pressa upp. Byt sida varje repetition.",
     primaryPattern: "horizontal_push",
@@ -692,7 +692,7 @@ const horizontalPushExercises: Exercise[] = [
   },
   {
     id: "tempo_push_up",
-    name: "Långsam armhävning",
+    name: "Tempo Push-Up",
     instruction:
       "Sänk dig ned under fem sekunder. Pressa sedan upp i normal takt.",
     primaryPattern: "horizontal_push",
@@ -719,7 +719,7 @@ const horizontalPushExercises: Exercise[] = [
   },
   {
     id: "spiderman_push_up",
-    name: "Spiderman push-up",
+    name: "Spiderman Push-Up",
     instruction:
       "Sänk dig i en armhävning. För samtidigt ett knä mot armbågen på samma sida. Byt sida varje repetition.",
     primaryPattern: "horizontal_push",
@@ -746,7 +746,7 @@ const horizontalPushExercises: Exercise[] = [
   },
   {
     id: "t_push_up",
-    name: "Armhävning med rotation",
+    name: "T Push-Up",
     instruction:
       "Gör en armhävning. Rotera sedan upp till en sidoplanka och sträck den övre armen mot taket. Byt sida varje repetition.",
     primaryPattern: "horizontal_push",
@@ -773,7 +773,7 @@ const horizontalPushExercises: Exercise[] = [
   },
   {
     id: "explosive_push_up",
-    name: "Explosiv armhävning",
+    name: "Explosive Push-Up",
     instruction:
       "Sänk dig kontrollerat. Pressa upp så explosivt att händerna lättar från golvet.",
     primaryPattern: "horizontal_push",
@@ -800,7 +800,7 @@ const horizontalPushExercises: Exercise[] = [
   },
   {
     id: "decline_push_up",
-    name: "Decline push-up",
+    name: "Decline Push-Up",
     instruction:
       "Gör armhävningar med fötterna på en upphöjning. Sänk kontrollerat. Pressa upp.",
     primaryPattern: "horizontal_push",
@@ -831,7 +831,7 @@ const horizontalPushExercises: Exercise[] = [
 const verticalPushExercises: Exercise[] = [
   {
     id: "pike_push_up",
-    name: "Pike push-up",
+    name: "Pike Push-Up",
     instruction:
       "Ställ dig i armhävningsposition men med höften högt (Λ). Sänk huvudet mot golvet. Pressa upp.",
     primaryPattern: "vertical_push",
@@ -862,7 +862,7 @@ const verticalPushExercises: Exercise[] = [
 const horizontalPullExercises: Exercise[] = [
   {
     id: "inverted_row",
-    name: "Kroppsrodd",
+    name: "Inverted Row",
     instruction:
       "Häng horisontellt under en stång eller ett bord med rak kropp. Dra bröstet mot stången. Sänk kontrollerat.",
     primaryPattern: "horizontal_pull",
@@ -889,7 +889,7 @@ const horizontalPullExercises: Exercise[] = [
   },
   {
     id: "prone_y_raise",
-    name: "Liggande Y-lyft",
+    name: "Prone Y-Raise",
     instruction:
       "Ligg på mage med armarna sträckta framåt i en Y-form. Lyft armarna mot taket.",
     primaryPattern: "horizontal_pull",
@@ -920,7 +920,7 @@ const horizontalPullExercises: Exercise[] = [
 const verticalPullExercises: Exercise[] = [
   {
     id: "pull_up",
-    name: "Pull-up",
+    name: "Pull-Up",
     instruction:
       "Häng i en stång med handflatorna framåt. Dra hakan över stången. Sänk kontrollerat.",
     primaryPattern: "vertical_pull",
@@ -947,7 +947,7 @@ const verticalPullExercises: Exercise[] = [
   },
   {
     id: "chin_up",
-    name: "Chin-up",
+    name: "Chin-Up",
     instruction:
       "Häng i en stång med handflatorna mot dig. Dra hakan över stången. Sänk kontrollerat.",
     primaryPattern: "vertical_pull",
@@ -974,7 +974,7 @@ const verticalPullExercises: Exercise[] = [
   },
   {
     id: "negative_pull_up",
-    name: "Negativ pull-up",
+    name: "Negative Pull-Up",
     instruction:
       "Hoppa upp med hakan över stången. Sänk dig själv så långsamt som möjligt.",
     primaryPattern: "vertical_pull",
@@ -1001,7 +1001,7 @@ const verticalPullExercises: Exercise[] = [
   },
   {
     id: "dead_hang",
-    name: "Dead hang",
+    name: "Dead Hang",
     instruction:
       "Häng i en stång med raka armar. Håll kroppen still och andas lugnt.",
     primaryPattern: "vertical_pull",
@@ -1028,7 +1028,7 @@ const verticalPullExercises: Exercise[] = [
   },
   {
     id: "flexed_arm_hang",
-    name: "Statiskt häng",
+    name: "Flexed-Arm Hang",
     instruction:
       "Dra dig upp med hakan över en stång. Håll positionen.",
     primaryPattern: "vertical_pull",
@@ -1059,7 +1059,7 @@ const verticalPullExercises: Exercise[] = [
 const coreExercises: Exercise[] = [
   {
     id: "plank",
-    name: "Planka",
+    name: "Plank",
     instruction:
       "Stöd på underarmar och tår med rak kropp. Håll positionen.",
     primaryPattern: "core",
@@ -1086,7 +1086,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "side_plank",
-    name: "Sidoplanka",
+    name: "Side Plank",
     instruction:
       "Stöd på en underarm med kroppen i sidled. Håll höften lyft och positionen. Byt sida efter halva tiden.",
     primaryPattern: "core",
@@ -1113,7 +1113,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "plank_shoulder_tap",
-    name: "Planka med axelklapp",
+    name: "Plank Shoulder Tap",
     instruction:
       "Stå i planka på händerna. Klappa motsatt axel växelvis utan att vagga med höften.",
     primaryPattern: "core",
@@ -1140,7 +1140,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "mountain_climber",
-    name: "Mountain climbers",
+    name: "Mountain Climbers",
     instruction:
       "Stå i planka på händerna. För knäna växelvis mot bröstet i ett jämnt tempo utan att höften sjunker.",
     primaryPattern: "core",
@@ -1167,7 +1167,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "dead_bug",
-    name: "Dead bug",
+    name: "Dead Bug",
     instruction:
       "Ligg på rygg med armar och ben lyfta. Pressa svanken mot golvet och sänk motsatt arm och ben kontrollerat. Byt sida.",
     primaryPattern: "core",
@@ -1194,7 +1194,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "hollow_hold",
-    name: "Hollow hold",
+    name: "Hollow Hold",
     instruction:
       "Ligg på rygg. Pressa svanken mot golvet och lyft axlar och ben lätt. Håll positionen.",
     primaryPattern: "core",
@@ -1221,7 +1221,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "leg_raise",
-    name: "Benlyft liggande",
+    name: "Leg Raise",
     instruction:
       "Ligg på rygg med raka ben. Lyft benen mot taket. Sänk kontrollerat utan att svanken lyfter.",
     primaryPattern: "core",
@@ -1248,7 +1248,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "flutter_kick",
-    name: "Flutterkick",
+    name: "Flutter Kicks",
     instruction:
       "Ligg på rygg med lätt lyfta raka ben. Växla små sparkar upp och ned.",
     primaryPattern: "core",
@@ -1275,7 +1275,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "side_plank_dip",
-    name: "Sidoplanka med höftsänkning",
+    name: "Side Plank Dip",
     instruction:
       "Stöd i sidoplanka. Sänk höften mot golvet och lyft tillbaka upp igen. Byt sida efter halva tiden.",
     primaryPattern: "core",
@@ -1302,7 +1302,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "plank_up_down",
-    name: "Planka upp-ner",
+    name: "Plank Up-Down",
     instruction:
       "Stå i planka på raka armar. Sänk ned till underarmarna en i taget. Pressa upp igen.",
     primaryPattern: "core",
@@ -1329,7 +1329,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "star_plank",
-    name: "Stjärnplanka",
+    name: "Star Plank",
     instruction:
       "Stå i sidoplanka. Lyft det översta benet och den översta armen ut i en stjärnform. Byt sida efter halva tiden.",
     primaryPattern: "core",
@@ -1356,7 +1356,7 @@ const coreExercises: Exercise[] = [
   },
   {
     id: "bear_plank",
-    name: "Bear plank",
+    name: "Bear Plank",
     instruction:
       "Stå på alla fyra med knäna strax ovanför golvet. Spänn bålen och håll ryggen still.",
     primaryPattern: "core",
@@ -1387,7 +1387,7 @@ const coreExercises: Exercise[] = [
 const conditioningExercises: Exercise[] = [
   {
     id: "marching_in_place",
-    name: "Marsch på stället",
+    name: "Marching in Place",
     instruction:
       "Stå upprätt. Lyft knäna växelvis i ett lugnt, kontrollerat tempo.",
     primaryPattern: "conditioning",
@@ -1414,7 +1414,7 @@ const conditioningExercises: Exercise[] = [
   },
   {
     id: "high_knees",
-    name: "Höga knän",
+    name: "High Knees",
     instruction:
       "Spring på stället och driv knäna högt mot bröstet i snabb takt.",
     primaryPattern: "conditioning",
@@ -1441,7 +1441,7 @@ const conditioningExercises: Exercise[] = [
   },
   {
     id: "jumping_jacks",
-    name: "Jumping jacks",
+    name: "Jumping Jacks",
     instruction:
       "Hoppa isär med benen samtidigt som armarna förs upp över huvudet. Hoppa tillbaka.",
     primaryPattern: "conditioning",
@@ -1468,7 +1468,7 @@ const conditioningExercises: Exercise[] = [
   },
   {
     id: "burpee",
-    name: "Burpee med armhävning",
+    name: "Burpee",
     instruction:
       "Sätt händerna i golvet och hoppa bak till planka. Gör en armhävning, hoppa in med fötterna och avsluta med ett upphopp.",
     primaryPattern: "conditioning",
@@ -1495,7 +1495,7 @@ const conditioningExercises: Exercise[] = [
   },
   {
     id: "sprint_mountain_climbers",
-    name: "Sprint mountain climbers",
+    name: "Sprint Mountain Climbers",
     instruction:
       "Stå i planka på händerna. Dra knäna växelvis mot bröstet i sprinttempo.",
     primaryPattern: "conditioning",
@@ -1522,7 +1522,7 @@ const conditioningExercises: Exercise[] = [
   },
   {
     id: "butt_kicks",
-    name: "Hälkickar",
+    name: "Butt Kicks",
     instruction:
       "Jogga på stället och för hälarna växelvis bakåt mot sätet i snabb takt.",
     primaryPattern: "conditioning",
@@ -1549,7 +1549,7 @@ const conditioningExercises: Exercise[] = [
   },
   {
     id: "plank_jack",
-    name: "Plank jack",
+    name: "Plank Jacks",
     instruction:
       "Stå i planka på händerna. Hoppa isär och ihop med fötterna utan att låta höften sjunka.",
     primaryPattern: "conditioning",
@@ -1576,7 +1576,7 @@ const conditioningExercises: Exercise[] = [
   },
   {
     id: "lateral_shuffle",
-    name: "Snabba sidosteg",
+    name: "Lateral Shuffle",
     instruction:
       "Stå i en låg position. Förflytta dig i snabba steg åt sidan och tillbaka.",
     primaryPattern: "conditioning",
@@ -1603,7 +1603,7 @@ const conditioningExercises: Exercise[] = [
   },
   {
     id: "bear_crawl",
-    name: "Bear crawl",
+    name: "Bear Crawl",
     instruction:
       "Stå på händer och fötter med knäna strax ovanför golvet. Kryp framåt med motsatt hand och fot utan att höften vrids.",
     primaryPattern: "conditioning",
@@ -1630,7 +1630,7 @@ const conditioningExercises: Exercise[] = [
   },
   {
     id: "crab_walk",
-    name: "Crab walk",
+    name: "Crab Walk",
     instruction:
       "Sitt med händer och fötter i golvet och lyft höften. Förflytta dig med små steg utan att låta höften sjunka.",
     primaryPattern: "conditioning",
@@ -1662,7 +1662,7 @@ const conditioningExercises: Exercise[] = [
 const balanceExercises: Exercise[] = [
   {
     id: "single_leg_hop_stick",
-    name: "Enbenshopp med landning",
+    name: "Single-Leg Hop and Stick",
     instruction:
       "Stå på ett ben. Hoppa kort framåt och landa stilla på samma ben. Byt ben efter halva tiden.",
     primaryPattern: "balance",
@@ -1689,7 +1689,7 @@ const balanceExercises: Exercise[] = [
   },
   {
     id: "hip_airplane",
-    name: "Hip airplane",
+    name: "Hip Airplane",
     instruction:
       "Stå på ett ben och fäll fram i höften. Rotera bäckenet långsamt utåt och tillbaka utan att tappa balansen. Byt ben efter halva tiden.",
     primaryPattern: "balance",
@@ -1723,7 +1723,7 @@ const additionalExercises: Exercise[] = [
 
   {
     id: "pistol_squat_negative",
-    name: "Negativ pistol squat",
+    name: "Negative Pistol Squat",
     instruction:
       "Stå på ett ben. Sänk dig så långsamt som möjligt med andra benet sträckt framåt. Byt ben efter halva tiden.",
     primaryPattern: "knee",
@@ -1750,7 +1750,7 @@ const additionalExercises: Exercise[] = [
   },
   {
     id: "archer_pull_up",
-    name: "Archer pull-up",
+    name: "Archer Pull-Up",
     instruction:
       "Häng i en stång med brett grepp. Dra dig upp mot ena handen med andra armen sträckt. Byt sida varje repetition.",
     primaryPattern: "vertical_pull",
@@ -1777,7 +1777,7 @@ const additionalExercises: Exercise[] = [
   },
   {
     id: "easy_jog_in_place",
-    name: "Lätt jogg på stället",
+    name: "Easy Jog in Place",
     instruction: "Jogga lätt på stället med små, avslappnade steg.",
     primaryPattern: "conditioning",
     secondaryPatterns: [],
@@ -1809,7 +1809,7 @@ const additionalExercises: Exercise[] = [
 const freeWeightExercises: Exercise[] = [
   {
     id: "goblet_squat",
-    name: "Goblet squat",
+    name: "Goblet Squat",
     instruction:
       "Håll en vikt intill bröstet med båda händerna. Gör en knäböj. Pressa upp genom hälarna.",
     primaryPattern: "knee",
@@ -1836,7 +1836,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "weighted_reverse_lunge",
-    name: "Utfall bakåt med vikt",
+    name: "Weighted Reverse Lunge",
     instruction:
       "Håll en vikt i vardera hand. Kliv bakåt med ett ben och sänk bakre knäet mot golvet. Pressa tillbaka till start. Byt ben varje gång.",
     primaryPattern: "knee",
@@ -1863,7 +1863,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "weighted_split_squat",
-    name: "Split squat med vikt",
+    name: "Weighted Split Squat",
     instruction:
       "Håll en vikt i vardera hand och stå i utfallsposition. Sänk kroppen rakt ned och pressa upp igen. Byt ben efter halva tiden.",
     primaryPattern: "knee",
@@ -1894,7 +1894,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "overhead_press_light",
-    name: "Axelpress",
+    name: "Overhead Press",
     instruction:
       "Håll en vikt i vardera hand i axelhöjd. Pressa upp rakt över huvudet. Sänk kontrollerat.",
     primaryPattern: "vertical_push",
@@ -1921,7 +1921,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "one_arm_row_light",
-    name: "Enarmsrodd med vikt",
+    name: "One-Arm Row",
     instruction:
       "Stå böjd i höften med rak rygg. Dra en vikt i ena handen mot höften. Sänk kontrollerat. Byt sida efter halva tiden.",
     primaryPattern: "horizontal_pull",
@@ -1948,7 +1948,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "curl_to_press",
-    name: "Curl to press",
+    name: "Curl to Press",
     instruction:
       "Håll en vikt i vardera hand. Gör en bicepscurl och för vikterna mot axlarna. Pressa sedan rakt upp över huvudet. Sänk kontrollerat hela vägen.",
     primaryPattern: "vertical_push",
@@ -1975,7 +1975,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "thruster_light",
-    name: "Thruster lätt",
+    name: "Thruster",
     instruction:
       "Håll en vikt i vardera hand vid axlarna. Sänk ned i en knäböj. Pressa upp till stående och vikterna rakt över huvudet i samma rörelse.",
     primaryPattern: "conditioning",
@@ -2002,7 +2002,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "heavy_goblet_squat",
-    name: "Tung goblet squat",
+    name: "Heavy Goblet Squat",
     instruction:
       "Håll en tung vikt intill bröstet med båda händerna. Sänk höfterna bakåt och nedåt i en djup knäböj. Pressa upp genom hälarna.",
     primaryPattern: "knee",
@@ -2029,7 +2029,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "romanian_deadlift",
-    name: "Rumänskt marklyft",
+    name: "Romanian Deadlift",
     instruction:
       "Håll en vikt i vardera hand framför låren. Fäll överkroppen framåt med rak rygg och mjukt böjda knän. Res dig upp igen.",
     primaryPattern: "hip",
@@ -2056,7 +2056,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "farmer_carry",
-    name: "Farmer carry",
+    name: "Farmer Carry",
     instruction:
       "Håll en tung vikt i vardera hand längs sidorna. Gå raka steg med upprätt hållning.",
     primaryPattern: "conditioning",
@@ -2083,7 +2083,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "suitcase_carry",
-    name: "Suitcase carry",
+    name: "Suitcase Carry",
     instruction:
       "Håll en tung vikt i ena handen längs sidan. Gå raka steg utan att luta bålen åt sidan. Byt hand efter halva tiden.",
     primaryPattern: "core",
@@ -2110,7 +2110,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "front_rack_march",
-    name: "Front rack march",
+    name: "Front Rack March",
     instruction:
       "Håll en tung vikt i vardera hand vid axlarna. Marschera på stället med höga knän.",
     primaryPattern: "conditioning",
@@ -2137,7 +2137,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "heavy_split_squat",
-    name: "Tung split squat",
+    name: "Heavy Split Squat",
     instruction:
       "Håll en tung vikt i vardera hand och stå i utfallsposition. Sänk kroppen rakt ned och pressa upp igen. Byt ben efter halva tiden.",
     primaryPattern: "knee",
@@ -2164,7 +2164,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "kettlebell_deadlift",
-    name: "Kettlebell deadlift",
+    name: "Kettlebell Deadlift",
     instruction:
       "Stå med en tung vikt mellan fötterna. Fäll höfterna bakåt med rak rygg och greppa vikten. Res dig upp till stående.",
     primaryPattern: "hip",
@@ -2191,7 +2191,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "goblet_squat_hold",
-    name: "Goblet squat hold",
+    name: "Goblet Squat Hold",
     instruction:
       "Håll en tung vikt intill bröstet. Sänk ned i en djup knäböj. Håll positionen och andas lugnt.",
     primaryPattern: "knee",
@@ -2218,7 +2218,7 @@ const freeWeightExercises: Exercise[] = [
   },
   {
     id: "loaded_step_up",
-    name: "Loaded step-up",
+    name: "Loaded Step-Up",
     instruction:
       "Håll en tung vikt i vardera hand. Stig upp på en stabil stol med ett ben. Pressa upp till stående. Sänk kontrollerat. Byt ben efter halva tiden.",
     primaryPattern: "knee",
@@ -2252,7 +2252,7 @@ const freeWeightExercises: Exercise[] = [
 const calfExercises: Exercise[] = [
   {
     id: "calf_raise",
-    name: "Tåhävning",
+    name: "Calf Raise",
     instruction:
       "Stå upprätt, gärna med händerna lätt mot en vägg eller stol för balans. Pressa upp på tå. Sänk kontrollerat.",
     primaryPattern: "calf",
@@ -2279,7 +2279,7 @@ const calfExercises: Exercise[] = [
   },
   {
     id: "bent_knee_calf_raise",
-    name: "Tåhävning med böjda knän",
+    name: "Bent-Knee Calf Raise",
     instruction:
       "Stå med lätt böjda knän genom hela rörelsen. Pressa upp på tå. Sänk kontrollerat.",
     primaryPattern: "calf",
@@ -2306,7 +2306,7 @@ const calfExercises: Exercise[] = [
   },
   {
     id: "squat_calf_raise",
-    name: "Knäböj med tåhävning",
+    name: "Squat Calf Raise",
     instruction:
       "Sänk ned i en knäböj. Pressa upp till stående och avsluta med en tåhävning högst upp.",
     primaryPattern: "calf",
@@ -2338,7 +2338,7 @@ const calfExercises: Exercise[] = [
   },
   {
     id: "single_leg_calf_raise",
-    name: "Enbens tåhävning",
+    name: "Single-Leg Calf Raise",
     instruction:
       "Stå på ett ben med lätt stöd mot en vägg eller stol. Pressa upp på tå och sänk kontrollerat. Byt ben efter halva tiden.",
     primaryPattern: "calf",

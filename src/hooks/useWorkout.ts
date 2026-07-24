@@ -20,16 +20,26 @@ export function useWorkout(soundEnabled: boolean) {
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { playNewBlock, playCountdown, playFinish } = useAudio(soundEnabled);
+  const { announceExercise, playNextExercise, playCountdown, playFinish } = useAudio(soundEnabled);
 
   const handleFinish = useCallback(() => {
     playFinish();
     setScreen("finished");
   }, [playFinish]);
 
+  // Vid övningsbyte läses "next exercise" upp följt av den nya övningens namn.
+  // Blockindexet slås upp mot workout här (timern känner bara till index).
+  const handleBlockChange = useCallback(
+    (blockIndex: number) => {
+      const name = workout?.blocks[blockIndex]?.exercise.name;
+      if (name) playNextExercise(name);
+    },
+    [workout, playNextExercise]
+  );
+
   const timerCallbacks = useMemo(
-    () => ({ onFinish: handleFinish, onBlockChange: playNewBlock, onCountdown: playCountdown }),
-    [handleFinish, playNewBlock, playCountdown]
+    () => ({ onFinish: handleFinish, onBlockChange: handleBlockChange, onCountdown: playCountdown }),
+    [handleFinish, handleBlockChange, playCountdown]
   );
 
   const { timerState, pause: pauseTimer, resume: resumeTimer, stop: stopTimer, skip: skipTimer } = useTimer(
@@ -53,19 +63,28 @@ export function useWorkout(soundEnabled: boolean) {
 
     setError(null);
 
+    let generated: Workout;
     try {
-      setWorkout(generateWorkout(settings));
-      setScreen("workout");
+      generated = generateWorkout(settings);
     } catch {
       // Appen ska försöka återhämta sig innan ett felmeddelande visas (D.7).
       try {
-        setWorkout(generateWorkout(settings));
-        setScreen("workout");
+        generated = generateWorkout(settings);
       } catch {
         setError("Kunde inte skapa ett pass just nu. Försök igen.");
         setScreen("start");
+        return;
       }
     }
+
+    setWorkout(generated);
+    setScreen("workout");
+
+    // Läs upp första övningens namn direkt (synkront i knapptryckningen, precis
+    // efter upplåsningen ovan - annars vägrar iOS läsa upp något). Resten av
+    // övningarnas namn läses upp vid respektive övningsbyte (handleBlockChange).
+    const firstExerciseName = generated.blocks[0]?.exercise.name;
+    if (firstExerciseName) announceExercise(firstExerciseName);
   }
 
   // Paus är endast giltigt från "workout" och återuppta endast från "paused"

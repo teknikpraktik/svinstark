@@ -1,12 +1,15 @@
-// Röstuppläsning av nedräkningen ("thirty", sedan "ten" ... "one" och "go" vid
-// övningsbyte). Använder webbläsarens inbyggda Web Speech API istället för
-// inspelade ljudfiler, av samma skäl som tonerna i audio.ts genereras med Web
-// Audio API: MVP ska inte bero på externa tillgångar (00-principer.md §6) och
-// appen ska fungera offline utan nedladdade resurser.
+// Röstuppläsning under passet: övningens namn när den börjar, nedräkningen
+// ("thirty", "ten" ... "one") och "next exercise" följt av nästa övnings namn
+// vid övningsbyte. Målet är att hela passet ska gå att köra utan att titta på
+// mobilen. Använder webbläsarens inbyggda Web Speech API istället för inspelade
+// ljudfiler, av samma skäl som tonerna i audio.ts genereras med Web Audio API:
+// MVP ska inte bero på externa tillgångar (00-principer.md §6) och appen ska
+// fungera offline utan nedladdade resurser.
 //
-// Rösten är engelsk trots att appen i övrigt är svensk - siffrorna är korta och
-// entydiga på engelska, och engelska röster finns installerade på i praktiken
-// alla plattformar (svenska röster saknas ofta på icke-svenska enheter).
+// Rösten är engelsk: övningsnamnen är engelska (se exerciseData.ts) och
+// siffrorna är korta och entydiga på engelska. Engelska röster finns dessutom
+// installerade på i praktiken alla plattformar (svenska röster saknas ofta på
+// icke-svenska enheter).
 
 // Bara de sekunder timern faktiskt signalerar (COUNTDOWN_CUE_SECONDS i
 // lib/timer.ts) - en sekund utan ord faller tillbaka på pipljudet.
@@ -140,10 +143,21 @@ export function speakCountdown(remainingSeconds: number): boolean {
   return true;
 }
 
-export function speakGo(): boolean {
+// Läser upp övningens namn när den startar.
+export function speakExerciseName(name: string): boolean {
   if (!isVoiceAvailable()) return false;
 
-  speak("go");
+  speak(name);
+  return true;
+}
+
+// Övningsbyte: "Next exercise" följt av nästa övnings namn. Läses upp som EN
+// enda utterance - speak() avbryter (cancel:ar) alltid en pågående uppläsning,
+// så två separata anrop hade tystat "Next exercise" innan namnet hann läsas.
+export function speakNextExercise(name: string): boolean {
+  if (!isVoiceAvailable()) return false;
+
+  speak(`Next exercise. ${name}`);
   return true;
 }
 
