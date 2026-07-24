@@ -3,10 +3,10 @@ import type { TimerState, Workout, WorkoutBlock } from "@/types/workout";
 const TICK_INTERVAL_MS = 250;
 
 // Sekunderna som ska signaleras under ett block: två förvarningar (halvtid
-// och tio sekunder kvar) och sedan den avslutande 3-2-1-nedräkningen (C.19).
+// och tio sekunder kvar) och sedan den avslutande 5-4-3-2-1-nedräkningen (C.19).
 // Timern avgör bara *när* en signal ska ges - hur den låter (röst eller pip)
 // ägs av useAudio.
-const COUNTDOWN_CUE_SECONDS = [30, 10, 3, 2, 1];
+const COUNTDOWN_CUE_SECONDS = [30, 10, 5, 4, 3, 2, 1];
 const FIRST_CUE_SECOND = Math.max(...COUNTDOWN_CUE_SECONDS);
 
 export interface ExerciseProgress {
@@ -100,8 +100,8 @@ export class WorkoutTimer {
   // hålla wall-clock-schemat efter bakgrundsfördröjning). Ett skip är en
   // explicit, engångs-handling just nu - nästa block ska få hela sin tid
   // räknat från detta ögonblick, inte från när det "borde" ha startat.
-  // Anropar avsiktligt inte onBlockChange (som triggar skidstart-tonen) -
-  // ett skip ska vara tyst, bara nästa övning ska starta.
+  // Anropar onBlockChange precis som ett vanligt blockbyte, så att nästa övning
+  // annonseras ("next exercise" + namn) även när användaren själv hoppar över.
   skip(): void {
     if (!this.state.isRunning) return;
 
@@ -117,6 +117,7 @@ export class WorkoutTimer {
     const nextBlock = this.state.currentBlock + 1;
     this.blockDeadline = Date.now() + this.blockDurationsSeconds[nextBlock] * 1000;
     this.state = { ...this.state, currentBlock: nextBlock, remainingSeconds: this.blockDurationsSeconds[nextBlock] };
+    this.callbacks.onBlockChange?.(nextBlock);
     this.emit();
   }
 

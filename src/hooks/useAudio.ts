@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { playCountdownBeep, playFinishSound, playNewBlockSound } from "@/lib/audio";
-import { speakCountdown, speakExerciseName, speakNextExercise } from "@/lib/voice";
+import { speakCountdown, speakExerciseName, speakNextExercise, speakWorkoutComplete } from "@/lib/voice";
 
 // Spelar ljud endast om inställningen är påslagen (C.19: "Ljud ska kunna
 // stängas av"). Hooken innehåller ingen ljudlogik själv, den använder bara
@@ -39,15 +39,20 @@ export function useAudio(enabled: boolean) {
     (remainingSeconds: number) => {
       if (!enabled) return;
       if (speakCountdown(remainingSeconds)) return;
-      // Utan röst signaleras bara de sista tre sekunderna, som tidigare -
-      // ett pip per sekund från tio och ned vore mer stressande än stödjande.
-      if (remainingSeconds <= 3) playCountdownBeep();
+      // Utan röst signaleras bara den sammanhängande slutnedräkningen (fem
+      // sekunder och ned) - ett pip per sekund från tio och ned vore mer
+      // stressande än stödjande.
+      if (remainingSeconds <= 5) playCountdownBeep();
     },
     [enabled]
   );
 
+  // Passet klart: rösten säger "workout complete", plus avslutningsklangen
+  // (kvar som celebrativ signal och som reserv för webbläsare utan röst).
   const playFinish = useCallback(() => {
-    if (enabled) playFinishSound();
+    if (!enabled) return;
+    speakWorkoutComplete();
+    playFinishSound();
   }, [enabled]);
 
   return { announceExercise, playNextExercise, playCountdown, playFinish };

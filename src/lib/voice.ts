@@ -1,7 +1,8 @@
 // Röstuppläsning under passet: övningens namn när den börjar, nedräkningen
-// ("thirty", "ten" ... "one") och "next exercise" följt av nästa övnings namn
-// vid övningsbyte. Målet är att hela passet ska gå att köra utan att titta på
-// mobilen. Använder webbläsarens inbyggda Web Speech API istället för inspelade
+// ("thirty", "ten", "five" ... "one"), "next exercise" följt av nästa övnings
+// namn vid övningsbyte och "workout complete" när passet är slut. Målet är att
+// hela passet ska gå att köra utan att titta på mobilen. Använder webbläsarens
+// inbyggda Web Speech API istället för inspelade
 // ljudfiler, av samma skäl som tonerna i audio.ts genereras med Web Audio API:
 // MVP ska inte bero på externa tillgångar (00-principer.md §6) och appen ska
 // fungera offline utan nedladdade resurser.
@@ -16,6 +17,8 @@
 const NUMBER_WORDS: Record<number, string> = {
   30: "thirty",
   10: "ten",
+  5: "five",
+  4: "four",
   3: "three",
   2: "two",
   1: "one",
@@ -105,9 +108,10 @@ function speak(text: string): void {
   } else {
     utterance.lang = "en-US";
   }
-  // Något snabbare än normaltempo så att ordet hinner klart innan nästa
-  // sekund, men inte så snabbt att det låter stressat (05-designprinciper.md §14).
-  utterance.rate = 1.15;
+  // Något långsammare än normaltempo för ett lugnt, tydligt intryck - ljud ska
+  // aldrig kännas stressande (05-designprinciper.md §14). Fortfarande snabbt nog
+  // att varje nedräkningssiffra hinner klart innan nästa sekund.
+  utterance.rate = 0.9;
 
   synth.speak(utterance);
 }
@@ -158,6 +162,14 @@ export function speakNextExercise(name: string): boolean {
   if (!isVoiceAvailable()) return false;
 
   speak(`Next exercise. ${name}`);
+  return true;
+}
+
+// Läses upp när passet är slut (efter sista övningen).
+export function speakWorkoutComplete(): boolean {
+  if (!isVoiceAvailable()) return false;
+
+  speak("Workout complete.");
   return true;
 }
 
